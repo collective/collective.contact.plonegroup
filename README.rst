@@ -1,0 +1,46 @@
+.. contents::
+
+Introduction
+============
+
+A Plone add-on that manage organizations and functions, leading to corresponding plone groups creation.
+This product makes the link between:
+* collective.contact.core : organization definition containing your organization services (multiple levels)
+* collective.dms.basecontent (LocalRolesToPrincipals field) : field presenting a list of services for which a local role can be given
+
+How-to
+======
+
+First, create a directory in your site (object from collective.contact.core). This directory will contain all the informations related to your contacts.
+
+You can then add your organization in it. An organization can contain organizations (such as services, divisions or department).
+
+In the collective.contact.plonegroup configuration panel, you have to :
+* select some services of your organization to be used in LocalRolesToPrincipals field
+* define some function labels that will be used in each selected organization
+
+When submitting, for each organization - function combination, a plone group will be created with the id "organization-id"_"function-id" and name "organisation-name" ("function-name"). 
+
+The generated plone groups will be used in LocalRolesToPrincipals field, where some local roles can be given to some function for each selected service. 
+
+Installation
+============
+
+* Add collective.contact.plonegroup to your eggs.
+* Re-run buildout.
+* Install the product in your plone site.
+
+Tests
+=====
+
+This add-on is tested using Travis CI. The current status of the add-on is :
+
+.. image:: https://secure.travis-ci.org/collective/collective.contact.plonegroup.png
+    :target: http://travis-ci.org/collective/collective.contact.plonegroup
+
+Credits
+=======
+
+Have an idea? Found a bug? Let us know by `opening a ticket`_.
+
+.. _`opening a ticket`: https://github.com/collective/collective.contact.plonegroup/issues

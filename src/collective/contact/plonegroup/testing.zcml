@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.contact.plonegroup">
+
+  <include file="configure.zcml" />
+
+  <include package="ecreall.helpers.testing" />
+
+  <genericsetup:registerProfile
+      name="testing"
+      title="collective.contact.plonegroup tests"
+      directory="profiles/testing"
+      description="Steps to ease tests of collective.contact.plonegroup"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+</configure>

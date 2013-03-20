@@ -1,0 +1,3 @@
+graft src/
+graft docs/
+include *.cfg *.rst *.in
