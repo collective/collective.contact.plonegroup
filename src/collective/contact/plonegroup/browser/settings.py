@@ -72,6 +72,8 @@ def addOrModifyGroup(group_name, organization_title, function_title):
         organization_title = organization_title.encode('utf8')
     if isinstance(function_title, unicode):
         function_title = function_title.encode('utf8')
+    if isinstance(group_name, unicode):
+        group_name = group_name.encode('utf8')
     group = api.group.get(groupname=group_name)
     group_title = '%s (%s)' % (organization_title, function_title)
     if group is None:
@@ -90,21 +92,28 @@ def detectContactPlonegroupChange(event):
         Manage our record changes
     """
     if IRecordModifiedEvent.providedBy(event) and event.record.interface == IContactPlonegroupConfig:
-        if event.record.fieldName == 'organizations':
-            old_set = set([(dic['org_id'], dic['org_title']) for dic in event.oldValue])
-            new_set = set([(dic['org_id'], dic['org_title']) for dic in event.newValue])
+        registry = getUtility(IRegistry)
+        if event.record.fieldName == 'organizations' and registry['collective.contact.plonegroup.browser'
+                                                                  '.settings.IContactPlonegroupConfig.functions']:
+            old_set = new_set = set()
+            if event.oldValue:
+                old_set = set([(dic['org_id'], dic['org_title']) for dic in event.oldValue])
+            if event.newValue:
+                new_set = set([(dic['org_id'], dic['org_title']) for dic in event.newValue])
             # we detect a new organization
             add_set = new_set.difference(old_set)
-            registry = getUtility(IRegistry)
             for (new_id, new_title) in add_set:
                 for fct_dic in registry['collective.contact.plonegroup.browser.settings.'
                                         'IContactPlonegroupConfig.functions']:
                     group_name = "%s_%s" % (new_id, fct_dic['fct_id'])
                     addOrModifyGroup(group_name, new_title, fct_dic['fct_title'])
             # we detect a removed organization
-        elif event.record.fieldName == 'functions':
-            old_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.oldValue])
-            new_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.newValue])
+        elif event.record.fieldName == 'functions' and registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.organizations']:
+            old_set = new_set = set()
+            if event.oldValue:
+                old_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.oldValue])
+            if event.newValue:
+                new_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.newValue])
             # we detect a new function
             add_set = new_set.difference(old_set)
             registry = getUtility(IRegistry)
