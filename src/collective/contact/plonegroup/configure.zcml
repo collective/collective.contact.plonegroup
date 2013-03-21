@@ -15,6 +15,8 @@
     <include package="plone.api" />
     <include package="collective.contact.core" />
 
+    <include file="subscribers.zcml" />
+
     <grok:grok package="." />
 
     <genericsetup:registerProfile
