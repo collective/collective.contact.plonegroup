@@ -1,0 +1,6 @@
+<registry>
+
+    <records interface="collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig">
+    </records>
+
+</registry>
