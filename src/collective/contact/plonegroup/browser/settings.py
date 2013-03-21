@@ -101,6 +101,19 @@ def detectContactPlonegroupChange(event):
                                         'IContactPlonegroupConfig.functions']:
                     group_name = "%s_%s" % (new_id, fct_dic['fct_id'])
                     addOrModifyGroup(group_name, new_title, fct_dic['fct_title'])
+            # we detect a removed organization
+        elif event.record.fieldName == 'functions':
+            old_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.oldValue])
+            new_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.newValue])
+            # we detect a new function
+            add_set = new_set.difference(old_set)
+            registry = getUtility(IRegistry)
+            for (new_id, new_title) in add_set:
+                for org_dic in registry['collective.contact.plonegroup.browser.settings.'
+                                        'IContactPlonegroupConfig.organizations']:
+                    group_name = "%s_%s" % (org_dic['org_id'], new_id)
+                    addOrModifyGroup(group_name, org_dic['org_title'], new_title)
+            # we detect a removed function
 
 
 class SettingsEditForm(RegistryEditForm):
