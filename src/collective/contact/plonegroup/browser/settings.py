@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from zope import schema
+from zope.app.component.hooks import getSite
 from zope.component import getUtility
 from zope.interface import Interface
+from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from z3c.form import form
+from five import grok
 from plone import api
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
+from plone.app.uuid.utils import uuidToObject
 from plone.autoform.directives import widget
-#from plone.formwidget.contenttree import PathSourceBinder
-#from plone.formwidget.contenttree import MultiContentTreeFieldWidget
 from plone.registry.interfaces import IRecordModifiedEvent, IRegistry
 from plone.z3cform import layout
 from collective.z3cform.datagridfield import DataGridFieldFactory
@@ -33,27 +36,48 @@ class IFunctionSchema(Interface):
     fct_title = schema.TextLine(title=_("Plone group suffix title"), required=True)
 
 
+class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
+    """Vocabulary of own organizations services"""
+    grok.name('collective.contact.plonegroup.organization_services')
+    grok.implements(IVocabularyFactory)
+
+    def listSubOrganizations(self, terms, folder, parent_label='', parent_id=''):
+        for orga in folder.listFolderContents(contentFilter={'portal_type': 'organization'}):
+            term_title = orga.Title()
+            if parent_label:
+                term_title = "%s - %s" % (parent_label, term_title)
+            term_token = orga.getId()
+            if parent_id:
+                term_token = "%s|%s" % (parent_id, term_token)
+            terms.append(SimpleTerm(orga.UID(), term_token, term_title))
+            self.listSubOrganizations(terms, orga, term_title, term_token)
+
+    def __call__(self, context):
+        portal = getSite()
+        terms = []
+        pcat = portal.portal_catalog
+        brains = pcat(portal_type='organization', id='own-organization')
+        if not brains:
+            terms.append(SimpleTerm('', token="unfound",
+                                    title=_(u"You must define an organization with id 'own-organization'")))
+            return SimpleVocabulary(terms)
+
+        own_orga = brains[0].getObject()
+        self.listSubOrganizations(terms, own_orga)
+
+        return SimpleVocabulary(terms)
+
+
 class IContactPlonegroupConfig(Interface):
     """
         Configuration schema
     """
 
-    # plone.registry cannot store schema.Choice different from source !
-    #organizations = schema.List(
-    #    title=_(u'Selected organizations'),
-    #    description=_(u"Choose multiple organization levels for which you want to create a plone group."),
-    #    value_type=schema.Choice(title=u"Selection",
-    #                             source=PathSourceBinder(portal_type='organization')))
-    #
-    #widget(organizations=MultiContentTreeFieldWidget)
-
+    # plone.registry cannot store schema.Choice different from named vocabularies !
     organizations = schema.List(
         title=_(u'Selected organizations'),
         description=_(u"Choose multiple organization levels for which you want to create a plone group."),
-        value_type=DictRow(title=_("Organization"),
-                           schema=IOrganizationSchema)
-    )
-    widget(organizations=DataGridFieldFactory)
+        value_type=schema.Choice(vocabulary=u'collective.contact.plonegroup.organization_services',))
 
     functions = schema.List(
         title=_(u'Function list'),
@@ -95,20 +119,20 @@ def detectContactPlonegroupChange(event):
         registry = getUtility(IRegistry)
         if event.record.fieldName == 'organizations' and registry['collective.contact.plonegroup.browser'
                                                                   '.settings.IContactPlonegroupConfig.functions']:
-            old_set = new_set = set()
-            if event.oldValue:
-                old_set = set([(dic['org_id'], dic['org_title']) for dic in event.oldValue])
-            if event.newValue:
-                new_set = set([(dic['org_id'], dic['org_title']) for dic in event.newValue])
+            old_set = set(event.oldValue)
+            new_set = set(event.newValue)
             # we detect a new organization
             add_set = new_set.difference(old_set)
-            for (new_id, new_title) in add_set:
+            for uid in add_set:
+                obj = uuidToObject(uid)
+                full_title = obj.get_full_title().replace('/', '-')
                 for fct_dic in registry['collective.contact.plonegroup.browser.settings.'
                                         'IContactPlonegroupConfig.functions']:
-                    group_name = "%s_%s" % (new_id, fct_dic['fct_id'])
-                    addOrModifyGroup(group_name, new_title, fct_dic['fct_title'])
+                    group_name = "%s_%s" % (uid, fct_dic['fct_id'])
+                    addOrModifyGroup(group_name, full_title, fct_dic['fct_title'])
             # we detect a removed organization
-        elif event.record.fieldName == 'functions' and registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.organizations']:
+        elif event.record.fieldName == 'functions' and registry['collective.contact.plonegroup.browser.settings.'
+                                                                'IContactPlonegroupConfig.organizations']:
             old_set = new_set = set()
             if event.oldValue:
                 old_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.oldValue])
@@ -118,10 +142,11 @@ def detectContactPlonegroupChange(event):
             add_set = new_set.difference(old_set)
             registry = getUtility(IRegistry)
             for (new_id, new_title) in add_set:
-                for org_dic in registry['collective.contact.plonegroup.browser.settings.'
-                                        'IContactPlonegroupConfig.organizations']:
-                    group_name = "%s_%s" % (org_dic['org_id'], new_id)
-                    addOrModifyGroup(group_name, org_dic['org_title'], new_title)
+                for uid in registry['collective.contact.plonegroup.browser.settings.'
+                                    'IContactPlonegroupConfig.organizations']:
+                    obj = uuidToObject(uid)
+                    group_name = "%s_%s" % (uid, new_id)
+                    addOrModifyGroup(group_name, obj.Title(), new_title)
             # we detect a removed function
 
 
