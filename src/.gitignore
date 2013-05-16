@@ -1,4 +1,4 @@
 # Packages
 collective.contact.core
 collective.dms.basecontent
-plone.*
+plone.*/
