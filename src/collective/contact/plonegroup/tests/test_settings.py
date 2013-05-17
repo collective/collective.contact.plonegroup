@@ -58,24 +58,28 @@ class TestInstall(IntegrationTestCase):
     def test_detectContactPlonegroupChange(self):
         """Test if group creation works correctly"""
         group_ids = [group.id for group in api.group.get_groups()]
-        for uid in self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                                 'organizations']:
+        organizations = self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
+                                      'organizations']
+        for uid in organizations:
             self.assertIn('%s_director' % uid, group_ids)
             self.assertIn('%s_worker' % uid, group_ids)
-        first_uid = self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                                  'organizations'][0]
-        d1_d_group = api.group.get(groupname='%s_director' % first_uid)
-        self.assertTrue(d1_d_group.getProperty('title'), 'Department 1 (Director)')
+        d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
+        self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Director)')
+        d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
+        self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Director)')
         # Changing organization title
         # To be updated when event added
-        #self.assertTrue(d1_d_group.getProperty('title'), 'Work service (Director)')
+        #self.assertEquals(d1_d_group.getProperty('title'), 'Work service (Director)')
         # Changing function title
         self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
                       'functions'] = [{'fct_title': u'Directors',
                                        'fct_id': u'director'},
                                       {'fct_title': u'Worker',
                                        'fct_id': u'worker'}]
-        self.assertTrue(d1_d_group.getProperty('title'), 'Department 1 (Directors)')
+        d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
+        self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Directors)')
+        d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
+        self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Directors)')
         # Adding new organization
         own_orga = self.portal['contacts']['own-organization']
         own_orga['department2'].invokeFactory('organization', 'service2', title='Service 2')

@@ -111,8 +111,6 @@ def addOrModifyGroup(group_name, organization_title, function_title):
         organization_title = organization_title.encode('utf8')
     if isinstance(function_title, unicode):
         function_title = function_title.encode('utf8')
-    if isinstance(group_name, unicode):
-        group_name = group_name.encode('utf8')
     group = api.group.get(groupname=group_name)
     group_title = '%s (%s)' % (organization_title, function_title)
     if group is None:
@@ -140,7 +138,7 @@ def detectContactPlonegroupChange(event):
             add_set = new_set.difference(old_set)
             for uid in add_set:
                 obj = uuidToObject(uid)
-                full_title = obj.get_full_title().replace('/', '-')
+                full_title = obj.get_full_title(separator=' - ', first_index=1)
                 for fct_dic in registry['collective.contact.plonegroup.browser.settings.'
                                         'IContactPlonegroupConfig.functions']:
                     group_name = "%s_%s" % (uid, fct_dic['fct_id'])
@@ -160,8 +158,9 @@ def detectContactPlonegroupChange(event):
                 for uid in registry['collective.contact.plonegroup.browser.settings.'
                                     'IContactPlonegroupConfig.organizations']:
                     obj = uuidToObject(uid)
+                    full_title = obj.get_full_title(separator=' - ', first_index=1)
                     group_name = "%s_%s" % (uid, new_id)
-                    addOrModifyGroup(group_name, obj.Title(), new_title)
+                    addOrModifyGroup(group_name, full_title, new_title)
             # we detect a removed function
 
 
