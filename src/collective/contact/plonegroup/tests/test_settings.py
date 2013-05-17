@@ -39,12 +39,21 @@ class TestInstall(IntegrationTestCase):
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
         self.assertEquals(voc_list, ['Department 1 - Service 1', 'Department 1', 'Department 2'])
-        # When own organization not found
-        self.portal['contacts'].manage_delObjects(ids=['own-organization'])
+        # When multiple own organizations
+        self.portal['contacts'].invokeFactory('organization', 'temporary', title='Temporary')
+        self.portal['contacts']['temporary'].invokeFactory('organization', 'own-organization',
+                                                           title='Duplicated organization')
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, ["You must define an organization with id 'own-organization'"])
+        self.assertEquals(voc_list, ["You must have only one organization with id 'own-organization' !"])
+        # When own organization not found
+        self.portal['contacts'].manage_delObjects(ids=['own-organization'])
+        self.portal['contacts'].manage_delObjects(ids=['temporary'])
+        services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
+        voc_dic = services(self).by_token
+        voc_list = [voc_dic[key].title for key in voc_dic.keys()]
+        self.assertEquals(voc_list, ["You must define an organization with id 'own-organization' !"])
 
     def test_detectContactPlonegroupChange(self):
         """Test if group creation works correctly"""

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-05-16 06:47+0000\n"
+"POT-Creation-Date: 2013-05-17 06:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.contact.plonegroup\n"
 
-#: ../browser/settings.py:79
+#: ../browser/settings.py:83
 msgid "Choose multiple organization levels for which you want to create a plone group."
 msgstr ""
 
-#: ../browser/settings.py:84
+#: ../browser/settings.py:89
 msgid "Each defined function will suffix each organization plone group."
 msgstr ""
 
-#: ../browser/settings.py:85
+#: ../browser/settings.py:91
 msgid "Function"
 msgstr ""
 
-#: ../browser/settings.py:83
+#: ../browser/settings.py:88
 msgid "Function list"
 msgstr ""
 
@@ -49,11 +49,27 @@ msgstr ""
 msgid "Plone group suffix title"
 msgstr ""
 
-#: ../browser/settings.py:78
+#: ../browser/settings.py:82
 msgid "Selected organizations"
+msgstr ""
+
+#: ../browser/settings.py:99
+msgid "You must choose at least one organization !"
+msgstr ""
+
+#: ../browser/settings.py:101
+msgid "You must correct the organization error first !"
 msgstr ""
 
 #: ../browser/settings.py:62
 msgid "You must define an organization with id 'own-organization'"
+msgstr ""
+
+#: ../browser/settings.py:103
+msgid "You must define at least one function !"
+msgstr ""
+
+#: ../browser/settings.py:66
+msgid "You must have only one organization with id 'own-organization'"
 msgstr ""
 

@@ -3,7 +3,7 @@
 from zope import schema
 from zope.app.component.hooks import getSite
 from zope.component import getUtility
-from zope.interface import Interface
+from zope.interface import Interface, Invalid, invariant
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from z3c.form import form
@@ -58,8 +58,12 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
         pcat = portal.portal_catalog
         brains = pcat(portal_type='organization', id='own-organization')
         if not brains:
-            terms.append(SimpleTerm('', token="unfound",
-                                    title=_(u"You must define an organization with id 'own-organization'")))
+            terms.append(SimpleTerm(None, token="unfound",
+                                    title=_(u"You must define an organization with id 'own-organization' !")))
+            return SimpleVocabulary(terms)
+        elif len(brains) > 1:
+            terms.append(SimpleTerm(None, token="multifound",
+                                    title=_(u"You must have only one organization with id 'own-organization' !")))
             return SimpleVocabulary(terms)
 
         own_orga = brains[0].getObject()
@@ -77,15 +81,26 @@ class IContactPlonegroupConfig(Interface):
     organizations = schema.List(
         title=_(u'Selected organizations'),
         description=_(u"Choose multiple organization levels for which you want to create a plone group."),
+        required=True,
         value_type=schema.Choice(vocabulary=u'collective.contact.plonegroup.organization_services',))
 
     functions = schema.List(
         title=_(u'Function list'),
         description=_(u'Each defined function will suffix each organization plone group.'),
+        required=True,
         value_type=DictRow(title=_("Function"),
                            schema=IFunctionSchema)
     )
     widget(functions=DataGridFieldFactory)
+
+    @invariant
+    def validateSettings(data):
+        if not data.organizations:
+            raise Invalid(_(u"You must choose at least one organization !"))
+        if len(data.organizations) == 1 and data.organizations[0] is None:
+            raise Invalid(_(u"You must correct the organization error first !"))
+        if not data.functions:
+            raise Invalid(_(u"You must define at least one function !"))
 
 
 def addOrModifyGroup(group_name, organization_title, function_title):
