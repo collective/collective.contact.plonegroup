@@ -27,11 +27,4 @@
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
 
-    <genericsetup:importStep
-        name="collective.contactplonegroup-postInstall"
-        title="collective.contact.plonegroup post_install import step"
-        description="Post install import step from collective.contact.plonegroup"
-        handler=".setuphandlers.post_install">
-    </genericsetup:importStep>
-
 </configure>

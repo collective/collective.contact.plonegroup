@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
+from config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
 
 
-def isNotCurrentProfile(context):
-    return context.readDataFile("collective.contactplonegroup_marker.txt") is None
-
-
-def post_install(context):
+def postInstall(context):
     """Post install script"""
-    if isNotCurrentProfile(context): return
+    if context.readDataFile("collective.contactplonegroup_marker.txt") is None:
+        return
     portal = context.getSite()
+    registry = getUtility(IRegistry)
+    # Initialize the registry content
+    registry[ORGANIZATIONS_REGISTRY] = []
+    registry[FUNCTIONS_REGISTRY] = []
