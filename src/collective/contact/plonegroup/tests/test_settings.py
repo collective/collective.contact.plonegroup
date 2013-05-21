@@ -16,8 +16,8 @@ class TestInstall(IntegrationTestCase):
         self.portal = self.layer['portal']
         # Organizations creation
         self.portal.invokeFactory('directory', 'contacts')
-        self.portal['contacts'].invokeFactory('organization', 'own-organization', title='My organization')
-        own_orga = self.portal['contacts']['own-organization']
+        self.portal['contacts'].invokeFactory('organization', 'plonegroup-organization', title='My organization')
+        own_orga = self.portal['contacts']['plonegroup-organization']
         own_orga.invokeFactory('organization', 'department1', title='Department 1')
         own_orga.invokeFactory('organization', 'department2', title='Department 2')
         own_orga['department1'].invokeFactory('organization', 'service1', title='Service 1')
@@ -41,19 +41,19 @@ class TestInstall(IntegrationTestCase):
         self.assertEquals(voc_list, ['Department 1 - Service 1', 'Department 1', 'Department 2'])
         # When multiple own organizations
         self.portal['contacts'].invokeFactory('organization', 'temporary', title='Temporary')
-        self.portal['contacts']['temporary'].invokeFactory('organization', 'own-organization',
+        self.portal['contacts']['temporary'].invokeFactory('organization', 'plonegroup-organization',
                                                            title='Duplicated organization')
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, ["You must have only one organization with id 'own-organization' !"])
+        self.assertEquals(voc_list, ["You must have only one organization with id 'plonegroup-organization' !"])
         # When own organization not found
-        self.portal['contacts'].manage_delObjects(ids=['own-organization'])
+        self.portal['contacts'].manage_delObjects(ids=['plonegroup-organization'])
         self.portal['contacts'].manage_delObjects(ids=['temporary'])
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, ["You must define an organization with id 'own-organization' !"])
+        self.assertEquals(voc_list, ["You must define an organization with id 'plonegroup-organization' !"])
 
     def test_detectContactPlonegroupChange(self):
         """Test if group creation works correctly"""
@@ -81,7 +81,7 @@ class TestInstall(IntegrationTestCase):
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
         self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Directors)')
         # Adding new organization
-        own_orga = self.portal['contacts']['own-organization']
+        own_orga = self.portal['contacts']['plonegroup-organization']
         own_orga['department2'].invokeFactory('organization', 'service2', title='Service 2')
         # append() method on the registry doesn't trigger the event. += too
         newValue = self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'

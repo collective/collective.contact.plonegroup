@@ -14,7 +14,7 @@ How-to
 
 First, create a directory in your site (object from collective.contact.core). This directory will contain all the informations related to your contacts.
 
-You can then add your organization in it (with a specific id equal to 'own-organization').
+You can then add your organization in it (with a specific id equal to 'plonegroup-organization').
 An organization can contain organizations (such as services, divisions or department).
 
 In the collective.contact.plonegroup configuration panel, you have to :

@@ -56,14 +56,14 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
         portal = getSite()
         terms = []
         pcat = portal.portal_catalog
-        brains = pcat(portal_type='organization', id='own-organization')
+        brains = pcat(portal_type='organization', id='plonegroup-organization')
         if not brains:
             terms.append(SimpleTerm(None, token="unfound",
-                                    title=_(u"You must define an organization with id 'own-organization' !")))
+                                    title=_(u"You must define an organization with id 'plonegroup-organization' !")))
             return SimpleVocabulary(terms)
         elif len(brains) > 1:
-            terms.append(SimpleTerm(None, token="multifound",
-                                    title=_(u"You must have only one organization with id 'own-organization' !")))
+            terms.append(SimpleTerm(None, token="multifound", title=_(u"You must have only one organization "
+                                                                      "with id 'plonegroup-organization' !")))
             return SimpleVocabulary(terms)
 
         own_orga = brains[0].getObject()
