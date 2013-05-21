@@ -18,6 +18,7 @@ from plone.z3cform import layout
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from .. import _
+from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
 
 
 class IOrganizationSchema(Interface):
@@ -130,8 +131,7 @@ def detectContactPlonegroupChange(event):
     """
     if IRecordModifiedEvent.providedBy(event) and event.record.interface == IContactPlonegroupConfig:
         registry = getUtility(IRegistry)
-        if event.record.fieldName == 'organizations' and registry['collective.contact.plonegroup.browser'
-                                                                  '.settings.IContactPlonegroupConfig.functions']:
+        if event.record.fieldName == 'organizations' and registry[FUNCTIONS_REGISTRY]:
             old_set = set(event.oldValue)
             new_set = set(event.newValue)
             # we detect a new organization
@@ -139,13 +139,11 @@ def detectContactPlonegroupChange(event):
             for uid in add_set:
                 obj = uuidToObject(uid)
                 full_title = obj.get_full_title(separator=' - ', first_index=1)
-                for fct_dic in registry['collective.contact.plonegroup.browser.settings.'
-                                        'IContactPlonegroupConfig.functions']:
+                for fct_dic in registry[FUNCTIONS_REGISTRY]:
                     group_name = "%s_%s" % (uid, fct_dic['fct_id'])
                     addOrModifyGroup(group_name, full_title, fct_dic['fct_title'])
             # we detect a removed organization
-        elif event.record.fieldName == 'functions' and registry['collective.contact.plonegroup.browser.settings.'
-                                                                'IContactPlonegroupConfig.organizations']:
+        elif event.record.fieldName == 'functions' and registry[ORGANIZATIONS_REGISTRY]:
             old_set = new_set = set()
             if event.oldValue:
                 old_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.oldValue])
@@ -155,8 +153,7 @@ def detectContactPlonegroupChange(event):
             add_set = new_set.difference(old_set)
             registry = getUtility(IRegistry)
             for (new_id, new_title) in add_set:
-                for uid in registry['collective.contact.plonegroup.browser.settings.'
-                                    'IContactPlonegroupConfig.organizations']:
+                for uid in registry[ORGANIZATIONS_REGISTRY]:
                     obj = uuidToObject(uid)
                     full_title = obj.get_full_title(separator=' - ', first_index=1)
                     group_name = "%s_%s" % (uid, new_id)

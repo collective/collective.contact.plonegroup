@@ -6,6 +6,7 @@ from zope.schema.interfaces import IVocabularyFactory
 from plone import api
 from plone.registry.interfaces import IRegistry
 from collective.contact.plonegroup.testing import IntegrationTestCase
+from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
 
 
 class TestInstall(IntegrationTestCase):
@@ -58,8 +59,7 @@ class TestInstall(IntegrationTestCase):
     def test_detectContactPlonegroupChange(self):
         """Test if group creation works correctly"""
         group_ids = [group.id for group in api.group.get_groups()]
-        organizations = self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                                      'organizations']
+        organizations = self.registry[ORGANIZATIONS_REGISTRY]
         for uid in organizations:
             self.assertIn('%s_director' % uid, group_ids)
             self.assertIn('%s_worker' % uid, group_ids)
@@ -71,11 +71,8 @@ class TestInstall(IntegrationTestCase):
         # To be updated when event added
         #self.assertEquals(d1_d_group.getProperty('title'), 'Work service (Director)')
         # Changing function title
-        self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                      'functions'] = [{'fct_title': u'Directors',
-                                       'fct_id': u'director'},
-                                      {'fct_title': u'Worker',
-                                       'fct_id': u'worker'}]
+        self.registry[FUNCTIONS_REGISTRY] = [{'fct_title': u'Directors', 'fct_id': u'director'},
+                                             {'fct_title': u'Worker', 'fct_id': u'worker'}]
         d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
         self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Directors)')
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
@@ -84,23 +81,18 @@ class TestInstall(IntegrationTestCase):
         own_orga = self.portal['contacts']['plonegroup-organization']
         own_orga['department2'].invokeFactory('organization', 'service2', title='Service 2')
         # append() method on the registry doesn't trigger the event. += too
-        newValue = self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                                 'organizations'] + [own_orga['department2']['service2'].UID()]
-        self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                      'organizations'] = newValue
+        newValue = self.registry[ORGANIZATIONS_REGISTRY] + [own_orga['department2']['service2'].UID()]
+        self.registry[ORGANIZATIONS_REGISTRY] = newValue
         group_ids = [group.id for group in api.group.get_groups()]
-        last_uid = self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                                 'organizations'][-1]
+        last_uid = self.registry[ORGANIZATIONS_REGISTRY][-1]
         self.assertIn('%s_director' % last_uid, group_ids)
         self.assertIn('%s_worker' % last_uid, group_ids)
         # Adding new function
-        newValue = self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                                 'functions'] + [{'fct_title': u'Chief', 'fct_id': u'chief'}]
-        self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.functions'] = newValue
+        newValue = self.registry[FUNCTIONS_REGISTRY] + [{'fct_title': u'Chief', 'fct_id': u'chief'}]
+        self.registry[FUNCTIONS_REGISTRY] = newValue
         group_ids = [group.id for group in api.group.get_groups() if '_' in group.id]
         self.assertEquals(len(group_ids), 12)
-        for uid in self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
-                                 'organizations']:
+        for uid in self.registry[ORGANIZATIONS_REGISTRY]:
             self.assertIn('%s_director' % uid, group_ids)
             self.assertIn('%s_chief' % uid, group_ids)
             self.assertIn('%s_worker' % uid, group_ids)
