@@ -3,6 +3,7 @@
 from zope import schema
 from zope.app.component.hooks import getSite
 from zope.component import getUtility
+from zope.container.interfaces import IContainerModifiedEvent
 from zope.interface import Interface, Invalid, invariant
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -169,3 +170,50 @@ class SettingsEditForm(RegistryEditForm):
     schema = IContactPlonegroupConfig
 
 SettingsView = layout.wrap_form(SettingsEditForm, ControlPanelFormWrapper)
+
+
+def addOrModifyOrganizationGroups(organization, uid):
+    """
+        Modify groups linked to an organization
+    """
+    registry = getUtility(IRegistry)
+    for dic in registry[FUNCTIONS_REGISTRY]:
+        full_title = organization.get_full_title(separator=' - ', first_index=1)
+        group_name = "%s_%s" % (uid, dic['fct_id'])
+        addOrModifyGroup(group_name, full_title, dic['fct_title'])
+
+
+def getOwnOrganizationPath():
+    """
+        get plonegroup-organization path
+    """
+    portal = getSite()
+    pcat = portal.portal_catalog
+    brains = pcat(portal_type='organization', id='plonegroup-organization')
+    if brains:
+        return '/'.join(brains[0].getObject().getPhysicalPath())
+    return 'unfound'
+
+
+def adaptPloneGroupDefinition(organization, event):
+    """
+        Manage an organization change
+    """
+    #zope.lifecycleevent.ObjectRemovedEvent : delete
+    #zope.lifecycleevent.ObjectModifiedEvent : edit, rename
+    # is the container who's modified at creation ?
+    if IContainerModifiedEvent.providedBy(event):
+        return
+    # is the current organization a part of own organization
+    organization_path = '/'.join(organization.getPhysicalPath())
+    if not organization_path.startswith(getOwnOrganizationPath()):
+        return
+    portal = getSite()
+    pcat = portal.portal_catalog
+    brains = pcat(portal_type='organization', path=organization_path)
+    registry = getUtility(IRegistry)
+    for brain in brains:
+        orga = brain.getObject()
+        orga_uid = orga.UID()
+        if orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+            addOrModifyOrganizationGroups(orga, orga_uid)

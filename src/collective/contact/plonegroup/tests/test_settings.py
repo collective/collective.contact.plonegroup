@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 """Setup/installation tests for this package."""
 
+from zope import event
 from zope.component import getUtility
+from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
 from plone import api
 from plone.registry.interfaces import IRegistry
 from collective.contact.plonegroup.testing import IntegrationTestCase
 from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.browser import settings
 
 
 class TestInstall(IntegrationTestCase):
@@ -35,7 +38,7 @@ class TestInstall(IntegrationTestCase):
                                        'fct_id': u'worker'}]
 
     def test_OwnOrganizationServicesVocabulary(self):
-        """"""
+        """ Test vocabulary """
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
@@ -67,9 +70,6 @@ class TestInstall(IntegrationTestCase):
         self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Director)')
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
         self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Director)')
-        # Changing organization title
-        # To be updated when event added
-        #self.assertEquals(d1_d_group.getProperty('title'), 'Work service (Director)')
         # Changing function title
         self.registry[FUNCTIONS_REGISTRY] = [{'fct_title': u'Directors', 'fct_id': u'director'},
                                              {'fct_title': u'Worker', 'fct_id': u'worker'}]
@@ -96,3 +96,20 @@ class TestInstall(IntegrationTestCase):
             self.assertIn('%s_director' % uid, group_ids)
             self.assertIn('%s_chief' % uid, group_ids)
             self.assertIn('%s_worker' % uid, group_ids)
+
+    def test_getOwnOrganizationPath(self):
+        """ Test the returned organization path """
+        self.assertEquals(settings.getOwnOrganizationPath(), '/plone/contacts/plonegroup-organization')
+
+    def test_adaptPloneGroupDefinition(self):
+        """ Test event when an organization is changed """
+        organizations = self.registry[ORGANIZATIONS_REGISTRY]
+        own_orga = self.portal['contacts']['plonegroup-organization']
+        # an organization is modified
+        own_orga['department1'].title = 'Department 1 changed'
+        event.notify(ObjectModifiedEvent(own_orga['department1']))
+        d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
+        self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 changed (Director)')
+        d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
+        self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 changed - Service 1 (Director)')
+        # an organization is moved
