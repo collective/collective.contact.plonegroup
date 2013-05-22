@@ -9,11 +9,11 @@
         handler=".browser.settings.detectContactPlonegroupChange"
         />
 
-    <!--subscriber
+    <subscriber
         for="collective.contact.core.content.organization.IOrganization
              zope.app.container.interfaces.IObjectMovedEvent"
         handler=".browser.settings.adaptPloneGroupDefinition"
-        /-->
+        />
 
     <subscriber
         for="collective.contact.core.content.organization.IOrganization
