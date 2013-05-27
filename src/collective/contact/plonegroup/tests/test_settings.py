@@ -114,6 +114,7 @@ class TestInstall(IntegrationTestCase):
         self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 changed - Service 1 (Director)')
         # an organization is moved (service1 in department2)
         clipboard = own_orga['department1'].manage_cutObjects(['service1'])
-        # exception raised when pasting
-        # Erreur in OFS/CopySupport.py, method _verifyObjectPaste, mt_permission is None
-        result = own_orga['department2'].manage_pasteObjects(clipboard)
+        own_orga['department2'].manage_pasteObjects(clipboard)
+        # the event IObjectMovedEvent is triggered
+        d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
+        self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 2 - Service 1 (Director)')
