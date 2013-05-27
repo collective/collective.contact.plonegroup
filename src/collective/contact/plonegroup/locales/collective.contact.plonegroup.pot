@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-05-17 06:35+0000\n"
+"POT-Creation-Date: 2013-05-27 12:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,59 +17,59 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.contact.plonegroup\n"
 
-#: ../browser/settings.py:83
+#: ../browser/settings.py:86
 msgid "Choose multiple organization levels for which you want to create a plone group."
 msgstr ""
 
-#: ../browser/settings.py:89
+#: ../browser/settings.py:92
 msgid "Each defined function will suffix each organization plone group."
 msgstr ""
 
-#: ../browser/settings.py:91
+#: ../browser/settings.py:94
 msgid "Function"
 msgstr ""
 
-#: ../browser/settings.py:88
+#: ../browser/settings.py:91
 msgid "Function list"
 msgstr ""
 
-#: ../browser/settings.py:27
+#: ../browser/settings.py:30
 msgid "Organization id"
 msgstr ""
 
-#: ../browser/settings.py:28
+#: ../browser/settings.py:31
 msgid "Organization title"
 msgstr ""
 
-#: ../browser/settings.py:35
+#: ../browser/settings.py:38
 msgid "Plone group suffix id"
 msgstr ""
 
-#: ../browser/settings.py:36
+#: ../browser/settings.py:39
 msgid "Plone group suffix title"
 msgstr ""
 
-#: ../browser/settings.py:82
+#: ../browser/settings.py:85
 msgid "Selected organizations"
 msgstr ""
 
-#: ../browser/settings.py:99
+#: ../browser/settings.py:102
 msgid "You must choose at least one organization !"
 msgstr ""
 
-#: ../browser/settings.py:101
+#: ../browser/settings.py:104
 msgid "You must correct the organization error first !"
 msgstr ""
 
-#: ../browser/settings.py:62
-msgid "You must define an organization with id 'own-organization'"
+#: ../browser/settings.py:65
+msgid "You must define an organization with id 'plonegroup-organization' !"
 msgstr ""
 
-#: ../browser/settings.py:103
+#: ../browser/settings.py:106
 msgid "You must define at least one function !"
 msgstr ""
 
-#: ../browser/settings.py:66
-msgid "You must have only one organization with id 'own-organization'"
+#: ../browser/settings.py:68
+msgid "You must have only one organization with id 'plonegroup-organization' !"
 msgstr ""
 
