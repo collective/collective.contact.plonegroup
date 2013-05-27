@@ -3,12 +3,13 @@
 from zope import schema
 from zope.app.component.hooks import getSite
 from zope.component import getUtility
-from zope.container.interfaces import IContainerModifiedEvent
+from zope.container.interfaces import IContainerModifiedEvent, IObjectRemovedEvent
 from zope.interface import Interface, Invalid, invariant
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from z3c.form import form
 from five import grok
+from OFS.ObjectManager import BeforeDeleteException
 from plone import api
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
@@ -209,9 +210,14 @@ def adaptPloneGroupDefinition(organization, event):
     if not organization_path.startswith(getOwnOrganizationPath()):
         return
     portal = getSite()
+    registry = getUtility(IRegistry)
+    # when an organization is removed (and its content), we check if it is used in plonegroup configuration
+    if IObjectRemovedEvent.providedBy(event) and organization.UID() in registry[ORGANIZATIONS_REGISTRY]:
+        raise BeforeDeleteException(_("This organization or a contained organization is used in plonegroup "
+                                      "configuration ! Remove it first from the configuration !"))
+        return
     pcat = portal.portal_catalog
     brains = pcat(portal_type='organization', path=organization_path)
-    registry = getUtility(IRegistry)
     for brain in brains:
         orga = brain.getObject()
         orga_uid = orga.UID()
