@@ -230,3 +230,25 @@ def adaptPloneGroupDefinition(organization, event):
         orga_uid = orga.UID()
         if orga_uid in registry[ORGANIZATIONS_REGISTRY]:
             addOrModifyOrganizationGroups(orga, orga_uid)
+
+
+def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
+    """
+        Returns a vocabulary of selected organizations corresponding plone groups
+    """
+    registry = getUtility(IRegistry)
+    terms = []
+    # if no function given, use all functions
+    if not functions:
+        functions = [fct_dic['fct_id'] for fct_dic in registry[FUNCTIONS_REGISTRY]]
+    for uid in registry[ORGANIZATIONS_REGISTRY]:
+        for fct_id in functions:
+            group_id = "%s_%s" % (uid, fct_id)
+            group = api.group.get(groupname=group_id)
+            if group is not None:
+                if group_title:
+                    title = group.getProperty('title')
+                else:
+                    title = uuidToObject(uid).get_full_title(separator=' - ', first_index=1)
+                terms.append(SimpleTerm(group_id, token=group_id, title=title))
+    return SimpleVocabulary(terms)
