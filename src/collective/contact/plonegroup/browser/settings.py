@@ -2,14 +2,14 @@
 
 from zope import schema
 from zope.app.component.hooks import getSite
-from zope.component import getUtility
+from zope.component import getUtility, getMultiAdapter
 from zope.container.interfaces import IContainerModifiedEvent, IObjectRemovedEvent
 from zope.interface import Interface, Invalid, invariant
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+from zExceptions import Redirect
 from z3c.form import form
 from five import grok
-from OFS.ObjectManager import BeforeDeleteException
 from plone import api
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
@@ -19,6 +19,7 @@ from plone.registry.interfaces import IRecordModifiedEvent, IRegistry
 from plone.z3cform import layout
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
+from Products.statusmessages.interfaces import IStatusMessage
 from .. import _
 from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
 
@@ -213,8 +214,14 @@ def adaptPloneGroupDefinition(organization, event):
     registry = getUtility(IRegistry)
     # when an organization is removed (and its content), we check if it is used in plonegroup configuration
     if IObjectRemovedEvent.providedBy(event) and organization.UID() in registry[ORGANIZATIONS_REGISTRY]:
-        raise BeforeDeleteException(_("This organization or a contained organization is used in plonegroup "
-                                      "configuration ! Remove it first from the configuration !"))
+        smi = IStatusMessage(organization.REQUEST)
+        smi.addStatusMessage(_('You cannot delete this item !'), type='error')
+        smi.addStatusMessage(_("This organization or a contained organization is used in plonegroup "
+                               "configuration ! Remove it first from the configuration !"), type='error')
+        view_url = getMultiAdapter((organization, organization.REQUEST), name=u'plone_context_state').view_url()
+        organization.REQUEST['RESPONSE'].redirect(view_url)
+        raise Redirect, _("This organization or a contained organization is used in plonegroup "
+                          "configuration ! Remove it first from the configuration !")
         return
     pcat = portal.portal_catalog
     brains = pcat(portal_type='organization', path=organization_path)
