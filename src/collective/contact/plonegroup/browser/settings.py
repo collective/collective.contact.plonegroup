@@ -41,7 +41,9 @@ class IFunctionSchema(Interface):
 
 
 class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
-    """Vocabulary of own organizations services"""
+    """
+        Vocabulary of own organizations services. Needed to be used with plone.app.registry list field
+    """
     grok.name('collective.contact.plonegroup.organization_services')
     grok.implements(IVocabularyFactory)
 

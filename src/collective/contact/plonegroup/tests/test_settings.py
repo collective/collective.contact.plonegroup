@@ -5,8 +5,7 @@ from zope import event
 from zope.component import getUtility
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
-from zExceptions import Redirect, BadRequest
-from OFS.ObjectManager import BeforeDeleteException
+from zExceptions import Redirect
 from plone import api
 from plone.registry.interfaces import IRegistry
 from collective.contact.plonegroup.testing import IntegrationTestCase
@@ -128,3 +127,16 @@ class TestInstall(IntegrationTestCase):
         own_orga['department2'].invokeFactory('organization', 'service3', title='Service 3')
         own_orga['department2'].manage_delObjects(ids=['service3'])
         self.assertFalse('service3' in own_orga['department2'])
+
+    def test_selectedOrganizationsPloneGroupsVocabulary(self):
+        """ Test plone groups vocabulary """
+        groups = settings.selectedOrganizationsPloneGroupsVocabulary()
+        voc_dic = groups.by_token
+        voc_list = [voc_dic[key].title for key in voc_dic.keys()]
+        self.assertEquals(set(voc_list), set(['Department 1 - Service 1 (Director)', 'Department 2 (Worker)',
+                                              'Department 1 - Service 1 (Worker)', 'Department 1 (Worker)',
+                                              'Department 2 (Director)', 'Department 1 (Director)']))
+        groups = settings.selectedOrganizationsPloneGroupsVocabulary(functions=['worker'], group_title=False)
+        voc_dic = groups.by_token
+        voc_list = [voc_dic[key].title for key in voc_dic.keys()]
+        self.assertEquals(set(voc_list), set(['Department 2', 'Department 1', 'Department 1 - Service 1']))
