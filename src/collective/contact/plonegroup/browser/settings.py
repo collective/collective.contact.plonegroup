@@ -134,7 +134,7 @@ def detectContactPlonegroupChange(event):
     """
         Manage our record changes
     """
-    if IRecordModifiedEvent.providedBy(event) and event.record.interface == IContactPlonegroupConfig:
+    if IRecordModifiedEvent.providedBy(event): # and event.record.interface == IContactPlonegroupConfig:
         registry = getUtility(IRegistry)
         if event.record.fieldName == 'organizations' and registry[FUNCTIONS_REGISTRY]:
             old_set = set(event.oldValue)
