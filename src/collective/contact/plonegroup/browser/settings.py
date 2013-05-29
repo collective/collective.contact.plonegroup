@@ -15,6 +15,8 @@ from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.uuid.utils import uuidToObject
 from plone.autoform.directives import widget
+from plone.memoize import ram
+from plone.memoize.interfaces import ICacheChooser
 from plone.registry.interfaces import IRecordModifiedEvent, IRegistry
 from plone.z3cform import layout
 from collective.z3cform.datagridfield import DataGridFieldFactory
@@ -124,10 +126,22 @@ def addOrModifyGroup(group_name, organization_title, function_title):
             groupname=group_name,
             title=group_title,
         )
+        return True
     else:
         #group_title is maybe modified
         if group.getProperty('title') != group_title:
             group.setProperties(title=group_title)
+            return True
+    return False
+
+
+def invalidate_sopgv_cache():
+    """
+        invalidate cache of selectedOrganizationsPloneGroupsVocabulary
+    """
+    cache_chooser = getUtility(ICacheChooser)
+    thecache = cache_chooser('collective.contact.plonegroup.browser.settings.selectedOrganizationsPloneGroupsVocabulary')
+    thecache.ramcache.invalidate('collective.contact.plonegroup.browser.settings.selectedOrganizationsPloneGroupsVocabulary')
 
 
 def detectContactPlonegroupChange(event):
@@ -136,6 +150,7 @@ def detectContactPlonegroupChange(event):
     """
     if IRecordModifiedEvent.providedBy(event): # and event.record.interface == IContactPlonegroupConfig:
         registry = getUtility(IRegistry)
+        changes = False
         if event.record.fieldName == 'organizations' and registry[FUNCTIONS_REGISTRY]:
             old_set = set(event.oldValue)
             new_set = set(event.newValue)
@@ -146,8 +161,11 @@ def detectContactPlonegroupChange(event):
                 full_title = obj.get_full_title(separator=' - ', first_index=1)
                 for fct_dic in registry[FUNCTIONS_REGISTRY]:
                     group_name = "%s_%s" % (uid, fct_dic['fct_id'])
-                    addOrModifyGroup(group_name, full_title, fct_dic['fct_title'])
-            # we detect a removed organization
+                    if addOrModifyGroup(group_name, full_title, fct_dic['fct_title']):
+                        changes = True
+            # we detect a removed organization. We dont do anything on exsiting groups
+            if old_set.difference(new_set):
+                changes = True
         elif event.record.fieldName == 'functions' and registry[ORGANIZATIONS_REGISTRY]:
             old_set = new_set = set()
             if event.oldValue:
@@ -162,8 +180,13 @@ def detectContactPlonegroupChange(event):
                     obj = uuidToObject(uid)
                     full_title = obj.get_full_title(separator=' - ', first_index=1)
                     group_name = "%s_%s" % (uid, new_id)
-                    addOrModifyGroup(group_name, full_title, new_title)
-            # we detect a removed function
+                    if addOrModifyGroup(group_name, full_title, new_title):
+                        changes = True
+            # we detect a removed function. We dont do anything on exsiting groups
+            if old_set.difference(new_set):
+                changes = True
+        if changes:
+            invalidate_sopgv_cache()
 
 
 class SettingsEditForm(RegistryEditForm):
@@ -181,10 +204,13 @@ def addOrModifyOrganizationGroups(organization, uid):
         Modify groups linked to an organization
     """
     registry = getUtility(IRegistry)
+    changes = False
     for dic in registry[FUNCTIONS_REGISTRY]:
         full_title = organization.get_full_title(separator=' - ', first_index=1)
         group_name = "%s_%s" % (uid, dic['fct_id'])
-        addOrModifyGroup(group_name, full_title, dic['fct_title'])
+        if addOrModifyGroup(group_name, full_title, dic['fct_title']):
+            changes = True
+    return changes
 
 
 def getOwnOrganizationPath():
@@ -227,13 +253,25 @@ def adaptPloneGroupDefinition(organization, event):
         return
     pcat = portal.portal_catalog
     brains = pcat(portal_type='organization', path=organization_path)
+    changes = False
     for brain in brains:
         orga = brain.getObject()
         orga_uid = orga.UID()
         if orga_uid in registry[ORGANIZATIONS_REGISTRY]:
-            addOrModifyOrganizationGroups(orga, orga_uid)
+            if addOrModifyOrganizationGroups(orga, orga_uid):
+                changes = True
+    if changes:
+        invalidate_sopgv_cache()
 
 
+def sopgv_cache_key(function, functions=[], group_title=True):
+    """
+        calculate the cache key
+    """
+    return (set(functions), group_title)
+
+
+@ram.cache(sopgv_cache_key)
 def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     """
         Returns a vocabulary of selected organizations corresponding plone groups
