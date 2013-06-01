@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from zope import schema
-from zope.app.component.hooks import getSite
+from zope.component.hooks import getSite
 from zope.component import getUtility, getMultiAdapter
 from zope.container.interfaces import IContainerModifiedEvent, IObjectRemovedEvent
 from zope.interface import Interface, Invalid, invariant
