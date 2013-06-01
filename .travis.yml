@@ -1,0 +1,12 @@
+language: python
+python:
+  - 2.7
+install:
+  - mkdir -p buildout-cache/{eggs,downloads}
+  - python bootstrap.py -c travis.cfg -d
+  - bin/buildout -c travis.cfg -N -q -t 3
+script:
+  - bin/test
+notifications:
+  email:
+    - prive-ged@listes.entrouvert.com
