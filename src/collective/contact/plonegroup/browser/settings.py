@@ -229,10 +229,12 @@ def adaptPloneGroupDefinition(organization, event):
     """
         Manage an organization change
     """
-    #zope.lifecycleevent.ObjectRemovedEvent : delete
-    #zope.lifecycleevent.ObjectModifiedEvent : edit, rename
+    # zope.lifecycleevent.ObjectRemovedEvent : delete
+    # zope.lifecycleevent.ObjectModifiedEvent : edit, rename
     # is the container who's modified at creation ?
-    if IContainerModifiedEvent.providedBy(event):
+    # bypass if we are removing the Plone Site
+    if IContainerModifiedEvent.providedBy(event) or \
+       event.object.portal_type == 'Plone Site':
         return
     # is the current organization a part of own organization
     organization_path = '/'.join(organization.getPhysicalPath())
