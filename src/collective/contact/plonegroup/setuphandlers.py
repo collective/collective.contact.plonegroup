@@ -8,8 +8,9 @@ def postInstall(context):
     """Post install script"""
     if context.readDataFile("collective.contactplonegroup_marker.txt") is None:
         return
-    portal = context.getSite()
     registry = getUtility(IRegistry)
-    # Initialize the registry content
-    registry[ORGANIZATIONS_REGISTRY] = []
-    registry[FUNCTIONS_REGISTRY] = []
+    # Initialize the registry content if nothing is stored
+    if registry[ORGANIZATIONS_REGISTRY] is None:
+        registry[ORGANIZATIONS_REGISTRY] = []
+    if registry[FUNCTIONS_REGISTRY] is None:
+        registry[FUNCTIONS_REGISTRY] = []
