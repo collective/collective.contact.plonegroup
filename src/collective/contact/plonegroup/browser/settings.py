@@ -23,7 +23,7 @@ from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from Products.statusmessages.interfaces import IStatusMessage
 from .. import _
-from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
+from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
 
 
 class IOrganizationSchema(Interface):
@@ -64,14 +64,16 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
         portal = getSite()
         terms = []
         pcat = portal.portal_catalog
-        brains = pcat(portal_type='organization', id='plonegroup-organization')
+        brains = pcat(portal_type='organization', id=PLONEGROUP_ORG)
         if not brains:
             terms.append(SimpleTerm(None, token="unfound",
-                                    title=_(u"You must define an organization with id 'plonegroup-organization' !")))
+                                    title=_(u"You must define an organization with id '${pgo}' !",
+                                            mapping={'pgo': PLONEGROUP_ORG})))
             return SimpleVocabulary(terms)
         elif len(brains) > 1:
             terms.append(SimpleTerm(None, token="multifound", title=_(u"You must have only one organization "
-                                                                      "with id 'plonegroup-organization' !")))
+                                                                      "with id '${pgo}' !",
+                                                                      mapping={'pgo': PLONEGROUP_ORG})))
             return SimpleVocabulary(terms)
 
         own_orga = brains[0].getObject()
@@ -219,7 +221,7 @@ def getOwnOrganizationPath():
     """
     portal = getSite()
     pcat = portal.portal_catalog
-    brains = pcat(portal_type='organization', id='plonegroup-organization')
+    brains = pcat(portal_type='organization', id=PLONEGROUP_ORG)
     if brains:
         return '/'.join(brains[0].getObject().getPhysicalPath())
     return 'unfound'

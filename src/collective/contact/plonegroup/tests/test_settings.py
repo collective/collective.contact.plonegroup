@@ -9,7 +9,7 @@ from zExceptions import Redirect
 from plone import api
 from plone.registry.interfaces import IRegistry
 from collective.contact.plonegroup.testing import IntegrationTestCase
-from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
+from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
 from collective.contact.plonegroup.browser import settings
 
 
@@ -21,8 +21,8 @@ class TestInstall(IntegrationTestCase):
         self.portal = self.layer['portal']
         # Organizations creation
         self.portal.invokeFactory('directory', 'contacts')
-        self.portal['contacts'].invokeFactory('organization', 'plonegroup-organization', title='My organization')
-        own_orga = self.portal['contacts']['plonegroup-organization']
+        self.portal['contacts'].invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
+        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
         own_orga.invokeFactory('organization', 'department1', title='Department 1')
         own_orga.invokeFactory('organization', 'department2', title='Department 2')
         own_orga['department1'].invokeFactory('organization', 'service1', title='Service 1')
@@ -46,19 +46,19 @@ class TestInstall(IntegrationTestCase):
         self.assertEquals(voc_list, ['Department 1 - Service 1', 'Department 1', 'Department 2'])
         # When multiple own organizations
         self.portal['contacts'].invokeFactory('organization', 'temporary', title='Temporary')
-        self.portal['contacts']['temporary'].invokeFactory('organization', 'plonegroup-organization',
+        self.portal['contacts']['temporary'].invokeFactory('organization', PLONEGROUP_ORG,
                                                            title='Duplicated organization')
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, ["You must have only one organization with id 'plonegroup-organization' !"])
+        self.assertEquals(voc_list, ["You must have only one organization with id '%s' !" % PLONEGROUP_ORG])
         # When own organization not found
-        self.portal['contacts'].manage_delObjects(ids=['plonegroup-organization'])
+        self.portal['contacts'].manage_delObjects(ids=[PLONEGROUP_ORG])
         self.portal['contacts'].manage_delObjects(ids=['temporary'])
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, ["You must define an organization with id 'plonegroup-organization' !"])
+        self.assertEquals(voc_list, ["You must define an organization with id '%s' !" % PLONEGROUP_ORG])
 
     def test_detectContactPlonegroupChange(self):
         """Test if group creation works correctly"""
@@ -79,7 +79,7 @@ class TestInstall(IntegrationTestCase):
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
         self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Directors)')
         # Adding new organization
-        own_orga = self.portal['contacts']['plonegroup-organization']
+        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
         own_orga['department2'].invokeFactory('organization', 'service2', title='Service 2')
         # append() method on the registry doesn't trigger the event. += too
         newValue = self.registry[ORGANIZATIONS_REGISTRY] + [own_orga['department2']['service2'].UID()]
@@ -105,7 +105,7 @@ class TestInstall(IntegrationTestCase):
     def test_adaptPloneGroupDefinition(self):
         """ Test event when an organization is changed """
         organizations = self.registry[ORGANIZATIONS_REGISTRY]
-        own_orga = self.portal['contacts']['plonegroup-organization']
+        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
         # an organization is modified
         own_orga['department1'].title = 'Department 1 changed'
         event.notify(ObjectModifiedEvent(own_orga['department1']))

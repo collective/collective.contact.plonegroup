@@ -70,7 +70,7 @@ msgid "You must correct the organization error first !"
 msgstr ""
 
 #: ../browser/settings.py:66
-msgid "You must define an organization with id 'plonegroup-organization' !"
+msgid "You must define an organization with id '${pgo}' !"
 msgstr ""
 
 #: ../browser/settings.py:107
@@ -78,6 +78,6 @@ msgid "You must define at least one function !"
 msgstr ""
 
 #: ../browser/settings.py:69
-msgid "You must have only one organization with id 'plonegroup-organization' !"
+msgid "You must have only one organization with id '${pgo}' !"
 msgstr ""
 
