@@ -51,14 +51,14 @@ class TestInstall(IntegrationTestCase):
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, ["You must have only one organization with id '%s' !" % PLONEGROUP_ORG])
+        self.assertEquals(voc_list, [u"You must have only one organization with id '${pgo}' !"])
         # When own organization not found
         self.portal['contacts'].manage_delObjects(ids=[PLONEGROUP_ORG])
         self.portal['contacts'].manage_delObjects(ids=['temporary'])
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, ["You must define an organization with id '%s' !" % PLONEGROUP_ORG])
+        self.assertEquals(voc_list, [u"You must define an organization with id '${pgo}' !"])
 
     def test_detectContactPlonegroupChange(self):
         """Test if group creation works correctly"""
