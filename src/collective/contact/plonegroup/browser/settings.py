@@ -146,6 +146,15 @@ def invalidate_sopgv_cache():
     thecache.ramcache.invalidate('collective.contact.plonegroup.browser.settings.selectedOrganizationsPloneGroupsVocabulary')
 
 
+def invalidate_sov_cache():
+    """
+        invalidate cache of selectedOrganizationsVocabulary
+    """
+    cache_chooser = getUtility(ICacheChooser)
+    thecache = cache_chooser('collective.contact.plonegroup.browser.settings.selectedOrganizationsVocabulary')
+    thecache.ramcache.invalidate('collective.contact.plonegroup.browser.settings.selectedOrganizationsVocabulary')
+
+
 def detectContactPlonegroupChange(event):
     """
         Manage our record changes
@@ -189,6 +198,7 @@ def detectContactPlonegroupChange(event):
                 changes = True
         if changes:
             invalidate_sopgv_cache()
+            invalidate_sov_cache()
 
 
 class SettingsEditForm(RegistryEditForm):
@@ -295,4 +305,17 @@ def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
                 else:
                     title = uuidToObject(uid).get_full_title(separator=' - ', first_index=1)
                 terms.append(SimpleTerm(group_id, token=group_id, title=title))
+    return SimpleVocabulary(terms)
+
+
+@ram.cache(lambda *args: True)
+def selectedOrganizationsVocabulary():
+    """
+        Returns a vocabulary of selected organizations
+    """
+    registry = getUtility(IRegistry)
+    terms = []
+    for uid in registry[ORGANIZATIONS_REGISTRY]:
+        title = uuidToObject(uid).get_full_title(separator=' - ', first_index=1)
+        terms.append(SimpleTerm(uid, token=uid, title=title))
     return SimpleVocabulary(terms)
