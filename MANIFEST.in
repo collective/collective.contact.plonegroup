@@ -1,3 +1,10 @@
 graft src/
 graft docs/
+recursive-include docs *.GPL
+recursive-include docs *.rst
+recursive-include src *.po
+recursive-include src *.pot
+recursive-include src *.txt
+recursive-include src *.xml
+recursive-include src *.zcml
 include *.cfg *.rst *.in
