@@ -2,10 +2,10 @@ Changelog
 =========
 
 
-0.2 (unreleased)
+0.2 (2014-03-18)
 ----------------
 
-- Nothing changed yet.
+- Corrected Manifest to include all files.
 
 
 0.1 (2014-02-13)
