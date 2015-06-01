@@ -49,8 +49,18 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
     grok.name('collective.contact.plonegroup.organization_services')
     grok.implements(IVocabularyFactory)
 
+    valid_states = ('active',)
+
     def listSubOrganizations(self, terms, folder, parent_label='', parent_id=''):
-        for orga in folder.listFolderContents(contentFilter={'portal_type': 'organization'}):
+        catalog = api.portal.get_tool('portal_catalog')
+        folder_path = '/'.join(folder.getPhysicalPath())
+        brains = catalog.searchResults(
+            portal_type='organization',
+            review_state=self.valid_states,
+            path={'query': folder_path, 'depth': 1}
+            )
+        for brain in brains:
+            orga = brain.getObject()
             term_title = orga.Title()
             if parent_label:
                 term_title = "%s - %s" % (parent_label, term_title)
@@ -103,7 +113,7 @@ class IContactPlonegroupConfig(Interface):
     )
     widget(functions=DataGridFieldFactory)
 
-    @invariant
+    # @invariant
     def validateSettings(data):
         if not data.organizations:
             raise Invalid(_(u"You must choose at least one organization !"))

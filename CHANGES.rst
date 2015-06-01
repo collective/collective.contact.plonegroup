@@ -5,7 +5,8 @@ Changelog
 0.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Check state to build OwnOrganizationServicesVocabulary.
+  [cedricmessiant]
 
 
 0.2 (2014-03-18)

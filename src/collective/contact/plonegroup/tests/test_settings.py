@@ -26,6 +26,9 @@ class TestInstall(IntegrationTestCase):
         own_orga.invokeFactory('organization', 'department1', title='Department 1')
         own_orga.invokeFactory('organization', 'department2', title='Department 2')
         own_orga['department1'].invokeFactory('organization', 'service1', title='Service 1')
+        own_orga.invokeFactory('organization', 'inactive_department', title='Inactive department')
+        inactive_department = own_orga['inactive_department']
+        api.content.transition(obj=inactive_department, transition='deactivate')
 
         self.registry = getUtility(IRegistry)
         self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
@@ -44,6 +47,7 @@ class TestInstall(IntegrationTestCase):
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
         self.assertEquals(voc_list, ['Department 1 - Service 1', 'Department 1', 'Department 2'])
+        self.assertNotIn('Inactive department', voc_list)
         # When multiple own organizations
         self.portal['contacts'].invokeFactory('organization', 'temporary', title='Temporary')
         self.portal['contacts']['temporary'].invokeFactory('organization', PLONEGROUP_ORG,
