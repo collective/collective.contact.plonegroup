@@ -7,6 +7,8 @@ Changelog
 
 - Check state to build OwnOrganizationServicesVocabulary.
   [cedricmessiant]
+- Give access to configlet to Site Administrator
+  [sgeulette]
 
 
 0.2 (2014-03-18)

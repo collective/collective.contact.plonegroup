@@ -14,7 +14,7 @@
         icon_expr=""
         visible="True"
         i18n:attributes="title">
-        <permission>Manage portal</permission>
+        <permission>Plone Site Setup: Site</permission>
     </configlet>
 
 </object>
