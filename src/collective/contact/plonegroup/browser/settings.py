@@ -113,7 +113,7 @@ class IContactPlonegroupConfig(Interface):
     )
     widget(functions=DataGridFieldFactory)
 
-    # @invariant
+    @invariant
     def validateSettings(data):
         if not data.organizations:
             raise Invalid(_(u"You must choose at least one organization !"))
@@ -169,7 +169,7 @@ def detectContactPlonegroupChange(event):
     """
         Manage our record changes
     """
-    if IRecordModifiedEvent.providedBy(event): # and event.record.interface == IContactPlonegroupConfig:
+    if IRecordModifiedEvent.providedBy(event):  # and event.record.interface == IContactPlonegroupConfig:
         registry = getUtility(IRegistry)
         changes = False
         if event.record.fieldName == 'organizations' and registry[FUNCTIONS_REGISTRY]:
