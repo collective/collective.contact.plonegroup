@@ -9,4 +9,5 @@ script:
   - bin/test
 notifications:
   email:
-    - prive-ged@listes.entrouvert.com
+    - travis-reports@ecreall.com
+    - devs@imio.be
