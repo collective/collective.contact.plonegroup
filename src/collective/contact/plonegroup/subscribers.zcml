@@ -21,4 +21,24 @@
         handler=".browser.settings.adaptPloneGroupDefinition"
         />
 
+    <subscriber
+        for=".interfaces.IPloneGroupContact
+             OFS.interfaces.IObjectWillBeRemovedEvent"
+        handler=".subscribers.plonegroupOrganizationRemoved"
+        />
+
+    <subscriber
+        zcml:condition="installed zope.lifecycleevent"
+        for="collective.contact.widget.interfaces.IContactContent
+             zope.lifecycleevent.interfaces.IObjectAddedEvent"
+        handler=".subscribers.mark_organization"
+        />
+
+    <subscriber
+        zcml:condition="installed zope.lifecycleevent"
+        for="collective.contact.widget.interfaces.IContactContent
+             zope.lifecycleevent.interfaces.IObjectMovedEvent"
+        handler=".subscribers.mark_organization"
+        />
+
 </configure>

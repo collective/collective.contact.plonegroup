@@ -5,6 +5,8 @@ Changelog
 0.3 (unreleased)
 ----------------
 
+- Added marker interfaces to distinguish plonegroup organizations
+  [sgeulette]
 - Check state to build OwnOrganizationServicesVocabulary.
   [cedricmessiant]
 - Give access to configlet to Site Administrator

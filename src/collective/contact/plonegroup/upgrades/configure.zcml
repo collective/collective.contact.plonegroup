@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.contact.plonegroup">
+
+  <genericsetup:upgradeStep
+      title="Migration profile for collective.contact.plonegroup to 2"
+      description="Upgrade from 1 to 2"
+      source="1"
+      destination="2"
+      handler=".upgrades.v2"
+      profile="collective.contact.plonegroup:default" />
+
+
+</configure>
