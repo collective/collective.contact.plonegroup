@@ -4,7 +4,7 @@ from zope import schema
 from zope.component.hooks import getSite
 from zope.component import getUtility, getMultiAdapter
 from zope.container.interfaces import IContainerModifiedEvent, IObjectRemovedEvent
-from zope.interface import Interface, Invalid, invariant
+from zope.interface import Interface, Invalid, invariant, implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zExceptions import Redirect
@@ -44,7 +44,7 @@ class IFunctionSchema(Interface):
 
 class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
     """
-        Vocabulary of own organizations services. Needed to be used with plone.app.registry list field
+        Vocabulary of all plonegroup-organizations services.
     """
     grok.name('collective.contact.plonegroup.organization_services')
     grok.implements(IVocabularyFactory)
@@ -58,7 +58,7 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
             portal_type='organization',
             review_state=self.valid_states,
             path={'query': folder_path, 'depth': 1}
-            )
+        )
         for brain in brains:
             orga = brain.getObject()
             term_title = orga.Title()
@@ -329,3 +329,11 @@ def selectedOrganizationsVocabulary():
         title = uuidToObject(uid).get_full_title(separator=' - ', first_index=1)
         terms.append(SimpleTerm(uid, token=uid, title=title))
     return SimpleVocabulary(terms)
+
+
+class SelectedOrganizationsVocabulary(object):
+    """ Vocabulary of selected plonegroup-organizations services. """
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        return selectedOrganizationsVocabulary()

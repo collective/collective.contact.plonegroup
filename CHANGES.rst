@@ -7,6 +7,8 @@ Changelog
 
 - Added marker interfaces to distinguish plonegroup organizations
   [sgeulette]
+- Added selected organizations vocabulary
+  [sgeulette]
 - Check state to build OwnOrganizationServicesVocabulary.
   [cedricmessiant]
 - Give access to configlet to Site Administrator
