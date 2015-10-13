@@ -5,6 +5,8 @@ Changelog
 0.3 (unreleased)
 ----------------
 
+- Added link integrity check when deleting a plonegroup organization
+  [sgeulette]
 - Added marker interfaces to distinguish plonegroup organizations
   [sgeulette]
 - Added selected organizations vocabulary

@@ -23,6 +23,12 @@
 
     <subscriber
         for=".interfaces.IPloneGroupContact
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler=".subscribers.referencedObjectRemoved"
+        />
+
+    <subscriber
+        for=".interfaces.IPloneGroupContact
              OFS.interfaces.IObjectWillBeRemovedEvent"
         handler=".subscribers.plonegroupOrganizationRemoved"
         />
