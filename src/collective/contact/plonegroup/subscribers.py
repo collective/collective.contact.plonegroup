@@ -24,23 +24,29 @@ except ImportError:
         pass
 
 
-def plonegroupOrganizationRemoved(del_obj, event):
+def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
     """
-        Store information about the removed organization integrity.
+        Searching a value (reference to an object like id or uid) in fields of objects.
+        Parameters:
+            * s_obj : the object that is maybe referenced in another objects fields
+            * ref : the value to search in field
+            * p_types : portal_types that will be only searched
+            * type_fields : dict containing as key portal_type and as value a list of fields that must be searched.
+                            If a portal_type is not given, all fields will be searched
     """
-    # inspired from z3c/relationfield/event.py:breakRelations
-    # and plone/app/linkintegrity/handlers.py:referenceRemoved
-    # if the object the event was fired on doesn't have a `REQUEST` attribute
-    # we can safely assume no direct user action was involved and therefore
-    # never raise a link integrity exception...
-    request = aq_get(del_obj, 'REQUEST', None)
+    # we check all dexterity objects fields to see if ref is used in
+    # we can't check following vocabulary name because:
+    #   - maybe vocabulary not contains anymore the ref
+    #   - maybe another vocabulary named differently is used
+    # this can be long but this operation is not made so often
+
+    request = aq_get(s_obj, 'REQUEST', None)
     if not request:
         return
-
-    type_fields = {}
-    uid = del_obj.UID()
+    storage = ILinkIntegrityInfo(request)
 
     def list_fields(ptype, filter_interfaces=(IText, ICollection, IChoice)):
+        """ return for the portal_type the selected fields """
         if ptype not in type_fields:
             type_fields[ptype] = []
             fti = getUtility(IDexterityFTI, name=ptype)
@@ -59,28 +65,23 @@ def plonegroupOrganizationRemoved(del_obj, event):
                             break
         return type_fields[ptype]
 
-    storage = ILinkIntegrityInfo(request)
     catalog = api.portal.get_tool('portal_catalog')
-    # we check all dexterity objects fields to see if object uid is used in
-    # we can't check following vocabulary because:
-    #   - maybe vocabulary not contains anymore the uid
-    #   - maybe another vocabulary named differently is used
-    # this can be long but this operation is not made so often
 
     def check_value(val):
-        if isinstance(val, basestring) and val == uid:
+        if isinstance(val, basestring) and val == ref:
             return True
         return False
 
-    def test_value_type(val):
+    def check_attribute(val):
+        """ check the attribute value and walk in it """
         if isinstance(val, dict):
             for v in val.values():
-                res = test_value_type(v)
+                res = check_attribute(v)
                 if res:
                     return res
         elif base_hasattr(val, '__iter__'):
             for v in val:
-                res = test_value_type(v)
+                res = check_attribute(v)
                 if res:
                     return res
         elif check_value(val):
@@ -88,19 +89,28 @@ def plonegroupOrganizationRemoved(del_obj, event):
             return res
         return []
 
-    for brain in catalog.searchResults(object_provides=IDexterityContent.__identifier__):
+    for brain in catalog.searchResults(portal_types=p_types, object_provides=IDexterityContent.__identifier__):
         obj = brain.getObject()
-        if obj.id == 'test1':
-            storage.addBreach(obj, del_obj)
-        continue
         ptype = obj.portal_type
         for attr in list_fields(ptype):
             if base_hasattr(obj, attr):
-                res = test_value_type(getattr(obj, attr))
+                res = check_attribute(getattr(obj, attr))
                 if res:
-                    storage.addBreach(obj, del_obj)
+                    storage.addBreach(obj, s_obj)
                     break
-    storage.getIntegrityBreaches()
+
+
+def plonegroupOrganizationRemoved(del_obj, event):
+    """
+        Store information about the removed organization integrity.
+    """
+    # inspired from z3c/relationfield/event.py:breakRelations
+    # and plone/app/linkintegrity/handlers.py:referenceRemoved
+    # if the object the event was fired on doesn't have a `REQUEST` attribute
+    # we can safely assume no direct user action was involved and therefore
+    # never raise a link integrity exception...
+
+    search_value_in_objects(del_obj, del_obj.UID(), p_types=[], type_fields={})
 
 
 def referencedObjectRemoved(obj, event):
