@@ -35,9 +35,7 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
                             If a portal_type is not given, all fields will be searched
     """
     # we check all dexterity objects fields to see if ref is used in
-    # we can't check following vocabulary name because:
-    #   - maybe vocabulary not contains anymore the ref
-    #   - maybe another vocabulary named differently is used
+    # we can't check only fields using plonegroup vocabulary because maybe another vocabulary name is used
     # this can be long but this operation is not made so often
 
     request = aq_get(s_obj, 'REQUEST', None)
