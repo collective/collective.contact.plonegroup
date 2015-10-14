@@ -13,8 +13,8 @@ from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
 from collective.contact.plonegroup.browser import settings
 
 
-class TestInstall(IntegrationTestCase):
-    """Test installation of collective.contact.plonegroup into Plone."""
+class TestSettings(IntegrationTestCase):
+    """Test collective.contact.plonegroup settings."""
 
     def setUp(self):
         """Custom shared utility setup for tests."""
