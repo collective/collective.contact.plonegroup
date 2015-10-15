@@ -2,6 +2,7 @@
 """Setup/installation tests for this package."""
 
 from zope.component import getUtility
+from zExceptions import Redirect
 
 from plone import api
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
@@ -59,6 +60,24 @@ class TestSubscribers(IntegrationTestCase):
         self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[0].UID()]  # unselects the contact
         self.portal['acontent2'].pg_organization = None
         self.portal.restrictedTraverse('contacts/%s/department2/delete_confirmation' % PLONEGROUP_ORG)
+
+    def test_plonegroup_contact_transition_1(self):
+        """ We cannot deactivate an organization selected in settings """
+        self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition='deactivate')
+        self.assertEqual(api.content.get_state(obj=self.contacts[0]), 'active')
+
+    def test_plonegroup_contact_transition_2(self):
+        """ We cannot deactivate an organization used in objects """
+        self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[1].UID()]  # unselects the contact
+        self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition='deactivate')
+        self.assertEqual(api.content.get_state(obj=self.contacts[0]), 'active')
+
+    def test_plonegroup_contact_transition_3(self):
+        """ We can deactivate an organization not at all used """
+        self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[1].UID()]  # unselects the contact
+        self.portal['acontent1'].pg_organization = None
+        api.content.transition(obj=self.contacts[0], transition='deactivate')
+        self.assertEqual(api.content.get_state(obj=self.contacts[0]), 'deactivated')
 
     def test_mark_organization(self):
         """ We test marker interfaces """
