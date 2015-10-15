@@ -46,7 +46,7 @@ class TestSubscribers(IntegrationTestCase):
 
     def test_plonegroupOrganizationRemoved_2(self):
         """ We cannot remove an organization no more selected in settings and used in an object """
-        self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[1].UID()]
+        self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[0].UID()]  # unselects the contact
         view = self.portal.restrictedTraverse('contacts/%s/department2/delete_confirmation' % PLONEGROUP_ORG)
         self.assertRaises(LinkIntegrityNotificationException, view.render)
         storage = ILinkIntegrityInfo(view.REQUEST)
@@ -56,7 +56,7 @@ class TestSubscribers(IntegrationTestCase):
 
     def test_plonegroupOrganizationRemoved_3(self):
         """ We can remove an organization no more selected in settings and no more used in an object """
-        self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[1].UID()]
+        self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[0].UID()]  # unselects the contact
         self.portal['acontent2'].pg_organization = None
         self.portal.restrictedTraverse('contacts/%s/department2/delete_confirmation' % PLONEGROUP_ORG)
 
