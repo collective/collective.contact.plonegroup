@@ -32,15 +32,29 @@ class TestSubscribers(IntegrationTestCase):
 
         self.portal.invokeFactory('acontent', 'acontent1', title='Content 1', pg_organization=self.contacts[0].UID())
         self.portal.invokeFactory('acontent', 'acontent2', title='Content 2', pg_organization=self.contacts[1].UID())
-        self.contents = [self.portal['acontent1'], self.portal['acontent2']]
 
-    def test_plonegroupOrganizationRemoved(self):
-        """ Test if we can delete a used organization """
-        # We remove a plonegroup organization selected in settings
+    def test_plonegroupOrganizationRemoved_1(self):
+        """ We cannot remove an organization selected in settings and used in an object """
         view = self.portal.restrictedTraverse('contacts/%s/department1/delete_confirmation' % PLONEGROUP_ORG)
         self.assertRaises(LinkIntegrityNotificationException, view.render)
         storage = ILinkIntegrityInfo(view.REQUEST)
         breaches = storage.getIntegrityBreaches()
         self.assertIn(self.contacts[0], breaches)
         self.assertSetEqual(breaches[self.contacts[0]], set([self.portal['acontent1']]))
-        # We remove a plonegroup organization not selected in settings
+
+    def test_plonegroupOrganizationRemoved_2(self):
+        """ We cannot remove an organization no more selected in settings and used in an object """
+        self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[1].UID()]
+        view = self.portal.restrictedTraverse('contacts/%s/department2/delete_confirmation' % PLONEGROUP_ORG)
+        self.assertRaises(LinkIntegrityNotificationException, view.render)
+        storage = ILinkIntegrityInfo(view.REQUEST)
+        breaches = storage.getIntegrityBreaches()
+        self.assertIn(self.contacts[1], breaches)
+        self.assertSetEqual(breaches[self.contacts[1]], set([self.portal['acontent2']]))
+
+    def test_plonegroupOrganizationRemoved_3(self):
+        """ We can remove an organization no more selected in settings and no more used in an object """
+        self.registry[ORGANIZATIONS_REGISTRY] = [self.contacts[1].UID()]
+        self.portal['acontent2'].pg_organization = None
+        self.portal.restrictedTraverse('contacts/%s/department2/delete_confirmation' % PLONEGROUP_ORG)
+
