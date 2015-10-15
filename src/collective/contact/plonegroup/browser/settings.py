@@ -152,8 +152,10 @@ def invalidate_sopgv_cache():
         invalidate cache of selectedOrganizationsPloneGroupsVocabulary
     """
     cache_chooser = getUtility(ICacheChooser)
-    thecache = cache_chooser('collective.contact.plonegroup.browser.settings.selectedOrganizationsPloneGroupsVocabulary')
-    thecache.ramcache.invalidate('collective.contact.plonegroup.browser.settings.selectedOrganizationsPloneGroupsVocabulary')
+    thecache = cache_chooser('collective.contact.plonegroup.browser.settings.'
+                             'selectedOrganizationsPloneGroupsVocabulary')
+    thecache.ramcache.invalidate('collective.contact.plonegroup.browser.settings.'
+                                 'selectedOrganizationsPloneGroupsVocabulary')
 
 
 def invalidate_sov_cache():
@@ -272,8 +274,7 @@ def adaptPloneGroupDefinition(organization, event):
                                "configuration ! Remove it first from the configuration !"), type='error')
         view_url = getMultiAdapter((organization, organization.REQUEST), name=u'plone_context_state').view_url()
         organization.REQUEST['RESPONSE'].redirect(view_url)
-        raise Redirect, _("This organization or a contained organization is used in plonegroup "
-                          "configuration ! Remove it first from the configuration !")
+        raise Redirect(view_url)
         return
     pcat = portal.portal_catalog
     brains = pcat(portal_type='organization', path=organization_path)
