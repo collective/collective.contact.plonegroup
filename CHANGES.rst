@@ -11,6 +11,8 @@ Changelog
   [sgeulette]
 - Added selected organizations vocabulary
   [sgeulette]
+- Don't deactivate a used plonegroup organization
+  [sgeulette]
 - Check state to build OwnOrganizationServicesVocabulary.
   [cedricmessiant]
 - Give access to configlet to Site Administrator

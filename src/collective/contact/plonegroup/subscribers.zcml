@@ -3,7 +3,6 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.contact.plonegroup">
 
-    <!-- Settings event subscribers -->
     <subscriber
         for="plone.registry.interfaces.IRecordModifiedEvent"
         handler=".browser.settings.detectContactPlonegroupChange"
@@ -19,6 +18,12 @@
         for="collective.contact.core.content.organization.IOrganization
              zope.lifecycleevent.interfaces.IObjectModifiedEvent"
         handler=".browser.settings.adaptPloneGroupDefinition"
+        />
+
+    <subscriber
+        for=".interfaces.IPloneGroupContact
+             Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
+        handler=".subscribers.plonegroup_contact_transition"
         />
 
     <subscriber
