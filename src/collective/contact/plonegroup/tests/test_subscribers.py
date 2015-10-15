@@ -3,6 +3,7 @@
 
 from zope.component import getUtility
 
+from plone import api
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
 from plone.registry.interfaces import IRegistry
@@ -10,6 +11,7 @@ from plone.registry.interfaces import IRegistry
 from collective.contact.plonegroup.testing import IntegrationTestCase
 
 from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
+from ..interfaces import IPloneGroupContact, INotPloneGroupContact
 
 
 class TestSubscribers(IntegrationTestCase):
@@ -58,3 +60,24 @@ class TestSubscribers(IntegrationTestCase):
         self.portal['acontent2'].pg_organization = None
         self.portal.restrictedTraverse('contacts/%s/department2/delete_confirmation' % PLONEGROUP_ORG)
 
+    def test_mark_organization(self):
+        """ We test marker interfaces """
+        contacts = self.portal.contacts
+        pg_org = contacts[PLONEGROUP_ORG]
+        self.assertTrue(IPloneGroupContact.providedBy(self.contacts[0]))
+        self.assertFalse(INotPloneGroupContact.providedBy(self.contacts[0]))
+        self.assertTrue(IPloneGroupContact.providedBy(self.contacts[1]))
+        self.assertFalse(INotPloneGroupContact.providedBy(self.contacts[1]))
+
+        normal = api.content.create(
+            type='organization', id='normal', container=contacts)
+        self.assertTrue(INotPloneGroupContact.providedBy(normal))
+        self.assertFalse(IPloneGroupContact.providedBy(normal))
+
+        api.content.move(source=contacts['normal'], target=pg_org)
+        self.assertTrue(IPloneGroupContact.providedBy(pg_org['normal']))
+        self.assertFalse(INotPloneGroupContact.providedBy(pg_org['normal']))
+
+        api.content.move(source=pg_org['department1'], target=contacts)
+        self.assertTrue(INotPloneGroupContact.providedBy(contacts['department1']))
+        self.assertFalse(IPloneGroupContact.providedBy(contacts['department1']))
