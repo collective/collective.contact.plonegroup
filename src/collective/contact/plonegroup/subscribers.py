@@ -45,6 +45,12 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
     request = aq_get(s_obj, 'REQUEST', None)
     if not request:
         return
+    try:
+        catalog = api.portal.get_tool('portal_catalog')
+    except api.portal.CannotGetPortalError:
+        # When deleting site, the portal is no more found...
+        return
+
     storage = ILinkIntegrityInfo(request)
 
     def list_fields(ptype, filter_interfaces=(IText, ICollection, IChoice)):
@@ -66,8 +72,6 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
                             type_fields[ptype].append(name)
                             break
         return type_fields[ptype]
-
-    catalog = api.portal.get_tool('portal_catalog')
 
     def check_value(val):
         if isinstance(val, basestring) and val == ref:
