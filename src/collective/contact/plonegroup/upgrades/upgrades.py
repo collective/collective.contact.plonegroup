@@ -22,3 +22,5 @@ def v2(context):
             alsoProvides(obj, INotPloneGroupContact)
 
         obj.reindexObject(idxs='object_provides')
+    setup = api.portal.get_tool('portal_setup')
+    setup.runImportStepFromProfile('collective.contact.plonegroup:default', 'jsregistry')
