@@ -19,9 +19,11 @@ from plone.memoize import ram
 from plone.memoize.interfaces import ICacheChooser
 from plone.registry.interfaces import IRecordModifiedEvent, IRegistry
 from plone.z3cform import layout
+
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from Products.statusmessages.interfaces import IStatusMessage
+
 from .. import _
 from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
 
@@ -262,7 +264,7 @@ def adaptPloneGroupDefinition(organization, event):
         return
     # is the current organization a part of own organization
     organization_path = '/'.join(organization.getPhysicalPath())
-    if not organization_path.startswith(getOwnOrganizationPath()):
+    if not organization_path.startswith(getOwnOrganizationPath()):  # can be unfound too
         return
     portal = getSite()
     registry = getUtility(IRegistry)
