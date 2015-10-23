@@ -145,7 +145,13 @@ class TestSettings(IntegrationTestCase):
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
         self.assertEquals(set(voc_list), set(['Department 2', 'Department 1', 'Department 1 - Service 1']))
 
+    def test_selectedOrganizationsVocabulary(self):
+        """ Test registry vocabulary """
+        self.assertListEqual([v.title for v in settings.selectedOrganizationsVocabulary()],
+                             ['Department 1', 'Department 1 - Service 1', 'Department 2'])
+
     def test_SelectedOrganizationsElephantVocabulary(self):
+        """ Test elephant vocabulary """
         factory_all = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
         vocab_all = factory_all(self.portal)
         vocab_all_values = [v.value for v in vocab_all]
