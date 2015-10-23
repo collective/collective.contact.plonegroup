@@ -1,6 +1,7 @@
 *.egg-info
 *.mo
 *.pyc
+.coverage
 .installed.cfg
 .mr.developer.cfg
 .project
@@ -8,6 +9,7 @@
 .settings/
 bin/
 develop-eggs/
+htmlcov/
 include/
 lib/
 parts/
