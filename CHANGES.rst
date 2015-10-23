@@ -17,6 +17,8 @@ Changelog
   [cedricmessiant]
 - Give access to configlet to Site Administrator
   [sgeulette]
+- Flake8 corrections
+  [sgeulette]
 
 
 0.2 (2014-03-18)

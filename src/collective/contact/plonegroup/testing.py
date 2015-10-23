@@ -50,17 +50,17 @@ class CollectiveContactPlonegroupLayer(PloneSandboxLayer):
 
 FIXTURE = CollectiveContactPlonegroupLayer(
     name="FIXTURE"
-    )
+)
 
 INTEGRATION = IntegrationTesting(
     bases=(FIXTURE,),
     name="INTEGRATION"
-    )
+)
 
 FUNCTIONAL = FunctionalTesting(
     bases=(FIXTURE,),
     name="FUNCTIONAL"
-    )
+)
 
 
 class IntegrationTestCase(unittest.TestCase):

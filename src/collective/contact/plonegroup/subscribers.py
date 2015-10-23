@@ -144,7 +144,7 @@ def plonegroup_contact_transition(contact, event):
             smi.addStatusMessage(_('You cannot deactivate this item !'), type='error')
             smi.addStatusMessage(errors[0], type='error')
             view_url = getMultiAdapter((contact, contact.REQUEST), name=u'plone_context_state').view_url()
-            #contact.REQUEST['RESPONSE'].redirect(view_url)
+            # contact.REQUEST['RESPONSE'].redirect(view_url)
             raise Redirect(view_url)
 
 
