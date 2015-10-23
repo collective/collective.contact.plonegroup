@@ -61,6 +61,25 @@ class TestSubscribers(IntegrationTestCase):
         self.portal['acontent2'].pg_organization = None
         self.portal.restrictedTraverse('contacts/%s/department2/delete_confirmation' % PLONEGROUP_ORG)
 
+    def test_plonegroupOrganizationRemoved_4(self):
+        """ We cannot remove an organization selected in settings and used in an object as dict or list """
+        # set uid in dict
+        self.portal['acontent1'].pg_organization = {'uid': self.contacts[0].UID()}
+        view = self.portal.restrictedTraverse('contacts/%s/department1/delete_confirmation' % PLONEGROUP_ORG)
+        self.assertRaises(LinkIntegrityNotificationException, view.render)
+        storage = ILinkIntegrityInfo(view.REQUEST)
+        breaches = storage.getIntegrityBreaches()
+        self.assertIn(self.contacts[0], breaches)
+        self.assertSetEqual(breaches[self.contacts[0]], set([self.portal['acontent1']]))
+        # set uid in list
+        self.portal['acontent2'].pg_organization = [self.contacts[1].UID()]
+        view = self.portal.restrictedTraverse('contacts/%s/department2/delete_confirmation' % PLONEGROUP_ORG)
+        self.assertRaises(LinkIntegrityNotificationException, view.render)
+        storage = ILinkIntegrityInfo(view.REQUEST)
+        breaches = storage.getIntegrityBreaches()
+        self.assertIn(self.contacts[1], breaches)
+        self.assertSetEqual(breaches[self.contacts[1]], set([self.portal['acontent2']]))
+
     def test_plonegroup_contact_transition_1(self):
         """ We cannot deactivate an organization selected in settings """
         self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition='deactivate')
