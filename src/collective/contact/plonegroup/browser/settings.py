@@ -20,6 +20,7 @@ from plone.memoize.interfaces import ICacheChooser
 from plone.registry.interfaces import IRecordModifiedEvent, IRegistry
 from plone.z3cform import layout
 
+from collective.elephantvocabulary import wrap_vocabulary
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from Products.statusmessages.interfaces import IStatusMessage
@@ -59,7 +60,8 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
         brains = catalog.searchResults(
             portal_type='organization',
             review_state=self.valid_states,
-            path={'query': folder_path, 'depth': 1}
+            path={'query': folder_path, 'depth': 1},
+            sort_on='getObjPositionInParent'
         )
         for brain in brains:
             orga = brain.getObject()
@@ -169,6 +171,15 @@ def invalidate_sov_cache():
     thecache.ramcache.invalidate('collective.contact.plonegroup.browser.settings.selectedOrganizationsVocabulary')
 
 
+def invalidate_soev_cache():
+    """
+        invalidate cache of SelectedOrganizationsElephantVocabulary
+    """
+    cache_chooser = getUtility(ICacheChooser)
+    thecache = cache_chooser('collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary')
+    thecache.ramcache.invalidate('collective.contact.plonegroup.browser.settings.__call__')
+
+
 def detectContactPlonegroupChange(event):
     """
         Manage our record changes
@@ -213,6 +224,7 @@ def detectContactPlonegroupChange(event):
         if changes:
             invalidate_sopgv_cache()
             invalidate_sov_cache()
+            invalidate_soev_cache()
 
 
 class SettingsEditForm(RegistryEditForm):
@@ -289,6 +301,8 @@ def adaptPloneGroupDefinition(organization, event):
                 changes = True
     if changes:
         invalidate_sopgv_cache()
+        invalidate_sov_cache()
+        invalidate_soev_cache()
 
 
 def sopgv_cache_key(function, functions=[], group_title=True):
@@ -334,9 +348,23 @@ def selectedOrganizationsVocabulary():
     return SimpleVocabulary(terms)
 
 
-class SelectedOrganizationsVocabulary(object):
+class SelectedOrganizationsElephantVocabulary(object):
     """ Vocabulary of selected plonegroup-organizations services. """
     implements(IVocabularyFactory)
 
+    @ram.cache(lambda *args: 'SelectedOrganizationsElephantVocabulary')
     def __call__(self, context):
-        return selectedOrganizationsVocabulary()
+        factory = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
+        vocab = factory(context)
+        registry = getUtility(IRegistry)
+        terms = vocab.by_value
+        ordered_terms = []
+        for uid in registry[ORGANIZATIONS_REGISTRY]:
+            if uid in terms:
+                ordered_terms.append(terms[uid])
+                del terms[uid]
+        extra_uids = terms.keys()
+        extra_terms = terms.values()
+        ordered_vocab = SimpleVocabulary(ordered_terms+extra_terms)
+        wrapped_vocab = wrap_vocabulary(ordered_vocab, hidden_terms=extra_uids)(context)
+        return wrapped_vocab

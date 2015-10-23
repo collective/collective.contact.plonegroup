@@ -144,3 +144,19 @@ class TestSettings(IntegrationTestCase):
         voc_dic = groups.by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
         self.assertEquals(set(voc_list), set(['Department 2', 'Department 1', 'Department 1 - Service 1']))
+
+    def test_SelectedOrganizationsElephantVocabulary(self):
+        factory_all = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
+        vocab_all = factory_all(self.portal)
+        vocab_all_values = [v.value for v in vocab_all]
+        self.assertEqual(len(vocab_all), 3)
+        self.assertListEqual([v.title for v in vocab_all],
+                             ['Department 1', 'Department 1 - Service 1', 'Department 2'])
+        registry = getUtility(IRegistry)
+        registry[ORGANIZATIONS_REGISTRY] = [vocab_all_values[2], vocab_all_values[0]]
+        factory_wrp = getUtility(IVocabularyFactory, "collective.contact.plonegroup.selected_organization_services")
+        vocab_wrp = factory_wrp(self.portal)
+        self.assertEqual(len(vocab_wrp), 3)
+        self.assertListEqual([v.value for v in vocab_wrp], registry[ORGANIZATIONS_REGISTRY])
+        self.assertListEqual([v.title for v in vocab_wrp], ['Department 2', 'Department 1'])
+        self.assertEqual(vocab_wrp.getTerm(vocab_all_values[1]).title, 'Department 1 - Service 1')

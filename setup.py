@@ -46,6 +46,7 @@ setup(
         'plone.api',
         'setuptools',
         'collective.contact.core',
+        'collective.elephantvocabulary',
     ],
     extras_require={
         'test': [

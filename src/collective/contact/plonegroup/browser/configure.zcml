@@ -21,7 +21,7 @@
 
     <utility
         name="collective.contact.plonegroup.selected_organization_services"
-        factory=".settings.SelectedOrganizationsVocabulary"
+        factory=".settings.SelectedOrganizationsElephantVocabulary"
         />
 
 </configure>

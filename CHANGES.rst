@@ -9,7 +9,7 @@ Changelog
   [sgeulette]
 - Added marker interfaces to distinguish plonegroup organizations
   [sgeulette]
-- Added selected organizations vocabulary
+- Added selected organizations vocabulary as elephantvocabulary: display correctly no more selected terms.
   [sgeulette]
 - Don't deactivate a used plonegroup organization
   [sgeulette]
