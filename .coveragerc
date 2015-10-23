@@ -1,0 +1,11 @@
+[report]
+include =
+    src/collective/*
+omit =
+    */test*
+    src/collective/__init__.py
+    src/collective/contact/__init__.py
+    src/collective/contact/plonegroup/__init__.py
+    src/collective/contact/plonegroup/browser/__init__.py
+    src/collective/contact/plonegroup/content/__init__.py
+    src/collective/contact/plonegroup/upgrades/__init__.py
