@@ -54,7 +54,7 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
 
     valid_states = ('active',)
 
-    def listSubOrganizations(self, terms, folder, parent_label='', parent_id=''):
+    def listSubOrganizations(self, terms, folder, parent_label=''):
         catalog = api.portal.get_tool('portal_catalog')
         folder_path = '/'.join(folder.getPhysicalPath())
         brains = catalog.searchResults(
@@ -68,11 +68,8 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
             term_title = orga.Title()
             if parent_label:
                 term_title = "%s - %s" % (parent_label, term_title)
-            term_token = orga.getId()
-            if parent_id:
-                term_token = "%s|%s" % (parent_id, term_token)
-            terms.append(SimpleTerm(orga.UID(), term_token, term_title))
-            self.listSubOrganizations(terms, orga, term_title, term_token)
+            terms.append(SimpleTerm(orga.UID(), orga.UID(), term_title))
+            self.listSubOrganizations(terms, orga, term_title)
 
     def __call__(self, context):
         portal = getSite()

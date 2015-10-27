@@ -46,7 +46,7 @@ class TestSettings(IntegrationTestCase):
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, ['Department 1 - Service 1', 'Department 1', 'Department 2'])
+        self.assertSetEqual(set(voc_list), set(['Department 1 - Service 1', 'Department 1', 'Department 2']))
         self.assertNotIn('Inactive department', voc_list)
         # When multiple own organizations
         self.portal['contacts'].invokeFactory('organization', 'temporary', title='Temporary')

@@ -15,6 +15,8 @@ Changelog
   [sgeulette]
 - Check state to build OwnOrganizationServicesVocabulary.
   [cedricmessiant]
+- Set token to UID in OwnOrganizationServicesVocabulary.
+  [sgeulette]
 - Give access to configlet to Site Administrator
   [sgeulette]
 - Flake8 corrections
