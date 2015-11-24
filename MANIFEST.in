@@ -1,8 +1,10 @@
+  include *.cfg
+  include .coveragerc
   include *.py
   include *.rst
   include .travis.yml
-  include *.cfg
   recursive-include docs *.GPL
+  recursive-include src *.js
   recursive-include docs *.rst
   recursive-include src *.gitignore
   recursive-include src *.gitkeep
