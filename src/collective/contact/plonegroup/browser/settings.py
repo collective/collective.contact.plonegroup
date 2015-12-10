@@ -65,7 +65,7 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
         )
         for brain in brains:
             orga = brain.getObject()
-            term_title = orga.Title()
+            term_title = orga.title
             if parent_label:
                 term_title = "%s - %s" % (parent_label, term_title)
             terms.append(SimpleTerm(orga.UID(), orga.UID(), term_title))

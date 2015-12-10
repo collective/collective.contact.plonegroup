@@ -5,8 +5,8 @@ Changelog
 1.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Put title as unicode in vocabulary.
+  [sgeulette]
 
 1.0 (2015-11-24)
 ----------------
