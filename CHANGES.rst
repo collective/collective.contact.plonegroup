@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1 (unreleased)
+1.1 (2015-12-11)
 ----------------
 
 - Put title as unicode in vocabulary.
