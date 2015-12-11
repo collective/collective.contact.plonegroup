@@ -1,4 +1,3 @@
-  include *.cfg
   include .coveragerc
   include *.py
   include *.rst
@@ -14,3 +13,4 @@
   recursive-include src *.txt
   recursive-include src *.xml
   recursive-include src *.zcml
+  exclude *.cfg
