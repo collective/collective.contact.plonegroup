@@ -15,7 +15,7 @@
     <browser:page
         name="contact-plonegroup-settings"
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-        permission="cmf.ManagePortal"
+        permission="plone.app.controlpanel.Site"
         class=".settings.SettingsView"
         />
 

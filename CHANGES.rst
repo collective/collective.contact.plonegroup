@@ -7,6 +7,8 @@ Changelog
 
 - Increase OrderedSelectWidget size to 15 lines.
   [sgeulette]
+- Use the same permission to protect config view as controlpanel link.
+  [sgeulette]
 
 1.1 (2015-12-11)
 ----------------
