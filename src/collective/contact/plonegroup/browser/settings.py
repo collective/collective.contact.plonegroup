@@ -104,6 +104,7 @@ class IContactPlonegroupConfig(Interface):
         description=_(u"Choose multiple organization levels for which you want to create a plone group."),
         required=True,
         value_type=schema.Choice(vocabulary=u'collective.contact.plonegroup.organization_services',))
+    widget('organizations', size=15)
 
     functions = schema.List(
         title=_(u'Function list'),

@@ -5,8 +5,8 @@ Changelog
 1.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Increase OrderedSelectWidget size to 15 lines.
+  [sgeulette]
 
 1.1 (2015-12-11)
 ----------------
