@@ -5,6 +5,8 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Made an unrestricted search to list own organizations, possible reason of empty list
+  [sgeulette]
 - Increase OrderedSelectWidget size to 15 lines.
   [sgeulette]
 - Use the same permission to protect config view and configlet.

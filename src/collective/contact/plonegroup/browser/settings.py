@@ -57,14 +57,14 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
     def listSubOrganizations(self, terms, folder, parent_label=''):
         catalog = api.portal.get_tool('portal_catalog')
         folder_path = '/'.join(folder.getPhysicalPath())
-        brains = catalog.searchResults(
+        brains = catalog.unrestrictedSearchResults(
             portal_type='organization',
             review_state=self.valid_states,
             path={'query': folder_path, 'depth': 1},
             sort_on='getObjPositionInParent'
         )
         for brain in brains:
-            orga = brain.getObject()
+            orga = brain._unrestrictedGetObject()
             term_title = orga.title
             if parent_label:
                 term_title = "%s - %s" % (parent_label, term_title)
@@ -75,7 +75,7 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
         portal = getSite()
         terms = []
         pcat = portal.portal_catalog
-        brains = pcat(portal_type='organization', id=PLONEGROUP_ORG)
+        brains = pcat.unrestrictedSearchResults(portal_type='organization', id=PLONEGROUP_ORG)
         if not brains:
             terms.append(SimpleTerm(None, token="unfound",
                                     title=_(u"You must define an organization with id '${pgo}' !",
@@ -87,7 +87,7 @@ class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
                                                                       mapping={'pgo': PLONEGROUP_ORG})))
             return SimpleVocabulary(terms)
 
-        own_orga = brains[0].getObject()
+        own_orga = brains[0]._unrestrictedGetObject()
         self.listSubOrganizations(terms, own_orga)
 
         return SimpleVocabulary(terms)
