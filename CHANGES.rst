@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2 (unreleased)
+1.2 (2016-01-13)
 ----------------
 
 - Made an unrestricted search to list own organizations, possible reason of empty list
