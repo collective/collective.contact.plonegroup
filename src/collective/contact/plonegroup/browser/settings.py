@@ -23,6 +23,7 @@ from plone.z3cform import layout
 from collective.elephantvocabulary import wrap_vocabulary
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
+from imio.helpers.cache import get_cachekey_volatile, invalidate_cachekey_volatile_for
 from Products.statusmessages.interfaces import IStatusMessage
 
 from .. import _
@@ -43,6 +44,10 @@ class IFunctionSchema(Interface):
     """
     fct_id = schema.TextLine(title=_("Plone group suffix id"), required=True)
     fct_title = schema.TextLine(title=_("Plone group suffix title"), required=True)
+
+
+def voc_cache_key(method, self, context):
+    return get_cachekey_volatile(str(self.__class__)[8:-2])
 
 
 class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
@@ -173,9 +178,8 @@ def invalidate_soev_cache():
     """
         invalidate cache of SelectedOrganizationsElephantVocabulary
     """
-    cache_chooser = getUtility(ICacheChooser)
-    thecache = cache_chooser('collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary')
-    thecache.ramcache.invalidate('collective.contact.plonegroup.browser.settings.__call__')
+    invalidate_cachekey_volatile_for('collective.contact.plonegroup.browser.settings.'
+                                     'SelectedOrganizationsElephantVocabulary')
 
 
 def detectContactPlonegroupChange(event):
@@ -310,7 +314,7 @@ def sopgv_cache_key(function, functions=[], group_title=True):
     return (set(functions), group_title)
 
 
-@ram.cache(sopgv_cache_key)
+@ram.cache(sopgv_cache_key)  # not used
 def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     """
         Returns a vocabulary of selected organizations corresponding plone groups
@@ -333,7 +337,7 @@ def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     return SimpleVocabulary(terms)
 
 
-@ram.cache(lambda *args: True)
+@ram.cache(lambda *args: True)  # not used
 def selectedOrganizationsVocabulary():
     """
         Returns a vocabulary of selected organizations
@@ -350,7 +354,7 @@ class SelectedOrganizationsElephantVocabulary(object):
     """ Vocabulary of selected plonegroup-organizations services. """
     implements(IVocabularyFactory)
 
-    @ram.cache(lambda *args: 'SelectedOrganizationsElephantVocabulary')
+    @ram.cache(voc_cache_key)
     def __call__(self, context):
         factory = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
         vocab = factory(context)

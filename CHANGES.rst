@@ -5,8 +5,8 @@ Changelog
 1.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Use a stored cache key to invalidate cache on all zeo clients
+  [sgeulette]
 
 1.2 (2016-01-13)
 ----------------

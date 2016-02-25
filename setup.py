@@ -47,6 +47,7 @@ setup(
         'setuptools',
         'collective.contact.core',
         'collective.elephantvocabulary',
+        'imio.helpers > 0.4.13'
     ],
     extras_require={
         'test': [
