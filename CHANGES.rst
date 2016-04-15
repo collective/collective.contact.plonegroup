@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.3 (unreleased)
+1.3 (2016-04-15)
 ----------------
 
 - Use a stored cache key to invalidate cache on all zeo clients
