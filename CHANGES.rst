@@ -5,8 +5,8 @@ Changelog
 1.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Call only once a subscriber.
+  [sgeulette]
 
 1.3 (2016-04-15)
 ----------------
@@ -62,4 +62,3 @@ Changelog
 
 - Initial release.
   [sgeulette]
-

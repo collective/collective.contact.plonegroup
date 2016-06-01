@@ -38,13 +38,7 @@
         handler=".subscribers.plonegroupOrganizationRemoved"
         />
 
-    <subscriber
-        zcml:condition="installed zope.lifecycleevent"
-        for="collective.contact.widget.interfaces.IContactContent
-             zope.lifecycleevent.interfaces.IObjectAddedEvent"
-        handler=".subscribers.mark_organization"
-        />
-
+    <!-- Is notified on addition, moving, deletion -->
     <subscriber
         zcml:condition="installed zope.lifecycleevent"
         for="collective.contact.widget.interfaces.IContactContent
