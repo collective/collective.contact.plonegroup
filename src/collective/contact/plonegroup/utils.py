@@ -6,7 +6,8 @@ def organizations_with_suffixes(groups, suffixes):
         parts = group.id.split('_')
         if len(parts) == 1:
             continue
+        group_suffix = '_'.join(parts[1:])
         for suffix in suffixes:
-            if suffix == parts[1] and parts[0] not in orgs:
+            if suffix == group_suffix and parts[0] not in orgs:
                 orgs.append(parts[0])
     return orgs
