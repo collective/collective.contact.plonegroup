@@ -7,6 +7,8 @@ Changelog
 
 - Call only once a subscriber.
   [sgeulette]
+- Improved util method and added test
+  [sgeulette]
 
 1.3 (2016-04-15)
 ----------------
