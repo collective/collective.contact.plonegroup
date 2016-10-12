@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 def organizations_with_suffixes(groups, suffixes):
     """
         Return organization uids for given plone groups and without suffixes
