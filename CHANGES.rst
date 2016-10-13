@@ -9,6 +9,8 @@ Changelog
   [sgeulette]
 - Improved util method and added test
   [sgeulette]
+- Added method to get selected organizations with customized title
+  [sgeulette]
 
 1.3 (2016-04-15)
 ----------------
