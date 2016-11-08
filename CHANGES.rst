@@ -11,6 +11,8 @@ Changelog
   [sgeulette]
 - Added method to get selected organizations with customized title
   [sgeulette]
+- Added methods to get orgs users and vocabulary
+  [sgeulette]
 
 1.3 (2016-04-15)
 ----------------

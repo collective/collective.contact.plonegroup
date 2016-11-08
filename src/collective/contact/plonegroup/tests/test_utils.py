@@ -22,3 +22,6 @@ class TestUtils(IntegrationTestCase):
         self.assertListEqual(ret, ['b', 'c', 'e'])
         ret = organizations_with_suffixes([Dum('a'), Dum('b_1_1'), Dum('c_1_1')], ['1_1'])
         self.assertListEqual(ret, ['b', 'c'])
+
+    def test_voc_selected_org_suffix_users(self):
+        self.assertFalse('Test must be adapted from imio.dms.mail')

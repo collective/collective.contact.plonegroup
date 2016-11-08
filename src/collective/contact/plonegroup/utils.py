@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from operator import methodcaller
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+from plone import api
+
 
 def organizations_with_suffixes(groups, suffixes):
     """
@@ -14,3 +18,40 @@ def organizations_with_suffixes(groups, suffixes):
         if group_suffix in suffixes and parts[0] not in orgs:
             orgs.append(parts[0])
     return orgs
+
+
+def get_selected_org_suffix_users(org_uid, suffixes):
+    """
+        Get users that belongs to suffixed groups related to selected organization.
+    """
+    org_members = []
+    # only add to vocabulary users with these functions in the organization
+    for function_id in suffixes:
+        groupname = "{}_{}".format(org_uid, function_id)
+        members = api.user.get_users(groupname=groupname)
+        for member in members:
+            if member not in org_members:
+                org_members.append(member)
+    return org_members
+
+
+def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None):
+    """
+        Return users vocabulary that belongs to suffixed groups related to selected organization.
+    """
+    if not org_uid or org_uid == u'--NOVALUE--':
+        return SimpleVocabulary([])
+    terms = []
+    # only add to vocabulary users with these functions in the organization
+    for member in sorted(get_selected_org_suffix_users(org_uid, suffixes), key=methodcaller('getUserName')):
+        if member == first_member:
+            terms.insert(0, SimpleTerm(
+                value=member.getUserName(),  # login
+                token=member.getId(),  # id
+                title=member.getUser().getProperty('fullname') or member.getUserName()))
+        else:
+            terms.append(SimpleTerm(
+                value=member.getUserName(),  # login
+                token=member.getId(),  # id
+                title=member.getUser().getProperty('fullname') or member.getUserName()))  # title
+    return SimpleVocabulary(terms)
