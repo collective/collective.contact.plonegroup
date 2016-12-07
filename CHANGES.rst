@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.4 (unreleased)
+1.4 (2016-12-07)
 ----------------
 
 - Call only once a subscriber.
