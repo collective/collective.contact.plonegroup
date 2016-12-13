@@ -5,8 +5,8 @@ Changelog
 1.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Get selected organizations with manager role because plone.formwidget.masterselect calls ++widget++ as Anonymous.
+  [sgeulette]
 
 1.4 (2016-12-07)
 ----------------

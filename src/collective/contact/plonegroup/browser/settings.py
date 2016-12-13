@@ -337,13 +337,24 @@ def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     return SimpleVocabulary(terms)
 
 
+def unrestrictedUuidToObject(uid):
+    portal = getSite()
+    pc = portal.portal_catalog
+    res = pc.unrestrictedSearchResults(UID=uid)
+    if res:
+        return res[0].getObject()
+    return None
+
+
 def getSelectedOrganizations(separator=' - ', first_index=1):
     """ Return a list of tuples (uid, title) """
     ret = []
     registry = getUtility(IRegistry)
-    for uid in registry[ORGANIZATIONS_REGISTRY]:
-        title = uuidToObject(uid).get_full_title(separator=separator, first_index=first_index)
-        ret.append((uid, title))
+    # needed to get as manager because plone.formwidget.masterselect calls ++widget++ as Anonymous
+    with api.env.adopt_roles(['Manager']):
+        for uid in registry[ORGANIZATIONS_REGISTRY]:
+            title = unrestrictedUuidToObject(uid).get_full_title(separator=separator, first_index=first_index)
+            ret.append((uid, title))
     return ret
 
 
