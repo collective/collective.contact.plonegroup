@@ -351,9 +351,14 @@ def getSelectedOrganizations(separator=' - ', first_index=1):
     ret = []
     registry = getUtility(IRegistry)
     # needed to get as manager because plone.formwidget.masterselect calls ++widget++ as Anonymous
-    with api.env.adopt_roles(['Manager']):
+    if api.user.is_anonymous():
+        with api.env.adopt_roles(['Manager']):
+            for uid in registry[ORGANIZATIONS_REGISTRY]:
+                title = unrestrictedUuidToObject(uid).get_full_title(separator=separator, first_index=first_index)
+                ret.append((uid, title))
+    else:
         for uid in registry[ORGANIZATIONS_REGISTRY]:
-            title = unrestrictedUuidToObject(uid).get_full_title(separator=separator, first_index=first_index)
+            title = uuidToObject(uid).get_full_title(separator=separator, first_index=first_index)
             ret.append((uid, title))
     return ret
 

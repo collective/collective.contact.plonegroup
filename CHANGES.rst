@@ -5,8 +5,8 @@ Changelog
 1.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Use manager role only if necessary to avoid "SystemError: Excessive recursion" when recataloging
+  [sgeulette]
 
 1.5 (2016-12-13)
 ----------------
