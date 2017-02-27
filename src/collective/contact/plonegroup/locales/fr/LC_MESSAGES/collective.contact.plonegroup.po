@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-10-15 13:34+0000\n"
+"POT-Creation-Date: 2017-02-27 08:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,79 +15,98 @@ msgstr ""
 "Domain: collective.contact.plonegroup\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-#: ../browser/settings.py:103
+#: ../browser/settings.py:109
 msgid "Choose multiple organization levels for which you want to create a plone group."
 msgstr "Choisir des niveaux d'organisation pour lesquels un groupe plone sera créé."
 
-#: ../browser/settings.py:109
+#: ../browser/settings.py:116
 msgid "Each defined function will suffix each organization plone group."
 msgstr "Chaque fonction définie suffixera les groupes plone créés."
 
-#: ../browser/settings.py:111
+#: ../browser/settings.py:118
 msgid "Function"
 msgstr "Fonction"
 
-#: ../browser/settings.py:108
+#: ../browser/settings.py:115
 msgid "Function list"
 msgstr "Liste de fonctions"
 
-#: ../browser/settings.py:33
+#: ../configure.zcml:29
+msgid "Installs the collective.contact.plonegroup add-on."
+msgstr "Installs the collective.contact.plonegroup add-on."
+
+#: ../browser/settings.py:37
 msgid "Organization id"
 msgstr "Id de l'organisation"
 
-#: ../browser/settings.py:34
+#: ../browser/settings.py:38
 msgid "Organization title"
 msgstr "Titre de l'organisation"
 
-#: ../browser/settings.py:41
+#: ../browser/settings.py:45
 msgid "Plone group suffix id"
 msgstr "Id du suffixe"
 
-#: ../browser/settings.py:42
+#: ../browser/settings.py:46
 msgid "Plone group suffix title"
 msgstr "Titre du suffixe"
 
-#: ../browser/settings.py:102
+#: ../browser/settings.py:108
 msgid "Selected organizations"
 msgstr "Organisations"
 
-#: ../subscribers.py:132
+#: ../testing.zcml:16
+msgid "Steps to ease tests of collective.contact.plonegroup"
+msgstr "Steps to ease tests of collective.contact.plonegroup"
+
+#: ../subscribers.py:136
 msgid "This contact is selected in configuration"
 msgstr "Ce contact est sélectionné dans la configuration"
 
-#: ../subscribers.py:138
+#: ../subscribers.py:142
 msgid "This contact is used in following content: ${items}"
 msgstr "Ce contact est utilisé dans le contenu suivant: ${items}"
 
-#: ../browser/settings.py:273
+#: ../browser/settings.py:289
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 msgstr "Cette organisation ou une organisation contenue est utilisée dans la configuration de groupe plone via contact ! Il faut d'abord l'enlever de la configuration !"
 
-#: ../subscribers.py:144
+#: ../subscribers.py:148
 msgid "You cannot deactivate this item !"
 msgstr "Vous ne pouvez pas désactiver cet élément !"
 
-#: ../browser/settings.py:272
+#: ../subscribers.py:189
+msgid "You cannot delete the group '${group}', linked to used organization '${orga}'."
+msgstr "Vous ne pouvez pas effacer le groupe '${group}', lié à l'organisation utilisée '${orga}'."
+
+#: ../browser/settings.py:288
 msgid "You cannot delete this item !"
 msgstr "Vous ne pouvez pas effacer cet élément !"
 
-#: ../browser/settings.py:119
+#: ../browser/settings.py:126
 msgid "You must choose at least one organization !"
 msgstr "Vous devez au moins choisir une organisation !"
 
-#: ../browser/settings.py:121
+#: ../browser/settings.py:128
 msgid "You must correct the organization error first !"
 msgstr "Vous devez corriger l'erreur sur l'organisation !"
 
-#: ../browser/settings.py:80
+#: ../browser/settings.py:86
 msgid "You must define an organization with id '${pgo}' !"
 msgstr "Vous devez définir une organisation dont l'id est '${pgo}' !"
 
-#: ../browser/settings.py:123
+#: ../browser/settings.py:130
 msgid "You must define at least one function !"
 msgstr "Vous devez au moins choisir une fonction !"
 
-#: ../browser/settings.py:84
+#: ../browser/settings.py:90
 msgid "You must have only one organization with id '${pgo}' !"
 msgstr "Vous devez avoir une seule organisation avec l'id '${pgo}' !"
 
+#: ../configure.zcml:29
+msgid "collective.contact.plonegroup"
+msgstr "collective.contact.plonegroup"
+
+#: ../testing.zcml:16
+msgid "collective.contact.plonegroup tests"
+msgstr "collective.contact.plonegroup tests"

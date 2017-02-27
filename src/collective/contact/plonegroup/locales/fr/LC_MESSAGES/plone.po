@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-05-16 07:44+0000\n"
+"POT-Creation-Date: 2017-02-27 08:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,7 +14,14 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
+#: ../profiles/testing/types/acontent.xml
+msgid "A content"
+msgstr "A content"
+
 #: ../profiles/default/controlpanel.xml
 msgid "Contact Plone Group settings"
 msgstr "Configuration des groupes plone via contact"
 
+#: ../profiles/testing/types/acontent.xml
+msgid "None"
+msgstr "None"
