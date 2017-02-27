@@ -14,11 +14,11 @@ from plone.behavior.interfaces import IBehavior
 from plone.dexterity.interfaces import IDexterityContent, IDexterityFTI
 from plone.registry.interfaces import IRegistry
 
-from Products.CMFPlone.utils import base_hasattr
+from Products.CMFPlone.utils import base_hasattr, safe_unicode
 from Products.statusmessages.interfaces import IStatusMessage
 
 from . import _
-from config import PLONEGROUP_ORG, ORGANIZATIONS_REGISTRY
+from config import PLONEGROUP_ORG, ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
 from interfaces import IPloneGroupContact, INotPloneGroupContact
 
 try:
@@ -168,3 +168,25 @@ def mark_organization(contact, event):
             noLongerProvides(contact, IPloneGroupContact)
 
     contact.reindexObject(idxs='object_provides')
+
+
+def group_deleted(event):
+    """
+        Raises exception if group cannot be deleted
+    """
+    group = event.principal
+    portal = api.portal.get()
+    request = portal.REQUEST
+
+    parts = group.split('_')
+    if len(parts) == 1:
+        return
+    group_suffix = '_'.join(parts[1:])
+    registry = getUtility(IRegistry)
+    if parts[0] in registry[ORGANIZATIONS_REGISTRY] and \
+            group_suffix in [dic['fct_id'] for dic in registry[FUNCTIONS_REGISTRY]]:
+        orga = api.content.find(UID=parts[0])[0].getObject()
+        api.portal.show_message(message=_("You cannot delete the group '${group}', linked to used organization "
+                                          "'${orga}'.", mapping={'group': group, 'orga': safe_unicode(orga.Title())}),
+                                request=request, type='error')
+        raise Redirect(request.get('ACTUAL_URL'))

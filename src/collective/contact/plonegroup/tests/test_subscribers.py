@@ -9,10 +9,13 @@ from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
 from plone.registry.interfaces import IRegistry
 
+from Products.statusmessages.interfaces import IStatusMessage
+
 from collective.contact.plonegroup.testing import IntegrationTestCase
 
 from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
 from ..interfaces import IPloneGroupContact, INotPloneGroupContact
+from ..subscribers import group_deleted
 
 
 class TestSubscribers(IntegrationTestCase):
@@ -119,3 +122,20 @@ class TestSubscribers(IntegrationTestCase):
         api.content.move(source=pg_org['department1'], target=contacts)
         self.assertTrue(INotPloneGroupContact.providedBy(contacts['department1']))
         self.assertFalse(IPloneGroupContact.providedBy(contacts['department1']))
+
+    def test_group_deleted(self):
+        class Dummy(object):
+            def __init__(self, name):
+                self.principal = name
+        self.assertIsNone(group_deleted(Dummy('no-underscore')))
+        request = self.portal.REQUEST
+        smi = IStatusMessage(request)
+        uid = self.contacts[0].UID()
+        self.assertRaises(Redirect, api.group.delete, groupname='%s_director' % uid)
+        msgs = smi.show()
+        self.assertEqual(msgs[0].message, u"You cannot delete the group '%s_director', linked to used organization "
+                         "'Department 1'." % uid)
+        api.group.create(groupname='%s_other' % uid)
+        api.group.create(groupname='12345_director')
+        api.group.delete(groupname='%s_other' % uid)
+        api.group.delete(groupname='12345_director')

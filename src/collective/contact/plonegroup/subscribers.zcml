@@ -38,6 +38,11 @@
         handler=".subscribers.plonegroupOrganizationRemoved"
         />
 
+    <subscriber
+        for="Products.PluggableAuthService.interfaces.events.IGroupDeletedEvent"
+        handler=".subscribers.group_deleted"
+        />
+
     <!-- Is notified on addition, moving, deletion -->
     <subscriber
         zcml:condition="installed zope.lifecycleevent"

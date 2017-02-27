@@ -7,6 +7,8 @@ Changelog
 
 - Use manager role only if necessary to avoid "SystemError: Excessive recursion" when recataloging
   [sgeulette]
+- Protect against group deletion
+  [sgeulette]
 
 1.5 (2016-12-13)
 ----------------
