@@ -9,6 +9,8 @@ Changelog
   [sgeulette]
 - Protect against group deletion
   [sgeulette]
+- Corrected subscriber at object paste
+  [sgeulette]
 
 1.5 (2016-12-13)
 ----------------

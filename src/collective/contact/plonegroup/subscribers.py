@@ -128,7 +128,7 @@ def plonegroup_contact_transition(contact, event):
     """
         React when a IPloneGroupContact transition is done
     """
-    if event.transition.id == 'deactivate':
+    if event.transition and event.transition.id == 'deactivate':
         # check if the transition is selected
         registry = getUtility(IRegistry)
         errors = []
