@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.6 (unreleased)
+1.6 (2017-05-30)
 ----------------
 
 - Use manager role only if necessary to avoid "SystemError: Excessive recursion" when recataloging
