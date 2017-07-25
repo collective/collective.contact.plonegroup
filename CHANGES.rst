@@ -5,8 +5,8 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Check if linkintegrity is enabled in events.
+  [sgeulette]
 
 1.6 (2017-05-30)
 ----------------

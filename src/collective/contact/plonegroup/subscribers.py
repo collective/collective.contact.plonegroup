@@ -112,11 +112,9 @@ def plonegroupOrganizationRemoved(del_obj, event):
     """
     # inspired from z3c/relationfield/event.py:breakRelations
     # and plone/app/linkintegrity/handlers.py:referenceRemoved
-    # if the object the event was fired on doesn't have a `REQUEST` attribute
-    # we can safely assume no direct user action was involved and therefore
-    # never raise a link integrity exception...
-
-    search_value_in_objects(del_obj, del_obj.UID(), p_types=[], type_fields={})
+    pp = api.portal.get_tool('portal_properties')
+    if pp.site_properties.enable_link_integrity_checks:
+        search_value_in_objects(del_obj, del_obj.UID(), p_types=[], type_fields={})
 
 
 def referencedObjectRemoved(obj, event):
@@ -131,10 +129,11 @@ def plonegroup_contact_transition(contact, event):
     if event.transition and event.transition.id == 'deactivate':
         # check if the transition is selected
         registry = getUtility(IRegistry)
+        pp = api.portal.get_tool('portal_properties')
         errors = []
         if contact.UID() in registry[ORGANIZATIONS_REGISTRY]:
             errors.append(_('This contact is selected in configuration'))
-        else:
+        elif pp.site_properties.enable_link_integrity_checks:
             search_value_in_objects(contact, contact.UID(), p_types=[], type_fields={})
             storage = ILinkIntegrityInfo(contact.REQUEST)
             breaches = storage.getIntegrityBreaches()
