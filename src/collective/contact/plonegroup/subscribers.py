@@ -112,7 +112,11 @@ def plonegroupOrganizationRemoved(del_obj, event):
     """
     # inspired from z3c/relationfield/event.py:breakRelations
     # and plone/app/linkintegrity/handlers.py:referenceRemoved
-    pp = api.portal.get_tool('portal_properties')
+    try:
+        pp = api.portal.get_tool('portal_properties')
+    except api.portal.CannotGetPortalError:
+        # When deleting site, the portal is no more found...
+        return
     if pp.site_properties.enable_link_integrity_checks:
         search_value_in_objects(del_obj, del_obj.UID(), p_types=[], type_fields={})
 
