@@ -5,7 +5,7 @@ Changelog
 1.8 (unreleased)
 ----------------
 
-- Correcred error when deleting site.
+- Corrected error when deleting site.
   [sgeulette]
 
 1.7 (2017-07-25)
