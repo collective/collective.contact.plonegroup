@@ -148,8 +148,11 @@ def addOrModifyGroup(group_name, organization_title, function_title):
         return True
     else:
         # group_title is maybe modified
+        # portal_groups.editGroup(group_name, utf8)
+        pg = api.portal.get_tool('portal_groups')
         if group.getProperty('title') != group_title:
-            group.setProperties(title=group_title)
+            pg.editGroup(group_name, title=group_title)
+            # group.setProperties(title=group_title)  # not good !!
             return True
     return False
 

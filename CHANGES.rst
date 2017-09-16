@@ -7,6 +7,8 @@ Changelog
 
 - Corrected error when deleting site.
   [sgeulette]
+- Corrected group modification. Added migration step.
+  [sgeulette]
 
 1.7 (2017-07-25)
 ----------------
