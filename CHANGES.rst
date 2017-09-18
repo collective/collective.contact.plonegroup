@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.8 (unreleased)
+1.8 (2017-09-18)
 ----------------
 
 - Corrected error when deleting site.
