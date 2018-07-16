@@ -7,7 +7,7 @@ A Plone add-on that manage organizations and functions, leading to corresponding
 This product makes the link between:
 
 * collective.contact.core : organization definition containing your organization services (multiple levels)
-* collective.dms.basecontent (LocalRolesToPrincipals field) : field presenting a list of services for which a local role can be given
+* dexterity.localrolesfield : field presenting a list of services for which a local role can be given
 
 How-to
 ======
@@ -19,12 +19,12 @@ An organization can contain organizations (such as services, divisions or depart
 
 In the collective.contact.plonegroup configuration panel, you have to :
 
-* select some services of your organization to be used in LocalRolesToPrincipals field
+* select some services of your organization to be used in localroles field
 * define some function labels that will be used in each selected organization
 
-When submitting, for each organization - function combination, a plone group will be created with the id "organization-uid"_"function-id" and name "organizations-name" ("function-name"). 
+When submitting, for each organization - function combination, a plone group is created with the id "organization-uid"_"function-id" and name "organizations-name" ("function-name").
 
-The generated plone groups will be used in LocalRolesToPrincipals field, where some local roles can be given to some function for each selected service. 
+The generated plone groups will be used in localroles field, where some local roles can be given to some function for each selected service.
 
 Installation
 ============
