@@ -48,11 +48,23 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(voc_selected_org_suffix_users(None, []).by_token, {})
         self.assertEqual(voc_selected_org_suffix_users(u'--NOVALUE--', []).by_token, {})
         self.assertEqual(voc_selected_org_suffix_users(self.uid, []).by_token, {})
+        test_user = api.user.get(username=TEST_USER_NAME)
+        test_user.setMemberProperties({'fullname': 'Test User'})
+        self.assertEqual(test_user.getProperty('fullname'), 'Test User')
         self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'])], [TEST_USER_NAME])
-        api.user.create(username='user1', email='t@t.be')
+        api.user.create(username='user1', email='t@t.be', properties={'fullname': 'User A'})
+        api.user.create(username='user2', email='t@t.be', properties={'fullname': 'User B'})
         api.group.add_user(groupname='%s_director' % self.uid, username='user1')
+        api.group.add_user(groupname='%s_director' % self.uid, username='user2')
         self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'])],
-                             [TEST_USER_NAME, 'user1'])
+                             [TEST_USER_NAME, 'user1', 'user2'])
         self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'],
-                                                                             first_member=api.user.get(username='user1'))],
-                             ['user1', TEST_USER_NAME])
+                             first_member=api.user.get(username='user1'))],
+                             ['user1', TEST_USER_NAME, 'user2'])
+        # well ordered by fullname
+        test_user.setMemberProperties({'fullname': 'User Test'})
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'])],
+                             ['user1', 'user2', TEST_USER_NAME])
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'],
+                             first_member=api.user.get(username='user1'))],
+                             ['user1', 'user2', TEST_USER_NAME])

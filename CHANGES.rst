@@ -5,6 +5,8 @@ Changelog
 1.9 (unreleased)
 ----------------
 
+- Sort user vocabulary by fullname
+  [sgeulette]
 - Added cache on travis.
   [sgeulette]
 
