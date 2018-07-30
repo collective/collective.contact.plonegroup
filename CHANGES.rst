@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-1.9 (unreleased)
-----------------
+1.8.1 (2018-07-30)
+------------------
 
 - Sort user vocabulary by fullname
   [sgeulette]
