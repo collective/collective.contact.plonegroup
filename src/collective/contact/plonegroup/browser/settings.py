@@ -1,33 +1,41 @@
 # -*- coding: utf-8 -*-
 
-from zope import schema
-from zope.component.hooks import getSite
-from zope.component import getUtility, getMultiAdapter
-from zope.container.interfaces import IContainerModifiedEvent, IObjectRemovedEvent
-from zope.interface import Interface, Invalid, invariant, implements
-from zope.schema.interfaces import IVocabularyFactory
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-from zExceptions import Redirect
-from z3c.form import form
+from collective.contact.plonegroup import _
+from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.elephantvocabulary import wrap_vocabulary
+from collective.z3cform.datagridfield import DataGridFieldFactory
+from collective.z3cform.datagridfield.registry import DictRow
 from five import grok
+from imio.helpers.cache import get_cachekey_volatile
+from imio.helpers.cache import invalidate_cachekey_volatile_for
 from plone import api
-from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
+from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.app.uuid.utils import uuidToObject
 from plone.autoform.directives import widget
 from plone.memoize import ram
 from plone.memoize.interfaces import ICacheChooser
-from plone.registry.interfaces import IRecordModifiedEvent, IRegistry
+from plone.registry.interfaces import IRecordModifiedEvent
+from plone.registry.interfaces import IRegistry
 from plone.z3cform import layout
-
-from collective.elephantvocabulary import wrap_vocabulary
-from collective.z3cform.datagridfield import DataGridFieldFactory
-from collective.z3cform.datagridfield.registry import DictRow
-from imio.helpers.cache import get_cachekey_volatile, invalidate_cachekey_volatile_for
 from Products.statusmessages.interfaces import IStatusMessage
-
-from .. import _
-from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
+from z3c.form import form
+from zExceptions import Redirect
+from zope import schema
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.component.hooks import getSite
+from zope.container.interfaces import IContainerModifiedEvent
+from zope.container.interfaces import IObjectRemovedEvent
+from zope.interface import implements
+from zope.interface import Interface
+from zope.interface import Invalid
+from zope.interface import invariant
+from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 class IOrganizationSchema(Interface):

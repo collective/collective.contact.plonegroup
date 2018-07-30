@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 """ utils.py tests for this package."""
 
-from zope.component import getUtility
+from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.testing import IntegrationTestCase
+from collective.contact.plonegroup.utils import get_selected_org_suffix_users
+from collective.contact.plonegroup.utils import organizations_with_suffixes
+from collective.contact.plonegroup.utils import voc_selected_org_suffix_users
 from plone import api
-from plone.app.testing import TEST_USER_ID, TEST_USER_NAME
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
 from plone.registry.interfaces import IRegistry
-
-from ..testing import IntegrationTestCase
-from ..utils import organizations_with_suffixes, get_selected_org_suffix_users, voc_selected_org_suffix_users
-from ..config import PLONEGROUP_ORG, FUNCTIONS_REGISTRY, ORGANIZATIONS_REGISTRY
+from zope.component import getUtility
 
 
 class TestUtils(IntegrationTestCase):

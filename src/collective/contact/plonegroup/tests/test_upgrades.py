@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """Setup/installation tests for this package."""
 
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.interfaces import INotPloneGroupContact
+from collective.contact.plonegroup.interfaces import IPloneGroupContact
+from collective.contact.plonegroup.testing import IntegrationTestCase
+from collective.contact.plonegroup.upgrades.upgrades import v2
 from zope.interface import noLongerProvides
-from ..config import PLONEGROUP_ORG
-from ..interfaces import IPloneGroupContact, INotPloneGroupContact
-from ..testing import IntegrationTestCase
-from ..upgrades.upgrades import v2
 
 
 class TestUpgrades(IntegrationTestCase):

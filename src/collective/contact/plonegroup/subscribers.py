@@ -1,25 +1,33 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_get
+from collective.contact.plonegroup import _
+from config import FUNCTIONS_REGISTRY
+from config import ORGANIZATIONS_REGISTRY
+from config import PLONEGROUP_ORG
+from interfaces import INotPloneGroupContact
+from interfaces import IPloneGroupContact
+from plone import api
+from plone.app.linkintegrity.handlers import referencedObjectRemoved as baseReferencedObjectRemoved
+from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
+from plone.behavior.interfaces import IBehavior
+from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.utils import base_hasattr
+from Products.CMFPlone.utils import safe_unicode
+from Products.statusmessages.interfaces import IStatusMessage
 from zExceptions import Redirect
-from zope.component import getUtility, getMultiAdapter
-from zope.interface import alsoProvides, Interface, noLongerProvides
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.interface import alsoProvides
+from zope.interface import Interface
+from zope.interface import noLongerProvides
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 from zope.schema import getFieldsInOrder
-from zope.schema.interfaces import ICollection, IText, IChoice
+from zope.schema.interfaces import IChoice
+from zope.schema.interfaces import ICollection
+from zope.schema.interfaces import IText
 
-from plone import api
-from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.handlers import referencedObjectRemoved as baseReferencedObjectRemoved
-from plone.behavior.interfaces import IBehavior
-from plone.dexterity.interfaces import IDexterityContent, IDexterityFTI
-from plone.registry.interfaces import IRegistry
-
-from Products.CMFPlone.utils import base_hasattr, safe_unicode
-from Products.statusmessages.interfaces import IStatusMessage
-
-from . import _
-from config import PLONEGROUP_ORG, ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
-from interfaces import IPloneGroupContact, INotPloneGroupContact
 
 try:
     from plone.app.referenceablebehavior.referenceable import IReferenceable

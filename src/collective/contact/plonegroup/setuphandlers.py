@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from zope.component import getUtility
+from config import FUNCTIONS_REGISTRY
+from config import ORGANIZATIONS_REGISTRY
 from plone.registry.interfaces import IRegistry
-from config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY
+from zope.component import getUtility
 
 
 def postInstall(context):

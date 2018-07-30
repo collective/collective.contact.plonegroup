@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 """Setup/installation tests for this package."""
 
-from zope.component import getUtility
-from zExceptions import Redirect
-
-from plone import api
-from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
-from plone.registry.interfaces import IRegistry
-
-from Products.statusmessages.interfaces import IStatusMessage
-
+from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.interfaces import INotPloneGroupContact
+from collective.contact.plonegroup.interfaces import IPloneGroupContact
+from collective.contact.plonegroup.subscribers import group_deleted
 from collective.contact.plonegroup.testing import IntegrationTestCase
-
-from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
-from ..interfaces import IPloneGroupContact, INotPloneGroupContact
-from ..subscribers import group_deleted
+from plone import api
+from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
+from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
+from plone.registry.interfaces import IRegistry
+from Products.statusmessages.interfaces import IStatusMessage
+from zExceptions import Redirect
+from zope.component import getUtility
 
 
 class TestSubscribers(IntegrationTestCase):

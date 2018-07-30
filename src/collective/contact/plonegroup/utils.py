@@ -2,8 +2,9 @@
 
 from operator import attrgetter
 from operator import methodcaller
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from plone import api
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 def organizations_with_suffixes(groups, suffixes):

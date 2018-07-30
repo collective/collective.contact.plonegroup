@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-import logging
-from zope.interface import alsoProvides
+from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.interfaces import INotPloneGroupContact
+from collective.contact.plonegroup.interfaces import IPloneGroupContact
 from plone import api
 from plone.app.uuid.utils import uuidToObject
+from zope.interface import alsoProvides
 
-from ..config import FUNCTIONS_REGISTRY, PLONEGROUP_ORG
-from ..interfaces import IPloneGroupContact, INotPloneGroupContact
+import logging
+
 
 logger = logging.getLogger('collective.contact.plonegroup: upgrade. ')
 

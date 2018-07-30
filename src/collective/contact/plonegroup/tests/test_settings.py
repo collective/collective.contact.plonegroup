@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 """Setup/installation tests for this package."""
 
+from collective.contact.plonegroup.browser import settings
+from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.testing import IntegrationTestCase
+from plone import api
+from plone.registry.interfaces import IRegistry
+from zExceptions import Redirect
 from zope import event
 from zope.component import getUtility
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
-from zExceptions import Redirect
-from plone import api
-from plone.registry.interfaces import IRegistry
-from collective.contact.plonegroup.testing import IntegrationTestCase
-from ..config import ORGANIZATIONS_REGISTRY, FUNCTIONS_REGISTRY, PLONEGROUP_ORG
-from collective.contact.plonegroup.browser import settings
 
 
 class TestSettings(IntegrationTestCase):

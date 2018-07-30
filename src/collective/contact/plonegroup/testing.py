@@ -12,9 +12,8 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.testing import z2
 
-import unittest2 as unittest
-
 import collective.contact.plonegroup
+import unittest2 as unittest
 
 
 class CollectiveContactPlonegroupLayer(PloneSandboxLayer):
