@@ -5,8 +5,8 @@ Changelog
 1.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
-
+- Added utils.get_plone_group_id to get Plone group id for given organization and suffix.
+  [gbastien]
 
 1.8.1 (2018-07-30)
 ------------------

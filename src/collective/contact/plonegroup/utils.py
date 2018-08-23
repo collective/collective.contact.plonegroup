@@ -22,6 +22,13 @@ def organizations_with_suffixes(groups, suffixes):
     return orgs
 
 
+def get_plone_group_id(org, suffix):
+    """
+        Return Plone group id corresponding to org_uid/suffix.
+    """
+    return '{0}_{1}'.format(org.UID(), suffix)
+
+
 def get_selected_org_suffix_users(org_uid, suffixes):
     """
         Get users that belongs to suffixed groups related to selected organization.
