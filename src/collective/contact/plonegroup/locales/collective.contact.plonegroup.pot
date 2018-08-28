@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-08-28 13:10+0000\n"
+"POT-Creation-Date: 2018-08-28 14:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.contact.plonegroup\n"
 
-#: ../browser/tables.py:113
+#: ../browser/tables.py:126
 msgid "Actions"
 msgstr ""
 
@@ -57,7 +57,7 @@ msgstr ""
 msgid "Plone group suffix title"
 msgstr ""
 
-#: ../browser/tables.py:97
+#: ../browser/tables.py:110
 msgid "Selected in plonegroup"
 msgstr ""
 
@@ -119,4 +119,9 @@ msgstr ""
 
 #: ../testing.zcml:16
 msgid "collective.contact.plonegroup tests"
+msgstr ""
+
+#. Default: "For convenience, organizations are listed alphabetically. Order is defined in the ${plonegroup_config_url}."
+#: ../browser/templates/suborganizations.pt:5
+msgid "help_organizations_sorted_alphabetically"
 msgstr ""

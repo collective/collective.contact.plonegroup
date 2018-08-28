@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
-from collective.contact.plonegroup.interfaces import IPloneGroupContact
 from collective.contact.plonegroup import _
+from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.interfaces import IPloneGroupContact
+from collective.eeafaceted.z3ctable.browser.views import ExtendedCSSTable
 from collective.eeafaceted.z3ctable.columns import ActionsColumn
 from collective.eeafaceted.z3ctable.columns import BooleanColumn
+from collective.eeafaceted.z3ctable.columns import PrettyLinkWithAdditionalInfosColumn
 from plone import api
 from Products.Five import BrowserView
-from z3c.table.table import Table
 from zope.cachedescriptors.property import CachedProperty
 
 
-class SubOrganizationsTable(Table):
+class SubOrganizationsTable(ExtendedCSSTable):
     """Table that displays templates info."""
 
     cssClassEven = u'even'
@@ -88,6 +90,17 @@ class SubOrganizationsTableView(BrowserView):
             self.local_search = 'local_search' in self.request or self.local_search
         self.update()
         return self.index()
+
+
+class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColumn):
+    """ """
+
+    def contentValue(self, item):
+        """ """
+        # find first_index relative to PLONEGROUP_ORG organization
+        path = self.context.getPhysicalPath()
+        first_index = len(path) - path.index(PLONEGROUP_ORG)
+        return item.get_full_title(first_index=first_index)
 
 
 class SelectedInPlonegroupColumn(BooleanColumn):

@@ -19,4 +19,14 @@
       handler=".upgrades.v3"
       profile="collective.contact.plonegroup:default" />
 
+  <genericsetup:upgradeSteps
+      source="3"
+      destination="4"
+      profile="collective.contact.plonegroup:default">
+      <genericsetup:upgradeDepends
+          title="Migration profile for collective.contact.plonegroup to 4"
+          description="Register new plonegroup.css in portal_css"
+          import_steps="cssregistry" />
+  </genericsetup:upgradeSteps>
+
 </configure>

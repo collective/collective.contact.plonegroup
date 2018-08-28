@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-08-28 13:10+0000\n"
+"POT-Creation-Date: 2018-08-28 14:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Domain: collective.contact.plonegroup\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-#: ../browser/tables.py:113
+#: ../browser/tables.py:126
 msgid "Actions"
 msgstr "Actions"
 
@@ -55,7 +55,7 @@ msgstr "Id du suffixe"
 msgid "Plone group suffix title"
 msgstr "Titre du suffixe"
 
-#: ../browser/tables.py:97
+#: ../browser/tables.py:110
 msgid "Selected in plonegroup"
 msgstr "Sélectionné dans \"Configuration des groupes plone via contact\""
 
@@ -118,3 +118,8 @@ msgstr "collective.contact.plonegroup"
 #: ../testing.zcml:16
 msgid "collective.contact.plonegroup tests"
 msgstr "collective.contact.plonegroup tests"
+
+#. Default: "For convenience, organizations are listed alphabetically. Order is defined in the ${plonegroup_config_url}."
+#: ../browser/templates/suborganizations.pt:5
+msgid "help_organizations_sorted_alphabetically"
+msgstr "Par facilité, les organisations sont listées ici par ordre alphabétique.  L'ordre est défini dans la ${plonegroup_config_url}."

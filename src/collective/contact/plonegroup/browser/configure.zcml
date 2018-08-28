@@ -36,7 +36,7 @@
              zope.publisher.interfaces.browser.IBrowserRequest
              .tables.SubOrganizationsTable"
         provides="z3c.table.interfaces.IColumn"
-        factory="collective.eeafaceted.z3ctable.columns.PrettyLinkWithAdditionalInfosColumn" />
+        factory=".tables.OrgaPrettyLinkWithAdditionalInfosColumn" />
 
     <adapter
         name="SelectedInPlonegroupColumn"
