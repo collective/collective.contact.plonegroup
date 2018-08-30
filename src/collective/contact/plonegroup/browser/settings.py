@@ -412,6 +412,7 @@ class SelectedOrganizationsElephantVocabulary(object):
                 del terms[uid]
         extra_uids = terms.keys()
         extra_terms = terms.values()
-        ordered_vocab = SearchableSimpleVocabulary(ordered_terms + extra_terms)
+        # ordered_vocab = SearchableSimpleVocabulary(ordered_terms + extra_terms)  # bug in widget, trac #15186
+        ordered_vocab = SimpleVocabulary(ordered_terms + extra_terms)
         wrapped_vocab = wrap_vocabulary(ordered_vocab, hidden_terms=extra_uids)(context)
         return wrapped_vocab
