@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
@@ -383,6 +384,17 @@ def selectedOrganizationsVocabulary():
     return SimpleVocabulary(terms)
 
 
+class SearchableSimpleVocabulary(SimpleVocabulary):
+
+    def search(self, query, limit=50):
+        # transform query in a regexp
+        regexp = u' '.join([u'{}.*'.format(p) for p in query.split(' ')])
+        regexp = re.compile(regexp, re.I)
+        return [
+            term for term in self._terms if re.search(regexp, term.title)
+        ]
+
+
 class SelectedOrganizationsElephantVocabulary(object):
     """ Vocabulary of selected plonegroup-organizations services. """
     implements(IVocabularyFactory)
@@ -400,6 +412,6 @@ class SelectedOrganizationsElephantVocabulary(object):
                 del terms[uid]
         extra_uids = terms.keys()
         extra_terms = terms.values()
-        ordered_vocab = SimpleVocabulary(ordered_terms + extra_terms)
+        ordered_vocab = SearchableSimpleVocabulary(ordered_terms + extra_terms)
         wrapped_vocab = wrap_vocabulary(ordered_vocab, hidden_terms=extra_uids)(context)
         return wrapped_vocab
