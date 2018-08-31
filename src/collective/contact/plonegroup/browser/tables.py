@@ -64,7 +64,7 @@ class SubOrganizationsTableView(BrowserView):
         brains = catalog.searchResults(**self.query_dict())
 
         def keys(brain):
-            """ Goal: order by level of folder, parent folder, position in folder,"""
+            """Order by get_full_title that displays organizations and sub organizations."""
             obj = brain.getObject()
             return obj.get_full_title()
 
@@ -73,21 +73,8 @@ class SubOrganizationsTableView(BrowserView):
         self.table.results = [brain for brain in sorted(brains, key=keys) if brain.UID != self.context.UID()]
         self.table.update()
 
-    def __call__(self, local_search=None, search_depth=None):
-        """
-            search_depth = int value (0)
-            local_search = bool value
-        """
-        if search_depth is not None:
-            self.depth = search_depth
-        else:
-            sd = self.request.get('search_depth', '')
-            if sd:
-                self.depth = int(sd)
-        if local_search is not None:
-            self.local_search = local_search
-        else:
-            self.local_search = 'local_search' in self.request or self.local_search
+    def __call__(self):
+        """ """
         self.update()
         return self.index()
 
@@ -96,7 +83,7 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
     """ """
 
     def contentValue(self, item):
-        """ """
+        """Display get_full_title instead title."""
         # find first_index relative to PLONEGROUP_ORG organization
         path = self.context.getPhysicalPath()
         first_index = len(path) - path.index(PLONEGROUP_ORG)
@@ -118,10 +105,7 @@ class SelectedInPlonegroupColumn(BooleanColumn):
 
 
 class PlonegroupActionsColumn(ActionsColumn):
-    """
-    A column displaying available actions of the listed item.
-    Need imio.actionspanel to be used !
-    """
+    """ """
 
     header = _("Actions")
     weight = 20
