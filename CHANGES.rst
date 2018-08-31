@@ -7,6 +7,9 @@ Changelog
 
 - Added utils.get_plone_group_id to get Plone group id for given organization and suffix.
   [gbastien]
+- Overrided "@@suborganizations" view to display the entire hierarchy of contained
+  organizations and sub-organizations and more informations in a table.
+  [gbastien]
 
 1.8.1 (2018-07-30)
 ------------------

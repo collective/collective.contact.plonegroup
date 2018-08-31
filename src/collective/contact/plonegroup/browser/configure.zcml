@@ -9,19 +9,49 @@
     <!-- Publish static files -->
     <browser:resourceDirectory
         name="collective.contact.plonegroup"
-        directory="static"
-        />
+        directory="static" />
 
     <browser:page
         name="contact-plonegroup-settings"
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
         permission="plone.app.controlpanel.Site"
-        class=".settings.SettingsView"
-        />
+        class=".settings.SettingsView" />
 
     <utility
         name="collective.contact.plonegroup.selected_organization_services"
-        factory=".settings.SelectedOrganizationsElephantVocabulary"
-        />
+        factory=".settings.SelectedOrganizationsElephantVocabulary" />
+
+    <!-- z3c.table -->
+    <browser:page
+        for="collective.contact.plonegroup.interfaces.IPloneGroupContact"
+        name="suborganizations"
+        class=".tables.SubOrganizationsTableView"
+        permission="zope2.View"
+        template="templates/suborganizations.pt"
+        layer="collective.contact.plonegroup.interfaces.ICollectiveContactPlonegroupLayer" />
+
+    <adapter
+        name="Title"
+        for="zope.interface.Interface
+             zope.publisher.interfaces.browser.IBrowserRequest
+             .tables.SubOrganizationsTable"
+        provides="z3c.table.interfaces.IColumn"
+        factory=".tables.OrgaPrettyLinkWithAdditionalInfosColumn" />
+
+    <adapter
+        name="SelectedInPlonegroupColumn"
+        for="zope.interface.Interface
+             zope.interface.Interface
+             .tables.SubOrganizationsTable"
+        provides="z3c.table.interfaces.IColumn"
+        factory=".tables.SelectedInPlonegroupColumn" />
+
+    <adapter
+        name="ActionsColumn"
+        for="zope.interface.Interface
+             zope.interface.Interface
+             .tables.SubOrganizationsTable"
+        provides="z3c.table.interfaces.IColumn"
+        factory=".tables.PlonegroupActionsColumn" />
 
 </configure>

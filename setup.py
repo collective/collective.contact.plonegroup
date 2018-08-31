@@ -46,6 +46,7 @@ setup(
         'plone.api',
         'setuptools',
         'collective.contact.core',
+        'collective.eeafaceted.z3ctable',
         'collective.elephantvocabulary',
         'imio.helpers > 0.4.13'
     ],
