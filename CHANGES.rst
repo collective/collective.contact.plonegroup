@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.9 (unreleased)
+1.9 (2018-09-04)
 ----------------
 
 - Added utils.get_plone_group_id to get Plone group id for given organization and suffix.
