@@ -73,6 +73,11 @@ class SubOrganizationsTableView(BrowserView):
         self.table.results = [brain for brain in sorted(brains, key=keys) if brain.UID != self.context.UID()]
         self.table.update()
 
+    def render_original_suborgs(self):
+        """Render suborganizations like it is originally made in collective.contact.core."""
+        original_suborgs_view = self.context.restrictedTraverse('@@original-suborganizations')
+        return original_suborgs_view()
+
     def __call__(self):
         """ """
         self.update()

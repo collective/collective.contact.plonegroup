@@ -10,6 +10,10 @@ Changelog
 - Overrided "@@suborganizations" view to display the entire hierarchy of contained
   organizations and sub-organizations and more informations in a table.
   [gbastien]
+- When the plonegroup-organization is displayed in a tooltip, use original way
+  to display sub organizations because the new rendering using the table takes
+  too much place in the tooltip.
+  [gbastien]
 
 1.8.1 (2018-07-30)
 ------------------

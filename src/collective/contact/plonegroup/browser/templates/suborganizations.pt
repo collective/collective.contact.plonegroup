@@ -1,12 +1,19 @@
-<div i18n:domain="collective.contact.plonegroup" tal:define="results view/table/results">
+<div i18n:domain="collective.contact.plonegroup"
+     tal:define="results view/table/results;
+                 ajax_load request/ajax_load|nothing;">
+    <tal:ajax_load condition="ajax_load">
+        <tal:original_rendering replace="structure view/render_original_suborgs" />
+    </tal:ajax_load>
 
-    <h4 i18n:domain="collective.contact.core"><span i18n:translate="">Organizations in this organization</span>:</h4>
-    <p class="discreet" i18n:translate="help_organizations_sorted_alphabetically">For convenience, organizations are listed alphabetically.
-        Order is defined in the <a i18n:name="plonegroup_config_url" tal:attributes="href string:${view/table/portal_url}/@@contact-plonegroup-settings" i18n:domain="plone" i18n:translate="">Contact Plone Group settings</a>.</p>
-    <tal:block tal:condition="results">
-      <div id="dg-batch"><tal:batch replace="structure view/table/renderBatch" /></div>
-        <tal:listing replace="structure view/table/render" />
-      <div id="dg-batch"><tal:batch replace="structure view/table/renderBatch" /></div>
-    </tal:block>
+    <tal:not_ajax_load condition="not:ajax_load">
+        <h4 i18n:domain="collective.contact.core"><span i18n:translate="">Organizations in this organization</span>:</h4>
+        <p class="discreet" i18n:translate="help_organizations_sorted_alphabetically">For convenience, organizations are listed alphabetically.
+            Order is defined in the <a i18n:name="plonegroup_config_url" tal:attributes="href string:${view/table/portal_url}/@@contact-plonegroup-settings" i18n:domain="plone" i18n:translate="">Contact Plone Group settings</a>.</p>
+        <tal:block tal:condition="results">
+          <div id="dg-batch"><tal:batch replace="structure view/table/renderBatch" /></div>
+            <tal:listing replace="structure view/table/render" />
+          <div id="dg-batch"><tal:batch replace="structure view/table/renderBatch" /></div>
+        </tal:block>
+    </tal:not_ajax_load>
 
 </div>
