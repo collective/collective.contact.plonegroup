@@ -1,16 +1,18 @@
-  include .coveragerc
-  include *.py
-  include *.rst
-  include .travis.yml
-  recursive-include docs *.GPL
-  recursive-include src *.js
-  recursive-include docs *.rst
-  recursive-include src *.gitignore
-  recursive-include src *.gitkeep
-  recursive-include src *.po
-  recursive-include src *.pot
-  recursive-include src *.sh
-  recursive-include src *.txt
-  recursive-include src *.xml
-  recursive-include src *.zcml
-  exclude *.cfg
+include .coveragerc
+include *.py
+include *.rst
+include .travis.yml
+recursive-include docs *.GPL
+recursive-include src *.js
+recursive-include docs *.rst
+recursive-include src *.css
+recursive-include src *.gitignore
+recursive-include src *.gitkeep
+recursive-include src *.po
+recursive-include src *.pot
+recursive-include src *.pt
+recursive-include src *.sh
+recursive-include src *.txt
+recursive-include src *.xml
+recursive-include src *.zcml
+exclude *.cfg
