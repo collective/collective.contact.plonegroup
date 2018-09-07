@@ -18,6 +18,10 @@
         class=".settings.SettingsView" />
 
     <utility
+        name="collective.contact.plonegroup.organization_services"
+        factory=".settings.OwnOrganizationServicesVocabulary" />
+
+    <utility
         name="collective.contact.plonegroup.selected_organization_services"
         factory=".settings.SelectedOrganizationsElephantVocabulary" />
 

@@ -5,10 +5,10 @@ from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.elephantvocabulary import wrap_vocabulary
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
-from five import grok
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
 from plone import api
@@ -59,13 +59,11 @@ def voc_cache_key(method, self, context):
     return get_cachekey_volatile("%s.%s" % (self.__class__.__module__, self.__class__.__name__))
 
 
-class OwnOrganizationServicesVocabulary(grok.GlobalUtility):
+class OwnOrganizationServicesVocabulary(object):
     """
         Vocabulary of all plonegroup-organizations services.
     """
-    grok.name('collective.contact.plonegroup.organization_services')
-    grok.implements(IVocabularyFactory)
-
+    implements(IVocabularyFactory)
     valid_states = ('active',)
 
     def listSubOrganizations(self, terms, folder, parent_label=''):
@@ -265,15 +263,24 @@ def addOrModifyOrganizationGroups(organization, uid):
     return changes
 
 
-def getOwnOrganizationPath():
+def getOwnOrganization():
     """
-        get plonegroup-organization path
+        get plonegroup-organization object
     """
     portal = getSite()
     pcat = portal.portal_catalog
     brains = pcat(portal_type='organization', id=PLONEGROUP_ORG)
     if brains:
-        return '/'.join(brains[0].getObject().getPhysicalPath())
+        return brains[0].getObject()
+
+
+def getOwnOrganizationPath():
+    """
+        get plonegroup-organization path
+    """
+    own_orga = getOwnOrganization()
+    if own_orga:
+        return '/'.join(own_orga.getPhysicalPath())
     return 'unfound'
 
 
@@ -334,8 +341,7 @@ def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     registry = getUtility(IRegistry)
     terms = []
     # if no function given, use all functions
-    if not functions:
-        functions = [fct_dic['fct_id'] for fct_dic in registry[FUNCTIONS_REGISTRY]]
+    functions = functions or get_all_suffixes()
     for uid in registry[ORGANIZATIONS_REGISTRY]:
         for fct_id in functions:
             group_id = "%s_%s" % (uid, fct_id)
