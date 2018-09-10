@@ -6,11 +6,15 @@ from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.testing import IntegrationTestCase
+from collective.contact.plonegroup.utils import get_plone_group_id
 from plone import api
+from plone.app.testing import TEST_USER_ID
 from plone.registry.interfaces import IRegistry
+from z3c.form import validator
 from zExceptions import Redirect
 from zope import event
 from zope.component import getUtility
+from zope.interface import Invalid
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -39,9 +43,11 @@ class TestSettings(IntegrationTestCase):
                                           own_orga['department2'].UID()]
         self.registry['collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.'
                       'functions'] = [{'fct_title': u'Director',
-                                       'fct_id': u'director'},
+                                       'fct_id': u'director',
+                                       'fct_orgs': []},
                                       {'fct_title': u'Worker',
-                                       'fct_id': u'worker'}]
+                                       'fct_id': u'worker',
+                                       'fct_orgs': []}]
 
     def test_OwnOrganizationServicesVocabulary(self):
         """ Test vocabulary """
@@ -103,6 +109,43 @@ class TestSettings(IntegrationTestCase):
             self.assertIn('%s_director' % uid, group_ids)
             self.assertIn('%s_chief' % uid, group_ids)
             self.assertIn('%s_worker' % uid, group_ids)
+
+    def test_removeFunctionDeletedEveryLinkedPloneGroups(self):
+        """When a function is deleted, every linked Plone groups are deleted as well.
+           This is protected by validateSettings that checks first that every Plone groups are empty."""
+        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
+        dep1 = own_orga['department1']
+        plone_group_id = get_plone_group_id(dep1.UID(), 'director')
+        self.assertTrue(api.group.get(plone_group_id))
+        functions = list(self.registry[FUNCTIONS_REGISTRY])
+        # remove 'director'
+        functions.pop(0)
+        api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
+        # the linked Plone groups are deleted
+        self.assertFalse(api.group.get(plone_group_id))
+
+    def test_validateSettingsRemoveFunction(self):
+        """A function may only be removed if every linked Plone groups are empty."""
+        # add a user to group department1 director
+        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
+        dep1 = own_orga['department1']
+        plone_group_id = get_plone_group_id(dep1.UID(), 'director')
+        api.group.add_user(groupname=plone_group_id, username=TEST_USER_ID)
+        invariants = validator.InvariantsValidator(
+            None, None, None, settings.IContactPlonegroupConfig, None)
+        orgs = list(self.registry[ORGANIZATIONS_REGISTRY])
+        functions = list(self.registry[FUNCTIONS_REGISTRY])
+        data = {'organizations': orgs, 'functions': functions}
+        # for now it validates correctly
+        self.assertFalse(invariants.validate(data))
+        # remove 'director'
+        functions.pop(0)
+        errors = invariants.validate(data)
+        self.assertTrue(isinstance(errors[0], Invalid))
+        self.assertTrue(plone_group_id in errors[0].message)
+        # remove user from plone group, now it validates
+        api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
+        self.assertFalse(invariants.validate(data))
 
     def test_getOwnOrganizationPath(self):
         """ Test the returned organization path """

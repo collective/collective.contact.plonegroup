@@ -52,3 +52,18 @@ def v3(context):
         if group.getProperty('title') != group_title or sg._groups[group.id]['title'] != group_title:
             logger.info("Correcting group %s" % group.id)
             pg.editGroup(group.id, title=group_title)
+
+
+def v5(context):
+    logger.info("Migrate to v5")
+    functions = api.portal.get_registry_record(name=FUNCTIONS_REGISTRY)
+    res = []
+    for function in functions:
+        if 'fct_orgs' not in function:
+            copied_function = function.copy()
+            copied_function['fct_orgs'] = []
+            res.append(copied_function)
+        else:
+            # already migrated
+            return
+    api.portal.set_registry_record(FUNCTIONS_REGISTRY, res)

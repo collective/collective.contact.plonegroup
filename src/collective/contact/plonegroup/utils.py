@@ -27,14 +27,10 @@ def organizations_with_suffixes(groups, suffixes):
     return orgs
 
 
-def get_plone_group_id(org_or_org_uid, suffix):
+def get_plone_group_id(org_uid, suffix):
     """
         Return Plone group id corresponding to org_uid/suffix.
     """
-    if isinstance(org_or_org_uid, str):
-        org_uid = org_or_org_uid
-    else:
-        org_uid = org_or_org_uid.UID()
     return '{0}_{1}'.format(org_uid, suffix)
 
 
@@ -78,12 +74,13 @@ def get_organizations(only_selected=True, the_objects=True, not_empty_suffix=Non
     return orgs
 
 
-def get_all_suffixes():
+def get_all_suffixes(org_uid=None):
     """
         Get every suffixes defined in the configuration.
     """
     functions = api.portal.get_registry_record(FUNCTIONS_REGISTRY)
-    return [function['fct_id'] for function in functions]
+    return [function['fct_id'] for function in functions
+            if not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs']]
 
 
 def get_selected_org_suffix_users(org_uid, suffixes):

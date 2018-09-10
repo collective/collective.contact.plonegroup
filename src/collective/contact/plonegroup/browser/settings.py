@@ -6,6 +6,8 @@ from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.utils import get_all_suffixes
+from collective.contact.plonegroup.utils import get_organizations
+from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.elephantvocabulary import wrap_vocabulary
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
@@ -51,8 +53,20 @@ class IFunctionSchema(Interface):
     """
         Function identification schema
     """
-    fct_id = schema.TextLine(title=_("Plone group suffix id"), required=True)
-    fct_title = schema.TextLine(title=_("Plone group suffix title"), required=True)
+    fct_id = schema.TextLine(
+        title=_("Plone group suffix id"),
+        description=_("Plone group suffix description"),
+        required=True)
+    fct_title = schema.TextLine(
+        title=_("Plone group suffix title"),
+        description=_("Plone group title description"),
+        required=True)
+    fct_orgs = schema.List(
+        title=_("Plone group suffix organizations"),
+        description=_("Plone group organizations description"),
+        value_type=schema.Choice(
+            vocabulary='collective.contact.plonegroup.selected_organization_services'),
+        required=True)
 
 
 def voc_cache_key(method, self, context):
@@ -135,6 +149,23 @@ class IContactPlonegroupConfig(Interface):
             raise Invalid(_(u"You must correct the organization error first !"))
         if not data.functions:
             raise Invalid(_(u"You must define at least one function !"))
+
+        # only able to delete a function (suffix) if every linked Plone groups are empty
+        stored_functions = get_all_suffixes()
+        saved_functions = [func['fct_id'] for func in data.functions]
+        removed_functions = list(set(stored_functions) - set(saved_functions))
+        if removed_functions:
+            for removed_function in removed_functions:
+                # check that every organizations including not selected
+                # linked suffixed Plone group is empty
+                for org_uid in get_organizations(only_selected=False, the_objects=False):
+                    plone_group_id = get_plone_group_id(org_uid, removed_function)
+                    plone_group = api.group.get(plone_group_id)
+                    if plone_group and plone_group.getMemberIds():
+                        raise Invalid(
+                            _(u"You can not remove function \"{0}\" as there are still Plone "
+                              u"groups using this suffix that contains users "
+                              u"(check for example \"{1}\") !".format(removed_function, plone_group_id)))
 
 
 def addOrModifyGroup(group_name, organization_title, function_title):
@@ -230,8 +261,15 @@ def detectContactPlonegroupChange(event):
                     group_name = "%s_%s" % (uid, new_id)
                     if addOrModifyGroup(group_name, full_title, new_title):
                         changes = True
-            # we detect a removed function. We dont do anything on exsiting groups
+            # we detect a removed function.
+            # We may remove Plone groups as we checked before that every are empty
             if old_set.difference(new_set):
+                for fct_id, fct_title in old_set.difference(new_set):
+                    for orga_uid in get_organizations(only_selected=False, the_objects=False):
+                        plone_group_id = get_plone_group_id(orga_uid, fct_id)
+                        plone_group = api.group.get(plone_group_id)
+                        if plone_group:
+                            api.group.delete(plone_group_id)
                 changes = True
         if changes:
             invalidate_sopgv_cache()

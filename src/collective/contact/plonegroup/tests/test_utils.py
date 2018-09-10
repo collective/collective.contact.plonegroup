@@ -5,6 +5,10 @@ from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.testing import IntegrationTestCase
+from collective.contact.plonegroup.utils import get_all_suffixes
+from collective.contact.plonegroup.utils import get_organization
+from collective.contact.plonegroup.utils import get_organizations
+from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_selected_org_suffix_users
 from collective.contact.plonegroup.utils import organizations_with_suffixes
 from collective.contact.plonegroup.utils import voc_selected_org_suffix_users
@@ -23,12 +27,18 @@ class TestUtils(IntegrationTestCase):
         # Organizations creation
         self.portal.invokeFactory('directory', 'contacts')
         self.portal['contacts'].invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
-        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
-        own_orga.invokeFactory('organization', 'department1', title='Department 1')
-        self.uid = own_orga['department1'].UID()
+        self.own_orga = self.portal['contacts'][PLONEGROUP_ORG]
+        self.dep1 = api.content.create(
+            container=self.own_orga, type='organization', id='department1', title='Department 1')
+        self.uid = self.dep1.UID()
+        self.dep2 = api.content.create(
+            container=self.own_orga, type='organization', id='department2', title='Department 2')
         self.registry = getUtility(IRegistry)
         self.registry[ORGANIZATIONS_REGISTRY] = [self.uid]
-        self.registry[FUNCTIONS_REGISTRY] = [{'fct_title': u'Director', 'fct_id': u'director'}]
+        self.registry[FUNCTIONS_REGISTRY] = [
+            {'fct_title': u'Observers', 'fct_id': u'observer', 'fct_orgs': [], },
+            {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [self.dep2.UID()], },
+        ]
         api.group.add_user(groupname='%s_director' % self.uid, username=TEST_USER_ID)
 
     def test_organizations_with_suffixes(self):
@@ -72,3 +82,27 @@ class TestUtils(IntegrationTestCase):
         self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'],
                              first_member=api.user.get(username='user1'))],
                              ['user1', 'user2', TEST_USER_NAME])
+
+    def test_get_plone_group_id(self):
+        self.assertEqual(get_plone_group_id('groupuid', 'suffix'), 'groupuid_suffix')
+
+    def test_get_organization(self):
+        suffixed_org = get_plone_group_id(self.uid, 'suffix')
+        self.assertEqual(get_organization(suffixed_org), self.dep1)
+
+    def test_get_organizations(self):
+        # only_selected
+        self.assertEqual(get_organizations(only_selected=True), [self.dep1])
+        self.assertEqual(get_organizations(only_selected=False), [self.dep1, self.dep2])
+        # the_objects
+        self.assertEqual(get_organizations(the_objects=True), [self.dep1])
+        self.assertEqual(get_organizations(the_objects=False), [self.uid])
+        # not_empty_suffix
+        self.assertEqual(get_organizations(not_empty_suffix=None), [self.dep1])
+        self.assertEqual(get_organizations(not_empty_suffix='director'), [self.dep1])
+        self.assertEqual(get_organizations(not_empty_suffix='observer'), [])
+
+    def test_get_all_suffixes(self):
+        self.assertEqual(get_all_suffixes(self.uid), ['observer'])
+        self.assertEqual(get_all_suffixes(self.dep2.UID()), ['observer', 'director'])
+        self.assertEqual(get_all_suffixes(), ['observer', 'director'])

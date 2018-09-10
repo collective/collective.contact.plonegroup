@@ -16,6 +16,8 @@ Changelog
   [gbastien]
 - Added utils.get_all_suffixes that returns every defined functions ids.
   [gbastien]
+- Added possibility to restrict suffixes to only some selected organizations.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------

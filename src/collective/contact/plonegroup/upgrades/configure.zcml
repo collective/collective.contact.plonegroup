@@ -29,4 +29,12 @@
           import_steps="cssregistry" />
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeStep
+      title="Migration profile for collective.contact.plonegroup to 5"
+      description="Upgrade from 4 to 5"
+      source="4"
+      destination="5"
+      handler=".upgrades.v5"
+      profile="collective.contact.plonegroup:default" />
+
 </configure>
