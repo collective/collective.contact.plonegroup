@@ -5,8 +5,17 @@ Changelog
 1.10 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Removed grok for OwnOrganizationServicesVocabulary.
+  [gbastien]
+- Added utils.get_organization to get an organization corresponding
+  to a given plone_group_id.
+  [gbastien]
+- Added utils.get_organizations to get every plonegroup organizations.  It is
+  possible to get every selectable or selected organizations, as objects or not
+  and for which a particular linked Plone group (suffix) is not empty.
+  [gbastien]
+- Added utils.get_all_suffixes that returns every defined functions ids.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------

@@ -5,6 +5,11 @@ from operator import methodcaller
 from plone import api
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from plone.app.uuid.utils import uuidToObject
+from zope.schema.interfaces import IVocabularyFactory
+from zope.component import getUtility
+from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 
 
 def organizations_with_suffixes(groups, suffixes):
@@ -22,11 +27,63 @@ def organizations_with_suffixes(groups, suffixes):
     return orgs
 
 
-def get_plone_group_id(org, suffix):
+def get_plone_group_id(org_or_org_uid, suffix):
     """
         Return Plone group id corresponding to org_uid/suffix.
     """
-    return '{0}_{1}'.format(org.UID(), suffix)
+    if isinstance(org_or_org_uid, str):
+        org_uid = org_or_org_uid
+    else:
+        org_uid = org_or_org_uid.UID()
+    return '{0}_{1}'.format(org_uid, suffix)
+
+
+def get_organization(plone_group_id):
+    """
+        Return organization corresponding to given Plone group id.
+    """
+    # there is no '_' in organization UID so we are sure that
+    # first part is the organization UID
+    organization_uid = plone_group_id.split('_')[0]
+    return uuidToObject(organization_uid)
+
+
+def get_organizations(only_selected=True, the_objects=True, not_empty_suffix=None):
+    """
+        Return every organizations.
+    """
+    if only_selected:
+        orgs = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
+    else:
+        # use the vocabulary to get selectable organizations so if vocabulary
+        # is overrided get_organizations is still consistent
+        vocab = getUtility(
+            IVocabularyFactory,
+            name=u'collective.contact.plonegroup.organization_services')
+        portal = api.portal.get()
+        orgs = [term.value for term in vocab(portal)._terms]
+
+    # we only keep orgs for which Plone group with not_empty_suffix suffix contains members
+    if not_empty_suffix:
+        filtered_orgs = []
+        for org_uid in orgs:
+            plone_group_id = get_plone_group_id(org_uid, suffix=not_empty_suffix)
+            plone_group = api.group.get(plone_group_id)
+            if plone_group and plone_group.getMemberIds():
+                filtered_orgs.append(org_uid)
+        orgs = filtered_orgs
+
+    if the_objects:
+        orgs = [uuidToObject(org) for org in orgs]
+    return orgs
+
+
+def get_all_suffixes():
+    """
+        Get every suffixes defined in the configuration.
+    """
+    functions = api.portal.get_registry_record(FUNCTIONS_REGISTRY)
+    return [function['fct_id'] for function in functions]
 
 
 def get_selected_org_suffix_users(org_uid, suffixes):

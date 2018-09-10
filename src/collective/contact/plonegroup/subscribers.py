@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_get
 from collective.contact.plonegroup import _
-from config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.utils import get_all_suffixes
 from config import ORGANIZATIONS_REGISTRY
 from config import PLONEGROUP_ORG
 from interfaces import INotPloneGroupContact
@@ -194,8 +194,7 @@ def group_deleted(event):
         return
     group_suffix = '_'.join(parts[1:])
     registry = getUtility(IRegistry)
-    if parts[0] in registry[ORGANIZATIONS_REGISTRY] and \
-            group_suffix in [dic['fct_id'] for dic in registry[FUNCTIONS_REGISTRY]]:
+    if parts[0] in registry[ORGANIZATIONS_REGISTRY] and group_suffix in get_all_suffixes():
         orga = api.content.find(UID=parts[0])[0].getObject()
         api.portal.show_message(message=_("You cannot delete the group '${group}', linked to used organization "
                                           "'${orga}'.", mapping={'group': group, 'orga': safe_unicode(orga.Title())}),
