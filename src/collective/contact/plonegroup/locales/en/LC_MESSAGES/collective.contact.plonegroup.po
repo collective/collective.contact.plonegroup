@@ -21,19 +21,19 @@ msgstr "Actions"
 
 #: ../browser/settings.py:130
 msgid "Choose multiple organization levels for which you want to create a plone group."
-msgstr "Choisir des niveaux d'organisation pour lesquels un groupe plone sera créé."
+msgstr "Choose multiple organization levels for which you want to create a plone group."
 
 #: ../browser/settings.py:137
 msgid "Each defined function will suffix each organization plone group."
-msgstr "Chaque fonction définie suffixera les groupes plone créés."
+msgstr "Each defined function will suffix each organization plone group."
 
 #: ../browser/settings.py:139
 msgid "Function"
-msgstr "Fonction"
+msgstr "Function"
 
 #: ../browser/settings.py:136
 msgid "Function list"
-msgstr "Liste de fonctions"
+msgstr "Function list"
 
 #: ../configure.zcml:29
 msgid "Installs the collective.contact.plonegroup add-on."
@@ -41,15 +41,15 @@ msgstr "Installs the collective.contact.plonegroup add-on."
 
 #: ../browser/settings.py:48
 msgid "Organization id"
-msgstr "Id de l'organisation"
+msgstr "Organization id"
 
 #: ../browser/settings.py:49
 msgid "Organization title"
-msgstr "Titre de l'organisation"
+msgstr "Organization title"
 
 #: ../browser/settings.py:66
 msgid "Plone group organizations description"
-msgstr "Le suffixe sera uniquement créé pour les organisations sélectionnées.  Si vous ne sélectionnez rien, le suffixe sera créé pour toutes les organisations sélectionnées dans le champ \"Organisations\" ci-dessus.  Si vous sélectionnez de nouvelles organisations, enregistrez une première fois pour qu'elles soient disponibles dans ce champ."
+msgstr "Plone group organizations description"
 
 #: ../browser/settings.py:58
 msgid "Plone group suffix description"
@@ -57,15 +57,15 @@ msgstr ""
 
 #: ../browser/settings.py:57
 msgid "Plone group suffix id"
-msgstr "Id du suffixe"
+msgstr "Plone group suffix id"
 
 #: ../browser/settings.py:65
 msgid "Plone group suffix organizations"
-msgstr "Restreindre ce suffixe aux organisations suivantes"
+msgstr "Plone group suffix organizations"
 
 #: ../browser/settings.py:61
 msgid "Plone group suffix title"
-msgstr "Titre du suffixe"
+msgstr "Plone group suffix title"
 
 #: ../browser/settings.py:62
 msgid "Plone group title description"
@@ -73,11 +73,11 @@ msgstr ""
 
 #: ../browser/tables.py:102
 msgid "Selected in plonegroup"
-msgstr "Sélectionné dans \"Configuration des groupes plone via contact\""
+msgstr "Selected in plonegroup"
 
 #: ../browser/settings.py:129
 msgid "Selected organizations"
-msgstr "Organisations"
+msgstr "Selected organizations"
 
 #: ../testing.zcml:16
 msgid "Steps to ease tests of collective.contact.plonegroup"
@@ -85,51 +85,51 @@ msgstr "Steps to ease tests of collective.contact.plonegroup"
 
 #: ../subscribers.py:147
 msgid "This contact is selected in configuration"
-msgstr "Ce contact est sélectionné dans la configuration"
+msgstr "This contact is selected in configuration"
 
 #: ../subscribers.py:153
 msgid "This contact is used in following content: ${items}"
-msgstr "Ce contact est utilisé dans le contenu suivant: ${items}"
+msgstr "This contact is used in following content: ${items}"
 
 #: ../browser/settings.py:348
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
-msgstr "Cette organisation ou une organisation contenue est utilisée dans la configuration de groupe plone via contact ! Il faut d'abord l'enlever de la configuration !"
+msgstr "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 
 #: ../subscribers.py:159
 msgid "You cannot deactivate this item !"
-msgstr "Vous ne pouvez pas désactiver cet élément !"
+msgstr "You cannot deactivate this item !"
 
 #: ../subscribers.py:199
 msgid "You cannot delete the group '${group}', linked to used organization '${orga}'."
-msgstr "Vous ne pouvez pas effacer le groupe '${group}', lié à l'organisation utilisée '${orga}'."
+msgstr "You cannot delete the group '${group}', linked to used organization '${orga}'."
 
 #: ../browser/settings.py:347
 msgid "You cannot delete this item !"
-msgstr "Vous ne pouvez pas effacer cet élément !"
+msgstr "You cannot delete this item !"
 
 #: ../browser/settings.py:147
 msgid "You must choose at least one organization !"
-msgstr "Vous devez au moins choisir une organisation !"
+msgstr "You must choose at least one organization !"
 
 #: ../browser/settings.py:149
 msgid "You must correct the organization error first !"
-msgstr "Vous devez corriger l'erreur sur l'organisation !"
+msgstr "You must correct the organization error first !"
 
 #: ../browser/settings.py:107
 msgid "You must define an organization with id '${pgo}' !"
-msgstr "Vous devez définir une organisation dont l'id est '${pgo}' !"
+msgstr "You must define an organization with id '${pgo}' !"
 
 #: ../browser/settings.py:151
 msgid "You must define at least one function !"
-msgstr "Vous devez au moins choisir une fonction !"
+msgstr "You must define at least one function !"
 
 #: ../browser/settings.py:111
 msgid "You must have only one organization with id '${pgo}' !"
-msgstr "Vous devez avoir une seule organisation avec l'id '${pgo}' !"
+msgstr "You must have only one organization with id '${pgo}' !"
 
 #: ../browser/settings.py:166
 msgid "can_not_remove_function_every_plone_groups_not_empty"
-msgstr "Vous ne pouvez pas supprimer la fonction \"${removed_function}\" car certains groupes Plone liés ne sont pas vides (vérifiez par exemple \"${plone_group_id}\") !"
+msgstr "You can not remove function \"${removed_function}\" as there are still Plone groups using this suffix that contains users (check for example \"${plone_group_id}\") !"
 
 #: ../configure.zcml:29
 msgid "collective.contact.plonegroup"
@@ -142,4 +142,4 @@ msgstr "collective.contact.plonegroup tests"
 #. Default: "For convenience, organizations are listed alphabetically. Order is defined in the ${plonegroup_config_url}."
 #: ../browser/templates/suborganizations.pt:11
 msgid "help_organizations_sorted_alphabetically"
-msgstr "Par facilité, les organisations sont listées ici par ordre alphabétique.  L'ordre est défini dans la ${plonegroup_config_url}."
+msgstr "For convenience, organizations are listed alphabetically. Order is defined in the ${plonegroup_config_url}."

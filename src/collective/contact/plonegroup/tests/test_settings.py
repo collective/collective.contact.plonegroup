@@ -14,6 +14,7 @@ from z3c.form import validator
 from zExceptions import Redirect
 from zope import event
 from zope.component import getUtility
+from zope.i18n import translate
 from zope.interface import Invalid
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
@@ -142,13 +143,46 @@ class TestSettings(IntegrationTestCase):
         functions.pop(0)
         errors = invariants.validate(data)
         self.assertTrue(isinstance(errors[0], Invalid))
-        self.assertTrue(plone_group_id in errors[0].message)
+        error_msg = translate(
+            msgid=u"can_not_remove_function_every_plone_groups_not_empty",
+            domain='collective.contact.plonegroup',
+            mapping={'removed_function': 'director',
+                     'plone_group_id': plone_group_id})
+        self.assertEqual(translate(errors[0].message), error_msg)
         # remove user from plone group, now it validates
         api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
         self.assertFalse(invariants.validate(data))
 
+    def test_validateSettingsSelectFunctionOrgsOnExistingFunction(self):
+        """Selecting 'fct_orgs' for an existing function (so for which Plone groups are already created),
+           is only possible if groups that will be deleted (Plone groups of organizations not selected
+           as 'fct_orgs') are empty."""
+        # add a user to group department1 director
+        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
+        dep1 = own_orga['department1']
+        dep2 = own_orga['department2']
+        plone_group_id = get_plone_group_id(dep1.UID(), 'director')
+        api.group.add_user(groupname=plone_group_id, username=TEST_USER_ID)
+        invariants = validator.InvariantsValidator(
+            None, None, None, settings.IContactPlonegroupConfig, None)
+        orgs = list(self.registry[ORGANIZATIONS_REGISTRY])
+        functions = list(self.registry[FUNCTIONS_REGISTRY])
+        data = {'organizations': orgs, 'functions': functions}
+        # set dep2 as 'fct_orgs' of 'director' function
+        director = functions[0]
+        director['fct_orgs'] = [dep2.UID()]
+        errors = invariants.validate(data)
+        self.assertTrue(isinstance(errors[0], Invalid))
+        error_msg = translate(
+            msgid=u"can_not_select_function_orgs_every_other_plone_groups_not_empty",
+            domain='collective.contact.plonegroup',
+            mapping={'function': 'director',
+                     'plone_group_id': plone_group_id})
+        self.assertEqual(translate(errors[0].message), error_msg)
+
     def test_getOwnOrganizationPath(self):
         """ Test the returned organization path """
+        self.assertEquals(settings.getOwnOrganization(), self.portal['contacts'][PLONEGROUP_ORG])
         self.assertEquals(settings.getOwnOrganizationPath(), '/plone/contacts/plonegroup-organization')
 
     def test_adaptPloneGroupDefinition(self):
@@ -176,6 +210,22 @@ class TestSettings(IntegrationTestCase):
         own_orga['department2'].invokeFactory('organization', 'service3', title='Service 3')
         own_orga['department2'].manage_delObjects(ids=['service3'])
         self.assertFalse('service3' in own_orga['department2'])
+
+    def test_onlyRelevantPloneGroupsCreatedWhenFunctionRestrictedToSelectedOrgs(self):
+        """Test using 'fct_orgs' when defining functions."""
+        # create a new suffix and restrict it to department1
+        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
+        dep1 = own_orga['department1']
+        dep1_uid = dep1.UID()
+        dep2 = own_orga['department2']
+        dep2_uid = dep2.UID()
+        functions = list(self.registry[FUNCTIONS_REGISTRY])
+        new_function = {'fct_id': u'new', 'fct_title': u'New', 'fct_orgs': [dep1_uid]}
+        functions.append(new_function)
+        api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
+        # 'new' suffixed Plone group was created only for dep1
+        self.assertTrue(api.group.get(get_plone_group_id(dep1_uid, u'new')))
+        self.assertFalse(api.group.get(get_plone_group_id(dep2_uid, u'new')))
 
     def test_selectedOrganizationsPloneGroupsVocabulary(self):
         """ Test plone groups vocabulary """

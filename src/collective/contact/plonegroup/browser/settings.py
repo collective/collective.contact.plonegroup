@@ -151,31 +151,54 @@ class IContactPlonegroupConfig(Interface):
             raise Invalid(_(u"You must define at least one function !"))
 
         # only able to delete a function (suffix) if every linked Plone groups are empty
-        stored_functions = get_all_suffixes()
-        saved_functions = [func['fct_id'] for func in data.functions]
-        removed_functions = list(set(stored_functions) - set(saved_functions))
-        if removed_functions:
-            for removed_function in removed_functions:
-                # check that every organizations including not selected
-                # linked suffixed Plone group is empty
+        stored_suffixes = get_all_suffixes()
+        saved_suffixes = [func['fct_id'] for func in data.functions]
+        removed_suffixes = list(set(stored_suffixes) - set(saved_suffixes))
+        for removed_suffix in removed_suffixes:
+            # check that every organizations including not selected
+            # linked suffixed Plone group is empty
+            for org_uid in get_organizations(only_selected=False, the_objects=False):
+                plone_group_id = get_plone_group_id(org_uid, removed_suffix)
+                plone_group = api.group.get(plone_group_id)
+                if plone_group and plone_group.getMemberIds():
+                    raise Invalid(
+                        _(u"can_not_remove_function_every_plone_groups_not_empty",
+                          mapping={'removed_function': removed_suffix,
+                                   'plone_group_id': plone_group_id}))
+
+        # only able to select orgs for an existing function (suffix) if
+        # every linked Plone groups of not selected orgs are empty
+        stored_functions = api.portal.get_registry_record(FUNCTIONS_REGISTRY)
+        old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
+                         for dic in stored_functions}
+        new_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
+                         for dic in data.functions}
+        for new_function, new_function_infos in new_functions.items():
+            if new_function_infos['fct_orgs'] and \
+               old_functions[new_function]['fct_orgs'] != new_function_infos['fct_orgs']:
+                # check that Plone group is empty for not selected fct_orgs
                 for org_uid in get_organizations(only_selected=False, the_objects=False):
-                    plone_group_id = get_plone_group_id(org_uid, removed_function)
+                    if org_uid in new_function_infos['fct_orgs']:
+                        continue
+                    plone_group_id = get_plone_group_id(org_uid, new_function)
                     plone_group = api.group.get(plone_group_id)
                     if plone_group and plone_group.getMemberIds():
                         raise Invalid(
-                            _(u"You can not remove function \"{0}\" as there are still Plone "
-                              u"groups using this suffix that contains users "
-                              u"(check for example \"{1}\") !".format(removed_function, plone_group_id)))
+                            _(u"can_not_select_function_orgs_every_other_plone_groups_not_empty",
+                              mapping={'function': new_function,
+                                       'plone_group_id': plone_group_id}))
 
 
-def addOrModifyGroup(group_name, organization_title, function_title):
+def addOrModifyGroup(orga, function_id, function_title):
     """
         create a plone group
     """
+    organization_title = orga.get_full_title(separator=' - ', first_index=1)
     if isinstance(organization_title, unicode):
         organization_title = organization_title.encode('utf8')
     if isinstance(function_title, unicode):
         function_title = function_title.encode('utf8')
+    group_name = get_plone_group_id(orga.UID(), function_id)
     group = api.group.get(groupname=group_name)
     group_title = '%s (%s)' % (organization_title, function_title)
     if group is None:
@@ -235,42 +258,74 @@ def detectContactPlonegroupChange(event):
             new_set = set(event.newValue)
             # we detect a new organization
             add_set = new_set.difference(old_set)
-            for uid in add_set:
-                obj = uuidToObject(uid)
-                full_title = obj.get_full_title(separator=' - ', first_index=1)
+            for orga_uid in add_set:
+                orga = uuidToObject(orga_uid)
                 for fct_dic in registry[FUNCTIONS_REGISTRY]:
-                    group_name = "%s_%s" % (uid, fct_dic['fct_id'])
-                    if addOrModifyGroup(group_name, full_title, fct_dic['fct_title']):
+                    fct_orgs = fct_dic['fct_orgs']
+                    if fct_orgs and orga_uid not in fct_orgs:
+                        continue
+                    if addOrModifyGroup(orga, fct_dic['fct_id'], fct_dic['fct_title']):
                         changes = True
             # we detect a removed organization. We dont do anything on exsiting groups
             if old_set.difference(new_set):
                 changes = True
         elif event.record.fieldName == 'functions' and registry[ORGANIZATIONS_REGISTRY]:
-            old_set = new_set = set()
-            if event.oldValue:
-                old_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.oldValue])
-            if event.newValue:
-                new_set = set([(dic['fct_id'], dic['fct_title']) for dic in event.newValue])
+            old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
+                             for dic in event.oldValue}
+            old_set = set(old_functions.keys())
+            new_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
+                             for dic in event.newValue}
+            new_set = set(new_functions.keys())
             # we detect a new function
             add_set = new_set.difference(old_set)
-            registry = getUtility(IRegistry)
-            for (new_id, new_title) in add_set:
-                for uid in registry[ORGANIZATIONS_REGISTRY]:
-                    obj = uuidToObject(uid)
-                    full_title = obj.get_full_title(separator=' - ', first_index=1)
-                    group_name = "%s_%s" % (uid, new_id)
-                    if addOrModifyGroup(group_name, full_title, new_title):
+            for new_id, new_infos in new_functions.items():
+                if new_id not in add_set:
+                    continue
+                new_title = new_infos['fct_title']
+                new_orgs = new_infos['fct_orgs']
+                for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+                    if new_orgs and orga_uid not in new_orgs:
+                        continue
+                    orga = uuidToObject(orga_uid)
+                    if addOrModifyGroup(orga, new_id, new_title):
                         changes = True
-            # we detect a removed function.
+            # we detect a removed function
             # We may remove Plone groups as we checked before that every are empty
             if old_set.difference(new_set):
-                for fct_id, fct_title in old_set.difference(new_set):
+                for fct_id, fct_title, fct_orgs in old_set.difference(new_set):
                     for orga_uid in get_organizations(only_selected=False, the_objects=False):
                         plone_group_id = get_plone_group_id(orga_uid, fct_id)
                         plone_group = api.group.get(plone_group_id)
                         if plone_group:
                             api.group.delete(plone_group_id)
                 changes = True
+            # we detect existing functions for which 'fct_orgs' changed
+            for new_function, new_function_infos in new_functions.items():
+                new_title = new_function_infos['fct_title']
+                new_orgs = new_function_infos['fct_orgs']
+                if not new_orgs:
+                    # we have to make sure Plone groups are created for every selected organizations
+                    for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+                        orga = uuidToObject(orga_uid)
+                        if addOrModifyGroup(orga, new_function, new_title):
+                            changes = True
+                elif old_functions[new_function]['fct_orgs'] != new_orgs:
+                    # fct_orgs changed, we remove every linked Plone groups
+                    # except ones defined in new_orgs
+                    for orga_uid in get_organizations(only_selected=False, the_objects=False):
+                        if orga_uid in new_orgs:
+                            # make sure Plone group is created
+                            orga = uuidToObject(orga_uid)
+                            if addOrModifyGroup(orga, new_id, new_title):
+                                changes = True
+                        else:
+                            # make sure Plone group is deleted
+                            plone_group_id = get_plone_group_id(orga_uid, new_function)
+                            plone_group = api.group.get(plone_group_id)
+                            if plone_group:
+                                api.group.delete(plone_group_id)
+                changes = True
+
         if changes:
             invalidate_sopgv_cache()
             invalidate_sov_cache()
@@ -294,9 +349,7 @@ def addOrModifyOrganizationGroups(organization, uid):
     registry = getUtility(IRegistry)
     changes = False
     for dic in registry[FUNCTIONS_REGISTRY]:
-        full_title = organization.get_full_title(separator=' - ', first_index=1)
-        group_name = "%s_%s" % (uid, dic['fct_id'])
-        if addOrModifyGroup(group_name, full_title, dic['fct_title']):
+        if addOrModifyGroup(organization, dic['fct_id'], dic['fct_title']):
             changes = True
     return changes
 
@@ -380,15 +433,15 @@ def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     terms = []
     # if no function given, use all functions
     functions = functions or get_all_suffixes()
-    for uid in registry[ORGANIZATIONS_REGISTRY]:
+    for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
         for fct_id in functions:
-            group_id = "%s_%s" % (uid, fct_id)
+            group_id = "%s_%s" % (orga_uid, fct_id)
             group = api.group.get(groupname=group_id)
             if group is not None:
                 if group_title:
                     title = group.getProperty('title')
                 else:
-                    title = uuidToObject(uid).get_full_title(separator=' - ', first_index=1)
+                    title = uuidToObject(orga_uid).get_full_title(separator=' - ', first_index=1)
                 terms.append(SimpleTerm(group_id, token=group_id, title=title))
     return SimpleVocabulary(terms)
 
@@ -413,8 +466,8 @@ def getSelectedOrganizations(separator=' - ', first_index=1):
                 title = unrestrictedUuidToObject(uid).get_full_title(separator=separator, first_index=first_index)
                 ret.append((uid, title))
     else:
-        for uid in registry[ORGANIZATIONS_REGISTRY]:
-            title = uuidToObject(uid).get_full_title(separator=separator, first_index=first_index)
+        for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+            title = uuidToObject(orga_uid).get_full_title(separator=separator, first_index=first_index)
             ret.append((uid, title))
     return ret
 
