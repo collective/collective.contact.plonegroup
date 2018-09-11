@@ -277,8 +277,8 @@ def detectContactPlonegroupChange(event):
                              for dic in event.newValue}
             new_set = set(new_functions.keys())
             # we detect a new function
-            added_set = new_set.difference(old_set)
-            for new_id in added_set:
+            add_set = new_set.difference(old_set)
+            for new_id in add_set:
                 new_title = new_functions[new_id]['fct_title']
                 new_orgs = new_functions[new_id]['fct_orgs']
                 for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
