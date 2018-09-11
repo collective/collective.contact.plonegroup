@@ -18,6 +18,7 @@ from zope.i18n import translate
 from zope.interface import Invalid
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
+from copy import deepcopy
 
 
 class TestSettings(IntegrationTestCase):
@@ -85,8 +86,8 @@ class TestSettings(IntegrationTestCase):
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
         self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Director)')
         # Changing function title
-        self.registry[FUNCTIONS_REGISTRY] = [{'fct_title': u'Directors', 'fct_id': u'director'},
-                                             {'fct_title': u'Worker', 'fct_id': u'worker'}]
+        self.registry[FUNCTIONS_REGISTRY] = [{'fct_title': u'Directors', 'fct_id': u'director', 'fct_orgs': []},
+                                             {'fct_title': u'Worker', 'fct_id': u'worker', 'fct_orgs': []}]
         d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
         self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Directors)')
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
@@ -102,7 +103,8 @@ class TestSettings(IntegrationTestCase):
         self.assertIn('%s_director' % last_uid, group_ids)
         self.assertIn('%s_worker' % last_uid, group_ids)
         # Adding new function
-        newValue = self.registry[FUNCTIONS_REGISTRY] + [{'fct_title': u'Chief', 'fct_id': u'chief'}]
+        newValue = self.registry[FUNCTIONS_REGISTRY] + [
+            {'fct_title': u'Chief', 'fct_id': u'chief', 'fct_orgs': []}]
         self.registry[FUNCTIONS_REGISTRY] = newValue
         group_ids = [group.id for group in api.group.get_groups() if '_' in group.id]
         self.assertEquals(len(group_ids), 12)
@@ -111,8 +113,8 @@ class TestSettings(IntegrationTestCase):
             self.assertIn('%s_chief' % uid, group_ids)
             self.assertIn('%s_worker' % uid, group_ids)
 
-    def test_removeFunctionDeletedEveryLinkedPloneGroups(self):
-        """When a function is deleted, every linked Plone groups are deleted as well.
+    def test_detectContactPlonegroupChangeRemoveFunction(self):
+        """When a function is removed, every linked Plone groups are deleted as well.
            This is protected by validateSettings that checks first that every Plone groups are empty."""
         own_orga = self.portal['contacts'][PLONEGROUP_ORG]
         dep1 = own_orga['department1']
@@ -124,6 +126,44 @@ class TestSettings(IntegrationTestCase):
         api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
         # the linked Plone groups are deleted
         self.assertFalse(api.group.get(plone_group_id))
+
+    def test_detectContactPlonegroupChangeSelectOrgs(self):
+        """When selecting 'fct_orgs' on a function, Plone groups are create/deleted depending
+           on the fact that 'fct_orgs' is empty or contains some organization uids."""
+        own_orga = self.portal['contacts'][PLONEGROUP_ORG]
+        dep1 = own_orga['department1']
+        dep1_uid = dep1.UID()
+        dep2 = own_orga['department2']
+        dep2_uid = dep2.UID()
+        dep1_plone_group_id = get_plone_group_id(dep1_uid, 'director')
+        dep2_plone_group_id = get_plone_group_id(dep2_uid, 'director')
+        self.assertTrue(api.group.get(dep1_plone_group_id))
+        self.assertTrue(api.group.get(dep2_plone_group_id))
+        # select dep2_uid for 'director'
+        functions = deepcopy(self.registry[FUNCTIONS_REGISTRY])
+        functions[0]['fct_orgs'] = [dep2_uid]
+        api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
+        # dep1 director Plone group is deleted
+        self.assertFalse(api.group.get(dep1_plone_group_id))
+        self.assertTrue(api.group.get(dep2_plone_group_id))
+        # select dep1_uid for 'director'
+        functions = deepcopy(self.registry[FUNCTIONS_REGISTRY])
+        functions[0]['fct_orgs'] = [dep1_uid]
+        api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
+        self.assertTrue(api.group.get(dep1_plone_group_id))
+        self.assertFalse(api.group.get(dep2_plone_group_id))
+        # select nothing for 'director', every groups are created
+        functions = deepcopy(self.registry[FUNCTIONS_REGISTRY])
+        functions[0]['fct_orgs'] = []
+        api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
+        self.assertTrue(api.group.get(dep1_plone_group_id))
+        self.assertTrue(api.group.get(dep2_plone_group_id))
+        # select both dep1 and dep2, every groups are created
+        functions = deepcopy(self.registry[FUNCTIONS_REGISTRY])
+        functions[0]['fct_orgs'] = [dep1_uid, dep2_uid]
+        api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
+        self.assertTrue(api.group.get(dep1_plone_group_id))
+        self.assertTrue(api.group.get(dep2_plone_group_id))
 
     def test_validateSettingsRemoveFunction(self):
         """A function may only be removed if every linked Plone groups are empty."""
@@ -165,8 +205,8 @@ class TestSettings(IntegrationTestCase):
         api.group.add_user(groupname=plone_group_id, username=TEST_USER_ID)
         invariants = validator.InvariantsValidator(
             None, None, None, settings.IContactPlonegroupConfig, None)
-        orgs = list(self.registry[ORGANIZATIONS_REGISTRY])
-        functions = list(self.registry[FUNCTIONS_REGISTRY])
+        orgs = deepcopy(self.registry[ORGANIZATIONS_REGISTRY])
+        functions = deepcopy(self.registry[FUNCTIONS_REGISTRY])
         data = {'organizations': orgs, 'functions': functions}
         # set dep2 as 'fct_orgs' of 'director' function
         director = functions[0]
@@ -179,6 +219,9 @@ class TestSettings(IntegrationTestCase):
             mapping={'function': 'director',
                      'plone_group_id': plone_group_id})
         self.assertEqual(translate(errors[0].message), error_msg)
+        # remove user from plone group, now it validates
+        api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
+        self.assertFalse(invariants.validate(data))
 
     def test_getOwnOrganizationPath(self):
         """ Test the returned organization path """

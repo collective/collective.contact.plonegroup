@@ -33,10 +33,17 @@ class TestSubscribers(IntegrationTestCase):
 
         self.registry = getUtility(IRegistry)
         self.registry[ORGANIZATIONS_REGISTRY] = [c.UID() for c in self.contacts]
-        self.registry[FUNCTIONS_REGISTRY] = [{'fct_title': u'Director', 'fct_id': u'director'}]
+        self.registry[FUNCTIONS_REGISTRY] = [
+            {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': []}]
 
-        self.portal.invokeFactory('acontent', 'acontent1', title='Content 1', pg_organization=self.contacts[0].UID())
-        self.portal.invokeFactory('acontent', 'acontent2', title='Content 2', pg_organization=self.contacts[1].UID())
+        self.portal.invokeFactory('acontent',
+                                  'acontent1',
+                                  title='Content 1',
+                                  pg_organization=self.contacts[0].UID())
+        self.portal.invokeFactory('acontent',
+                                  'acontent2',
+                                  title='Content 2',
+                                  pg_organization=self.contacts[1].UID())
 
     def test_plonegroupOrganizationRemoved_1(self):
         """ We cannot remove an organization selected in settings and used in an object """

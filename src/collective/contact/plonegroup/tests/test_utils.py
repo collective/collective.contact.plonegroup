@@ -17,6 +17,7 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
+from copy import deepcopy
 
 
 class TestUtils(IntegrationTestCase):
@@ -37,7 +38,7 @@ class TestUtils(IntegrationTestCase):
         self.registry[ORGANIZATIONS_REGISTRY] = [self.uid]
         self.registry[FUNCTIONS_REGISTRY] = [
             {'fct_title': u'Observers', 'fct_id': u'observer', 'fct_orgs': [], },
-            {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [self.dep2.UID()], },
+            {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [], },
         ]
         api.group.add_user(groupname='%s_director' % self.uid, username=TEST_USER_ID)
 
@@ -70,16 +71,16 @@ class TestUtils(IntegrationTestCase):
         api.user.create(username='user2', email='t@t.be', properties={'fullname': 'User B'})
         api.group.add_user(groupname='%s_director' % self.uid, username='user1')
         api.group.add_user(groupname='%s_director' % self.uid, username='user2')
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'])],
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, [u'director'])],
                              [TEST_USER_NAME, 'user1', 'user2'])
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'],
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, [u'director'],
                              first_member=api.user.get(username='user1'))],
                              ['user1', TEST_USER_NAME, 'user2'])
         # well ordered by fullname
         test_user.setMemberProperties({'fullname': 'User Test'})
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'])],
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, [u'director'])],
                              ['user1', 'user2', TEST_USER_NAME])
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'],
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, [u'director'],
                              first_member=api.user.get(username='user1'))],
                              ['user1', 'user2', TEST_USER_NAME])
 
@@ -99,10 +100,16 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(get_organizations(the_objects=False), [self.uid])
         # not_empty_suffix
         self.assertEqual(get_organizations(not_empty_suffix=None), [self.dep1])
-        self.assertEqual(get_organizations(not_empty_suffix='director'), [self.dep1])
-        self.assertEqual(get_organizations(not_empty_suffix='observer'), [])
+        self.assertEqual(get_organizations(not_empty_suffix=u'director'), [self.dep1])
+        self.assertEqual(get_organizations(not_empty_suffix=u'observer'), [])
 
     def test_get_all_suffixes(self):
-        self.assertEqual(get_all_suffixes(self.uid), ['observer'])
-        self.assertEqual(get_all_suffixes(self.dep2.UID()), ['observer', 'director'])
-        self.assertEqual(get_all_suffixes(), ['observer', 'director'])
+        self.assertEqual(get_all_suffixes(self.uid), [u'observer', u'director'])
+        dep2_uid = self.dep2.UID()
+        self.assertEqual(get_all_suffixes(dep2_uid), [u'observer', u'director'])
+        self.assertEqual(get_all_suffixes(), [u'observer', u'director'])
+        # is 'fct_orgs' aware
+        functions = deepcopy(self.registry[FUNCTIONS_REGISTRY])
+        functions[0]['fct_orgs'] = [self.uid]
+        api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
+        self.assertEqual(get_all_suffixes(dep2_uid), [u'director'])

@@ -277,12 +277,10 @@ def detectContactPlonegroupChange(event):
                              for dic in event.newValue}
             new_set = set(new_functions.keys())
             # we detect a new function
-            add_set = new_set.difference(old_set)
-            for new_id, new_infos in new_functions.items():
-                if new_id not in add_set:
-                    continue
-                new_title = new_infos['fct_title']
-                new_orgs = new_infos['fct_orgs']
+            added_set = new_set.difference(old_set)
+            for new_id in added_set:
+                new_title = new_functions[new_id]['fct_title']
+                new_orgs = new_functions[new_id]['fct_orgs']
                 for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
                     if new_orgs and orga_uid not in new_orgs:
                         continue
@@ -291,25 +289,26 @@ def detectContactPlonegroupChange(event):
                         changes = True
             # we detect a removed function
             # We may remove Plone groups as we checked before that every are empty
-            if old_set.difference(new_set):
-                for fct_id, fct_title, fct_orgs in old_set.difference(new_set):
-                    for orga_uid in get_organizations(only_selected=False, the_objects=False):
-                        plone_group_id = get_plone_group_id(orga_uid, fct_id)
-                        plone_group = api.group.get(plone_group_id)
-                        if plone_group:
-                            api.group.delete(plone_group_id)
-                changes = True
+            removed_set = old_set.difference(new_set)
+            for removed_id in removed_set:
+                for orga_uid in get_organizations(only_selected=False, the_objects=False):
+                    plone_group_id = get_plone_group_id(orga_uid, removed_id)
+                    plone_group = api.group.get(plone_group_id)
+                    if plone_group:
+                        api.group.delete(plone_group_id)
+            changes = True
             # we detect existing functions for which 'fct_orgs' changed
-            for new_function, new_function_infos in new_functions.items():
+            for new_id, new_function_infos in new_functions.items():
                 new_title = new_function_infos['fct_title']
                 new_orgs = new_function_infos['fct_orgs']
+                old_function = old_functions.get(new_id, None)
                 if not new_orgs:
                     # we have to make sure Plone groups are created for every selected organizations
                     for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
                         orga = uuidToObject(orga_uid)
-                        if addOrModifyGroup(orga, new_function, new_title):
+                        if addOrModifyGroup(orga, new_id, new_title):
                             changes = True
-                elif old_functions[new_function]['fct_orgs'] != new_orgs:
+                elif (not old_function and new_orgs) or old_functions[new_id]['fct_orgs'] != new_orgs:
                     # fct_orgs changed, we remove every linked Plone groups
                     # except ones defined in new_orgs
                     for orga_uid in get_organizations(only_selected=False, the_objects=False):
@@ -320,7 +319,7 @@ def detectContactPlonegroupChange(event):
                                 changes = True
                         else:
                             # make sure Plone group is deleted
-                            plone_group_id = get_plone_group_id(orga_uid, new_function)
+                            plone_group_id = get_plone_group_id(orga_uid, new_id)
                             plone_group = api.group.get(plone_group_id)
                             if plone_group:
                                 api.group.delete(plone_group_id)
@@ -462,13 +461,13 @@ def getSelectedOrganizations(separator=' - ', first_index=1):
     # needed to get as manager because plone.formwidget.masterselect calls ++widget++ as Anonymous
     if api.user.is_anonymous():
         with api.env.adopt_roles(['Manager']):
-            for uid in registry[ORGANIZATIONS_REGISTRY]:
-                title = unrestrictedUuidToObject(uid).get_full_title(separator=separator, first_index=first_index)
-                ret.append((uid, title))
+            for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+                title = unrestrictedUuidToObject(orga_uid).get_full_title(separator=separator, first_index=first_index)
+                ret.append((orga_uid, title))
     else:
         for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
             title = uuidToObject(orga_uid).get_full_title(separator=separator, first_index=first_index)
-            ret.append((uid, title))
+            ret.append((orga_uid, title))
     return ret
 
 
