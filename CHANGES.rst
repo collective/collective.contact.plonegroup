@@ -16,6 +16,13 @@ Changelog
   [gbastien]
 - Added utils.get_all_suffixes that returns every defined functions ids.
   [gbastien]
+- Added possibility to restrict suffixes to only some selected organizations.
+  Plone groups will only be created for selected organizations.  When selecting or
+  unselecting organizations, linked Plone groups are created/deleted accordingly.
+  [gbastien]
+- Moved setting.getOwnOrganizationPath to
+  utils.get_own_organization/utils.get_own_organization_path.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------

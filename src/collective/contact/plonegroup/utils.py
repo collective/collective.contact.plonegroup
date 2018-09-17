@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from operator import attrgetter
 from operator import methodcaller
 from plone import api
+from plone.app.uuid.utils import uuidToObject
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-from plone.app.uuid.utils import uuidToObject
-from zope.schema.interfaces import IVocabularyFactory
-from zope.component import getUtility
-from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
-from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 
 
 def organizations_with_suffixes(groups, suffixes):
@@ -27,14 +28,10 @@ def organizations_with_suffixes(groups, suffixes):
     return orgs
 
 
-def get_plone_group_id(org_or_org_uid, suffix):
+def get_plone_group_id(org_uid, suffix):
     """
         Return Plone group id corresponding to org_uid/suffix.
     """
-    if isinstance(org_or_org_uid, str):
-        org_uid = org_or_org_uid
-    else:
-        org_uid = org_or_org_uid.UID()
     return '{0}_{1}'.format(org_uid, suffix)
 
 
@@ -78,12 +75,13 @@ def get_organizations(only_selected=True, the_objects=True, not_empty_suffix=Non
     return orgs
 
 
-def get_all_suffixes():
+def get_all_suffixes(org_uid=None):
     """
         Get every suffixes defined in the configuration.
     """
     functions = api.portal.get_registry_record(FUNCTIONS_REGISTRY)
-    return [function['fct_id'] for function in functions]
+    return [function['fct_id'] for function in functions
+            if not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs']]
 
 
 def get_selected_org_suffix_users(org_uid, suffixes):
@@ -125,3 +123,23 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None):
     else:
         terms[1:] = sorted(terms[1:], key=attrgetter('title'))
     return SimpleVocabulary(terms)
+
+
+def get_own_organization():
+    """
+        get plonegroup-organization object
+    """
+    catalog = api.portal.get_tool('portal_catalog')
+    brains = catalog(portal_type='organization', id=PLONEGROUP_ORG)
+    if brains:
+        return brains[0].getObject()
+
+
+def get_own_organization_path(not_found_value=None):
+    """
+        get plonegroup-organization path
+    """
+    own_orga = get_own_organization()
+    if own_orga:
+        return '/'.join(own_orga.getPhysicalPath())
+    return not_found_value
