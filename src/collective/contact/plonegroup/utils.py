@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from operator import attrgetter
-from operator import methodcaller
-from plone import api
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
-from plone.app.uuid.utils import uuidToObject
-from zope.schema.interfaces import IVocabularyFactory
-from zope.component import getUtility
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from operator import attrgetter
+from operator import methodcaller
+from plone import api
+from plone.app.uuid.utils import uuidToObject
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
 def organizations_with_suffixes(groups, suffixes):
