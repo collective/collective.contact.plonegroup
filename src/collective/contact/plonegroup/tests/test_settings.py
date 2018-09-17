@@ -223,11 +223,6 @@ class TestSettings(IntegrationTestCase):
         api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
         self.assertFalse(invariants.validate(data))
 
-    def test_getOwnOrganizationPath(self):
-        """ Test the returned organization path """
-        self.assertEquals(settings.getOwnOrganization(), self.portal['contacts'][PLONEGROUP_ORG])
-        self.assertEquals(settings.getOwnOrganizationPath(), '/plone/contacts/plonegroup-organization')
-
     def test_adaptPloneGroupDefinition(self):
         """ Test event when an organization is changed """
         organizations = self.registry[ORGANIZATIONS_REGISTRY]

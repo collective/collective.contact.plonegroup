@@ -8,6 +8,7 @@ from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organizations
 from collective.contact.plonegroup.utils import get_plone_group_id
+from collective.contact.plonegroup.utils import get_own_organization_path
 from collective.elephantvocabulary import wrap_vocabulary
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
@@ -353,27 +354,6 @@ def addOrModifyOrganizationGroups(organization, uid):
     return changes
 
 
-def getOwnOrganization():
-    """
-        get plonegroup-organization object
-    """
-    portal = getSite()
-    pcat = portal.portal_catalog
-    brains = pcat(portal_type='organization', id=PLONEGROUP_ORG)
-    if brains:
-        return brains[0].getObject()
-
-
-def getOwnOrganizationPath():
-    """
-        get plonegroup-organization path
-    """
-    own_orga = getOwnOrganization()
-    if own_orga:
-        return '/'.join(own_orga.getPhysicalPath())
-    return 'unfound'
-
-
 def adaptPloneGroupDefinition(organization, event):
     """
         Manage an organization change
@@ -387,7 +367,8 @@ def adaptPloneGroupDefinition(organization, event):
         return
     # is the current organization a part of own organization
     organization_path = '/'.join(organization.getPhysicalPath())
-    if not organization_path.startswith(getOwnOrganizationPath()):  # can be unfound too
+    if not organization_path.startswith(
+       get_own_organization_path(not_found_value='unfound')):  # can be unfound too
         return
     portal = getSite()
     registry = getUtility(IRegistry)

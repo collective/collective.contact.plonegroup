@@ -10,6 +10,7 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.component import getUtility
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
 
 
 def organizations_with_suffixes(groups, suffixes):
@@ -122,3 +123,23 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None):
     else:
         terms[1:] = sorted(terms[1:], key=attrgetter('title'))
     return SimpleVocabulary(terms)
+
+
+def get_own_organization():
+    """
+        get plonegroup-organization object
+    """
+    catalog = api.portal.get_tool('portal_catalog')
+    brains = catalog(portal_type='organization', id=PLONEGROUP_ORG)
+    if brains:
+        return brains[0].getObject()
+
+
+def get_own_organization_path(not_found_value=None):
+    """
+        get plonegroup-organization path
+    """
+    own_orga = get_own_organization()
+    if own_orga:
+        return '/'.join(own_orga.getPhysicalPath())
+    return not_found_value

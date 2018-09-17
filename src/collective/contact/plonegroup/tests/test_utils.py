@@ -8,6 +8,8 @@ from collective.contact.plonegroup.testing import IntegrationTestCase
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_organizations
+from collective.contact.plonegroup.utils import get_own_organization
+from collective.contact.plonegroup.utils import get_own_organization_path
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_selected_org_suffix_users
 from collective.contact.plonegroup.utils import organizations_with_suffixes
@@ -113,3 +115,13 @@ class TestUtils(IntegrationTestCase):
         functions[0]['fct_orgs'] = [self.uid]
         api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
         self.assertEqual(get_all_suffixes(dep2_uid), [u'director'])
+
+    def test_get_own_organization_path(self):
+        """ Test the returned organization path """
+        self.assertEqual(get_own_organization(), self.portal['contacts'][PLONEGROUP_ORG])
+        self.assertEqual(get_own_organization_path(), '/plone/contacts/plonegroup-organization')
+        # remove own organization
+        api.content.delete(self.own_orga)
+        self.assertIsNone(get_own_organization())
+        self.assertIsNone(get_own_organization_path())
+        self.assertEqual(get_own_organization_path(not_found_value='unfound'), 'unfound')
