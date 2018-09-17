@@ -35,6 +35,20 @@ def get_plone_group_id(org_uid, suffix):
     return '{0}_{1}'.format(org_uid, suffix)
 
 
+def get_plone_groups(org_uid, ids_only=False, suffixes=[]):
+    """
+        Return Plone groups linked to given org_uid.
+        If ids_only is True, only returns Plone groups ids,
+        either returns Plone group objects.
+        Only returns Plone groups using suffixes if provided.
+    """
+    suffixes = suffixes or get_all_suffixes(org_uid)
+    plone_groups = [get_plone_group_id(org_uid, suffix) for suffix in suffixes]
+    if not ids_only:
+        plone_groups = [api.group.get(plone_group) for plone_group in plone_groups]
+    return plone_groups
+
+
 def get_organization(plone_group_id):
     """
         Return organization corresponding to given Plone group id.

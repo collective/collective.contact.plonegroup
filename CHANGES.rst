@@ -23,6 +23,9 @@ Changelog
 - Moved setting.getOwnOrganizationPath to
   utils.get_own_organization/utils.get_own_organization_path.
   [gbastien]
+- Added method utils.get_plone_groups that returns every Plone groups of a
+  given organization.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------
