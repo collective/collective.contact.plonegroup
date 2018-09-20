@@ -10,6 +10,7 @@ from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_organizations
 from collective.contact.plonegroup.utils import get_own_organization
 from collective.contact.plonegroup.utils import get_own_organization_path
+from collective.contact.plonegroup.utils import get_plone_group
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_selected_org_suffix_users
 from collective.contact.plonegroup.utils import organizations_with_suffixes
@@ -89,9 +90,17 @@ class TestUtils(IntegrationTestCase):
     def test_get_plone_group_id(self):
         self.assertEqual(get_plone_group_id('groupuid', 'suffix'), 'groupuid_suffix')
 
+    def test_get_plone_group(self):
+        self.assertIsNone(get_plone_group('groupuid', 'suffix'))
+        self.assertEqual(
+            get_plone_group(self.uid, 'observer'),
+            api.group.get('{0}_{1}'.format(self.uid, 'observer')))
+
     def test_get_organization(self):
         suffixed_org = get_plone_group_id(self.uid, 'suffix')
+        # get_organization may receive a plone_group_id or an organization uid
         self.assertEqual(get_organization(suffixed_org), self.dep1)
+        self.assertEqual(get_organization(self.uid), self.dep1)
 
     def test_get_organizations(self):
         # only_selected

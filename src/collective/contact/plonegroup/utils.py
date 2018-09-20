@@ -7,7 +7,9 @@ from operator import attrgetter
 from operator import methodcaller
 from plone import api
 from plone.app.uuid.utils import uuidToObject
+from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+from zope.globalrequest import getRequest
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -32,7 +34,19 @@ def get_plone_group_id(org_uid, suffix):
     """
         Return Plone group id corresponding to org_uid/suffix.
     """
+    # make sure we received an str as org_uid, not an org
+    if not isinstance(org_uid, (str, unicode)):
+        raise TypeError('Parameter org_uid must be str or unicode instance!')
     return '{0}_{1}'.format(org_uid, suffix)
+
+
+def get_plone_group(org_uid, suffix):
+    """
+        Return Plone group corresponding to org_uid/suffix.
+    """
+    plone_group_id = get_plone_group_id(org_uid, suffix)
+    plone_group = api.group.get(plone_group_id)
+    return plone_group
 
 
 def get_plone_groups(org_uid, ids_only=False, suffixes=[]):
@@ -49,43 +63,58 @@ def get_plone_groups(org_uid, ids_only=False, suffixes=[]):
     return plone_groups
 
 
-def get_organization(plone_group_id):
+def get_organization(plone_group_id_or_org_uid):
     """
-        Return organization corresponding to given Plone group id.
+        Return organization corresponding to given plone_group_id_or_org_uid.
+        We can receive either a plone_grou_id or an org_uid.
     """
-    # there is no '_' in organization UID so we are sure that
-    # first part is the organization UID
-    organization_uid = plone_group_id.split('_')[0]
+    # there is no '_' in organization UID so when receiving a Plone group id,
+    # we are sure that first part is the organization UID
+    organization_uid = plone_group_id_or_org_uid.split('_')[0]
     return uuidToObject(organization_uid)
 
 
-def get_organizations(only_selected=True, the_objects=True, not_empty_suffix=None):
+def get_organizations(only_selected=True,
+                      the_objects=True,
+                      not_empty_suffix=None,
+                      caching=True):
     """
         Return every organizations.
     """
-    if only_selected:
-        orgs = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
-    else:
-        # use the vocabulary to get selectable organizations so if vocabulary
-        # is overrided get_organizations is still consistent
-        vocab = getUtility(
-            IVocabularyFactory,
-            name=u'collective.contact.plonegroup.organization_services')
-        portal = api.portal.get()
-        orgs = [term.value for term in vocab(portal)._terms]
+    orgs = None
+    if caching:
+        key = "tool-get_internal_organizations-{0}-{1}-{2}".format(
+            not_empty_suffix or '', str(only_selected), str(the_objects))
+        cache = IAnnotations(getRequest())
+        orgs = cache.get(key, None)
 
-    # we only keep orgs for which Plone group with not_empty_suffix suffix contains members
-    if not_empty_suffix:
-        filtered_orgs = []
-        for org_uid in orgs:
-            plone_group_id = get_plone_group_id(org_uid, suffix=not_empty_suffix)
-            plone_group = api.group.get(plone_group_id)
-            if plone_group and plone_group.getMemberIds():
-                filtered_orgs.append(org_uid)
-        orgs = filtered_orgs
+    if orgs is None:
+        if only_selected:
+            orgs = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
+        else:
+            # use the vocabulary to get selectable organizations so if vocabulary
+            # is overrided get_organizations is still consistent
+            vocab = getUtility(
+                IVocabularyFactory,
+                name=u'collective.contact.plonegroup.organization_services')
+            portal = api.portal.get()
+            orgs = [term.value for term in vocab(portal)._terms]
+        # we only keep orgs for which Plone group with not_empty_suffix suffix contains members
+        if not_empty_suffix:
+            filtered_orgs = []
+            for org_uid in orgs:
+                plone_group_id = get_plone_group_id(org_uid, suffix=not_empty_suffix)
+                plone_group = api.group.get(plone_group_id)
+                if plone_group and plone_group.getMemberIds():
+                    filtered_orgs.append(org_uid)
+            orgs = filtered_orgs
+        # return org uids or org objects
+        if the_objects:
+            orgs = [uuidToObject(org) for org in orgs]
 
-    if the_objects:
-        orgs = [uuidToObject(org) for org in orgs]
+        if caching:
+            cache[key] = orgs
+
     return orgs
 
 
@@ -153,7 +182,7 @@ def get_own_organization_path(not_found_value=None):
     """
         get plonegroup-organization path
     """
-    own_orga = get_own_organization()
-    if own_orga:
-        return '/'.join(own_orga.getPhysicalPath())
+    own_org = get_own_organization()
+    if own_org:
+        return '/'.join(own_org.getPhysicalPath())
     return not_found_value

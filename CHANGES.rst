@@ -26,6 +26,9 @@ Changelog
 - Added method utils.get_plone_groups that returns every Plone groups of a
   given organization.
   [gbastien]
+- Added utils.get_plone_group that returns a Plone group for given organization
+  UID and suffix.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------
