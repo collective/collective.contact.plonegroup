@@ -83,10 +83,15 @@ def get_organizations(only_selected=True,
     """
     orgs = None
     if caching:
-        key = "tool-get_internal_organizations-{0}-{1}-{2}".format(
-            not_empty_suffix or '', str(only_selected), str(the_objects))
-        cache = IAnnotations(getRequest())
-        orgs = cache.get(key, None)
+        request = getRequest()
+        if request:
+            # in some cases like in tests, request can not be retrieved
+            key = "tool-get_internal_organizations-{0}-{1}-{2}".format(
+                not_empty_suffix or '', str(only_selected), str(the_objects))
+            cache = IAnnotations(getRequest())
+            orgs = cache.get(key, None)
+        else:
+            caching = False
 
     if orgs is None:
         if only_selected:
