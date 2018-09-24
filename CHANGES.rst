@@ -29,6 +29,8 @@ Changelog
 - Added utils.get_plone_group that returns a Plone group for given organization
   UID and suffix.
   [gbastien]
+- Disabled auto_append on IContactPlonegroupConfig.functions DataGridField.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------

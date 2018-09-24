@@ -140,7 +140,7 @@ class IContactPlonegroupConfig(Interface):
         value_type=DictRow(title=_("Function"),
                            schema=IFunctionSchema)
     )
-    widget(functions=DataGridFieldFactory)
+    widget('functions', DataGridFieldFactory, auto_append=False)
 
     @invariant
     def validateSettings(data):
