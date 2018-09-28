@@ -31,6 +31,9 @@ Changelog
   [gbastien]
 - Disabled auto_append on IContactPlonegroupConfig.functions DataGridField.
   [gbastien]
+- Notify event PlonegroupGroupCreatedEvent when a Plone group linked to an
+  organization is created.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------
