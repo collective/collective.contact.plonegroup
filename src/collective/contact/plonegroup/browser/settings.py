@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-import re
-
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.events import PlonegroupGroupCreatedEvent
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organizations
-from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_own_organization_path
+from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.elephantvocabulary import wrap_vocabulary
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
@@ -33,6 +32,7 @@ from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.container.interfaces import IContainerModifiedEvent
 from zope.container.interfaces import IObjectRemovedEvent
+from zope.event import notify
 from zope.interface import implements
 from zope.interface import Interface
 from zope.interface import Invalid
@@ -40,6 +40,8 @@ from zope.interface import invariant
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+
+import re
 
 
 class IOrganizationSchema(Interface):
@@ -207,6 +209,7 @@ def addOrModifyGroup(orga, function_id, function_title):
             groupname=group_name,
             title=group_title,
         )
+        notify(PlonegroupGroupCreatedEvent(group))
         return True
     else:
         # group_title is maybe modified
