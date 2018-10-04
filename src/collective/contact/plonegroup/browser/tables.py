@@ -20,8 +20,8 @@ class SubOrganizationsTable(ExtendedCSSTable):
     cssClassOdd = u'odd'
     cssClasses = {'table': 'listing nosort templates-listing icons-on'}
 
-    batchSize = 200
-    startBatchingAt = 200
+    batchSize = 999
+    startBatchingAt = 999
     sortOn = None
     results = []
 

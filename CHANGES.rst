@@ -34,6 +34,10 @@ Changelog
 - Notify event PlonegroupGroupCreatedEvent when a Plone group linked to an
   organization is created.
   [gbastien]
+- z3c.table batching does not work when displaying suborganizations, so set
+  batchSize and startBatchingAt to 999 instead 200 so we are pretty sure it is
+  never displayed.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------
