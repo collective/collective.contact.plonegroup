@@ -38,6 +38,11 @@ Changelog
   batchSize and startBatchingAt to 999 instead 200 so we are pretty sure it is
   never displayed.
   [gbastien]
+- While displaying "@@suborganizations", display a specific message "No suborganization"
+  when no suborganizations instead displaying nothing.
+  [gbastien]
+- Added default logger importable from collective.contact.plonegroup.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------

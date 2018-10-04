@@ -14,6 +14,11 @@
             <tal:listing replace="structure view/table/render" />
           <div id="dg-batch"><tal:batch replace="structure view/table/renderBatch" /></div>
         </tal:block>
+        <tal:no_results condition="not:results">
+            <p class="discreet" i18n:translate="help_organizations_no_suborgs">
+                There is no organizations in this organization.
+            </p>
+        </tal:no_results>
     </tal:not_ajax_load>
 
 </div>

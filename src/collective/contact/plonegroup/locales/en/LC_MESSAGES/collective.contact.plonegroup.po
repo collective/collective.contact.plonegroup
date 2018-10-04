@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-09-10 13:24+0000\n"
+"POT-Creation-Date: 2018-10-04 10:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,19 +19,19 @@ msgstr ""
 msgid "Actions"
 msgstr "Actions"
 
-#: ../browser/settings.py:130
+#: ../browser/settings.py:133
 msgid "Choose multiple organization levels for which you want to create a plone group."
 msgstr "Choose multiple organization levels for which you want to create a plone group."
 
-#: ../browser/settings.py:137
+#: ../browser/settings.py:140
 msgid "Each defined function will suffix each organization plone group."
 msgstr "Each defined function will suffix each organization plone group."
 
-#: ../browser/settings.py:139
+#: ../browser/settings.py:142
 msgid "Function"
 msgstr "Function"
 
-#: ../browser/settings.py:136
+#: ../browser/settings.py:139
 msgid "Function list"
 msgstr "Function list"
 
@@ -39,35 +39,35 @@ msgstr "Function list"
 msgid "Installs the collective.contact.plonegroup add-on."
 msgstr "Installs the collective.contact.plonegroup add-on."
 
-#: ../browser/settings.py:48
+#: ../browser/settings.py:51
 msgid "Organization id"
 msgstr "Organization id"
 
-#: ../browser/settings.py:49
+#: ../browser/settings.py:52
 msgid "Organization title"
 msgstr "Organization title"
 
-#: ../browser/settings.py:66
+#: ../browser/settings.py:69
 msgid "Plone group organizations description"
 msgstr "Plone group organizations description"
 
-#: ../browser/settings.py:58
+#: ../browser/settings.py:61
 msgid "Plone group suffix description"
 msgstr ""
 
-#: ../browser/settings.py:57
+#: ../browser/settings.py:60
 msgid "Plone group suffix id"
 msgstr "Plone group suffix id"
 
-#: ../browser/settings.py:65
+#: ../browser/settings.py:68
 msgid "Plone group suffix organizations"
 msgstr "Plone group suffix organizations"
 
-#: ../browser/settings.py:61
+#: ../browser/settings.py:64
 msgid "Plone group suffix title"
 msgstr "Plone group suffix title"
 
-#: ../browser/settings.py:62
+#: ../browser/settings.py:65
 msgid "Plone group title description"
 msgstr ""
 
@@ -75,7 +75,7 @@ msgstr ""
 msgid "Selected in plonegroup"
 msgstr "Selected in plonegroup"
 
-#: ../browser/settings.py:129
+#: ../browser/settings.py:132
 msgid "Selected organizations"
 msgstr "Selected organizations"
 
@@ -91,7 +91,7 @@ msgstr "This contact is selected in configuration"
 msgid "This contact is used in following content: ${items}"
 msgstr "This contact is used in following content: ${items}"
 
-#: ../browser/settings.py:348
+#: ../browser/settings.py:382
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 msgstr "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 
@@ -103,33 +103,37 @@ msgstr "You cannot deactivate this item !"
 msgid "You cannot delete the group '${group}', linked to used organization '${orga}'."
 msgstr "You cannot delete the group '${group}', linked to used organization '${orga}'."
 
-#: ../browser/settings.py:347
+#: ../browser/settings.py:381
 msgid "You cannot delete this item !"
 msgstr "You cannot delete this item !"
 
-#: ../browser/settings.py:147
+#: ../browser/settings.py:150
 msgid "You must choose at least one organization !"
 msgstr "You must choose at least one organization !"
 
-#: ../browser/settings.py:149
+#: ../browser/settings.py:152
 msgid "You must correct the organization error first !"
 msgstr "You must correct the organization error first !"
 
-#: ../browser/settings.py:107
+#: ../browser/settings.py:110
 msgid "You must define an organization with id '${pgo}' !"
 msgstr "You must define an organization with id '${pgo}' !"
 
-#: ../browser/settings.py:151
+#: ../browser/settings.py:154
 msgid "You must define at least one function !"
 msgstr "You must define at least one function !"
 
-#: ../browser/settings.py:111
+#: ../browser/settings.py:114
 msgid "You must have only one organization with id '${pgo}' !"
 msgstr "You must have only one organization with id '${pgo}' !"
 
-#: ../browser/settings.py:166
+#: ../browser/settings.py:168
 msgid "can_not_remove_function_every_plone_groups_not_empty"
 msgstr "You can not remove function \"${removed_function}\" as there are still Plone groups using this suffix that contains users (check for example \"${plone_group_id}\") !"
+
+#: ../browser/settings.py:190
+msgid "can_not_select_function_orgs_every_other_plone_groups_not_empty"
+msgstr ""
 
 #: ../configure.zcml:29
 msgid "collective.contact.plonegroup"
@@ -138,6 +142,11 @@ msgstr "collective.contact.plonegroup"
 #: ../testing.zcml:16
 msgid "collective.contact.plonegroup tests"
 msgstr "collective.contact.plonegroup tests"
+
+#. Default: "There is no organizations in this organization."
+#: ../browser/templates/suborganizations.pt:18
+msgid "help_organizations_no_suborgs"
+msgstr ""
 
 #. Default: "For convenience, organizations are listed alphabetically. Order is defined in the ${plonegroup_config_url}."
 #: ../browser/templates/suborganizations.pt:11
