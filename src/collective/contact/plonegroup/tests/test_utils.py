@@ -12,15 +12,16 @@ from collective.contact.plonegroup.utils import get_own_organization
 from collective.contact.plonegroup.utils import get_own_organization_path
 from collective.contact.plonegroup.utils import get_plone_group
 from collective.contact.plonegroup.utils import get_plone_group_id
+from collective.contact.plonegroup.utils import get_plone_groups
 from collective.contact.plonegroup.utils import get_selected_org_suffix_users
 from collective.contact.plonegroup.utils import organizations_with_suffixes
 from collective.contact.plonegroup.utils import voc_selected_org_suffix_users
+from copy import deepcopy
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
-from copy import deepcopy
 
 
 class TestUtils(IntegrationTestCase):
@@ -95,6 +96,14 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(
             get_plone_group(self.uid, 'observer'),
             api.group.get('{0}_{1}'.format(self.uid, 'observer')))
+
+    def test_get_plone_groups(self):
+        plone_groups = [get_plone_group(self.uid, 'observer'), get_plone_group(self.uid, 'director')]
+        self.assertEqual(get_plone_groups(self.uid, ids_only=False), plone_groups)
+        self.assertEqual(get_plone_groups(self.uid, ids_only=True), [g.id for g in plone_groups])
+        self.assertEqual(get_plone_groups(self.uid, suffixes=['observer']), [plone_groups[0]])
+        self.assertEqual(get_plone_groups(self.uid, suffixes=['unknown_suffix']), [])
+        self.assertEqual(get_plone_groups(self.uid, ids_only=True, suffixes=['unknown_suffix']), [])
 
     def test_get_organization(self):
         suffixed_org = get_plone_group_id(self.uid, 'suffix')

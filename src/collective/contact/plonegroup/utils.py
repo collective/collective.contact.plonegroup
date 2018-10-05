@@ -58,8 +58,11 @@ def get_plone_groups(org_uid, ids_only=False, suffixes=[]):
     """
     suffixes = suffixes or get_all_suffixes(org_uid)
     plone_groups = [get_plone_group_id(org_uid, suffix) for suffix in suffixes]
-    if not ids_only:
-        plone_groups = [api.group.get(plone_group) for plone_group in plone_groups]
+    plone_groups = [api.group.get(plone_group) for plone_group in plone_groups]
+    # remove None values
+    plone_groups = [v for v in plone_groups if v]
+    if ids_only:
+        plone_groups = [plone_group.getId() for plone_group in plone_groups]
     return plone_groups
 
 
