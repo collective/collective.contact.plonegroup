@@ -3,6 +3,7 @@
 
 from collective.contact.plonegroup.testing import IntegrationTestCase
 from plone import api
+from Products.GenericSetup.tool import DEPENDENCY_STRATEGY_REAPPLY
 
 
 class TestInstall(IntegrationTestCase):
@@ -28,3 +29,9 @@ class TestInstall(IntegrationTestCase):
         from collective.contact.plonegroup.interfaces import ICollectiveContactPlonegroupLayer
         from plone.browserlayer import utils
         self.failUnless(ICollectiveContactPlonegroupLayer in utils.registered_layers())
+
+    def test_reinstall(self):
+        """ """
+        self.portal.portal_setup.runAllImportStepsFromProfile(
+            'collective.contact.plonegroup:default',
+            dependency_strategy=DEPENDENCY_STRATEGY_REAPPLY)
