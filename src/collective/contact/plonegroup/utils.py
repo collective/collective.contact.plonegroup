@@ -194,3 +194,13 @@ def get_own_organization_path(not_found_value=None):
     if own_org:
         return '/'.join(own_org.getPhysicalPath())
     return not_found_value
+
+
+def select_organization(org_uid, remove=False):
+    """Select organization in ORGANIZATIONS_REGISTRY."""
+    plonegroup_organizations = list(api.portal.get_registry_record(ORGANIZATIONS_REGISTRY))
+    if remove:
+        plonegroup_organizations.remove(org_uid)
+    else:
+        plonegroup_organizations.append(org_uid)
+    api.portal.set_registry_record(ORGANIZATIONS_REGISTRY, plonegroup_organizations)

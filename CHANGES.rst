@@ -43,6 +43,9 @@ Changelog
   [gbastien]
 - Added default logger importable from collective.contact.plonegroup.
   [gbastien]
+- Added utils.select_organization to be able to select or unselect an
+  organization from organizations registry.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------

@@ -15,6 +15,7 @@ from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_plone_groups
 from collective.contact.plonegroup.utils import get_selected_org_suffix_users
 from collective.contact.plonegroup.utils import organizations_with_suffixes
+from collective.contact.plonegroup.utils import select_organization
 from collective.contact.plonegroup.utils import voc_selected_org_suffix_users
 from copy import deepcopy
 from plone import api
@@ -122,6 +123,18 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(get_organizations(not_empty_suffix=None), [self.dep1])
         self.assertEqual(get_organizations(not_empty_suffix=u'director'), [self.dep1])
         self.assertEqual(get_organizations(not_empty_suffix=u'observer'), [])
+
+    def test_get_organizations_follows_selected_organizations_order(self):
+        self.assertEqual(get_organizations(only_selected=True), [self.dep1])
+        select_organization(self.dep2.UID())
+        self.assertEqual(get_organizations(only_selected=True, caching=False),
+                         [self.dep1, self.dep2])
+        select_organization(self.dep1.UID(), remove=True)
+        select_organization(self.dep2.UID(), remove=True)
+        select_organization(self.dep2.UID())
+        select_organization(self.dep1.UID())
+        self.assertEqual(get_organizations(only_selected=True, caching=False),
+                         [self.dep2, self.dep1])
 
     def test_get_all_suffixes(self):
         self.assertEqual(get_all_suffixes(self.uid), [u'observer', u'director'])
