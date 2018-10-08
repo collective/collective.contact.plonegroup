@@ -3,6 +3,7 @@
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from imio.helpers.content import uuidsToObjects
 from operator import attrgetter
 from operator import methodcaller
 from plone import api
@@ -98,7 +99,7 @@ def get_organizations(only_selected=True,
 
     if orgs is None:
         if only_selected:
-            orgs = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
+            org_uids = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
         else:
             # use the vocabulary to get selectable organizations so if vocabulary
             # is overrided get_organizations is still consistent
@@ -106,19 +107,22 @@ def get_organizations(only_selected=True,
                 IVocabularyFactory,
                 name=u'collective.contact.plonegroup.organization_services')
             portal = api.portal.get()
-            orgs = [term.value for term in vocab(portal)._terms]
+            org_uids = [term.value for term in vocab(portal)._terms]
         # we only keep orgs for which Plone group with not_empty_suffix suffix contains members
         if not_empty_suffix:
             filtered_orgs = []
-            for org_uid in orgs:
+            for org_uid in org_uids:
                 plone_group_id = get_plone_group_id(org_uid, suffix=not_empty_suffix)
                 plone_group = api.group.get(plone_group_id)
                 if plone_group and plone_group.getMemberIds():
                     filtered_orgs.append(org_uid)
-            orgs = filtered_orgs
+            org_uids = filtered_orgs
+
         # return org uids or org objects
         if the_objects:
-            orgs = [uuidToObject(org) for org in orgs]
+            orgs = uuidsToObjects(org_uids)
+        else:
+            orgs = org_uids
 
         if caching:
             cache[key] = orgs
