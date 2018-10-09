@@ -46,6 +46,8 @@ Changelog
 - Added utils.select_organization to be able to select or unselect an
   organization from organizations registry.
   [gbastien]
+- While creating Plone groups, translate suffix displayed in title.
+  [gbastien]
 
 1.9 (2018-09-04)
 ----------------

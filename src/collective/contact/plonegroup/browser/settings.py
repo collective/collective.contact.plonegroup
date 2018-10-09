@@ -13,6 +13,7 @@ from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
+from imio.helpers.content import safe_encode
 from plone import api
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
@@ -197,10 +198,8 @@ def addOrModifyGroup(orga, function_id, function_title):
         create a plone group
     """
     organization_title = orga.get_full_title(separator=' - ', first_index=1)
-    if isinstance(organization_title, unicode):
-        organization_title = organization_title.encode('utf8')
-    if isinstance(function_title, unicode):
-        function_title = function_title.encode('utf8')
+    organization_title = safe_encode(organization_title)
+    function_title = safe_encode(function_title)
     group_name = get_plone_group_id(orga.UID(), function_id)
     group = api.group.get(groupname=group_name)
     group_title = '%s (%s)' % (organization_title, function_title)
