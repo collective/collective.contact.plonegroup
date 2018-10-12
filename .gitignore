@@ -1,7 +1,6 @@
 *.egg-info
 *.mo
 *.pyc
-.coverage
 .installed.cfg
 .mr.developer.cfg
 .project
@@ -9,7 +8,6 @@
 .settings/
 bin/
 develop-eggs/
-htmlcov/
 include/
 lib/
 parts/
@@ -17,3 +15,10 @@ src/*
 !src/collective/
 var/
 buildout-cache/
+htmlcov
+.coverage
+*.html
+*.log
+output.xml
+*.swp
+/.idea
