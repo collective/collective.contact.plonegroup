@@ -4,3 +4,5 @@ include *
 exclude .installed.cfg
 exclude .mr.developer.cfg
 global-exclude *pyc
+recursive-include src *.gitignore
+
