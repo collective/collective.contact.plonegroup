@@ -120,7 +120,7 @@ def get_organizations(only_selected=True,
 
         # return org uids or org objects
         if the_objects:
-            orgs = uuidsToObjects(org_uids)
+            orgs = uuidsToObjects(org_uids, ordered=True)
         else:
             orgs = org_uids
 
