@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.11 (unreleased)
+1.11 (2018-11-20)
 -----------------
 
 - In utils.get_organizations, call uuidsToObjects with ordered=True to get
