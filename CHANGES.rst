@@ -8,6 +8,8 @@ Changelog
 - In utils.get_organizations, call uuidsToObjects with ordered=True to get
   organizations in correct order because the catalog query is not sorted.
   [gbastien]
+- Fixed migration that adds 'fct_orgs' to functions.
+  [gbastien]
 
 1.10 (2018-10-12)
 -----------------

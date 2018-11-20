@@ -58,11 +58,13 @@ def v5(context):
     logger.info("Migrate to v5")
     functions = api.portal.get_registry_record(name=FUNCTIONS_REGISTRY)
     res = []
+    # XXX we intentionally directly edit the existing "function"
+    # so it does not break in the detectContactPlonegroupChange method while looking
+    # for 'fct_orgs' in old_functions
     for function in functions:
         if 'fct_orgs' not in function:
-            copied_function = function.copy()
-            copied_function['fct_orgs'] = []
-            res.append(copied_function)
+            function['fct_orgs'] = []
+            res.append(function)
         else:
             # already migrated
             return
