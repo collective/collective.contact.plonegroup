@@ -14,6 +14,7 @@ from collective.z3cform.datagridfield.registry import DictRow
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
 from imio.helpers.content import safe_encode
+from operator import attrgetter
 from plone import api
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
@@ -494,4 +495,7 @@ class SelectedOrganizationsElephantVocabulary(object):
         # ordered_vocab = SearchableSimpleVocabulary(ordered_terms + extra_terms)  # bug in widget, trac #15186
         ordered_vocab = SimpleVocabulary(ordered_terms + extra_terms)
         wrapped_vocab = wrap_vocabulary(ordered_vocab, hidden_terms=extra_uids)(context)
+        # sort by title
+        sorted_vocab = sorted(wrapped_vocab.vocab, key=attrgetter('title'))
+        wrapped_vocab.vocab = SimpleVocabulary(sorted_vocab)
         return wrapped_vocab

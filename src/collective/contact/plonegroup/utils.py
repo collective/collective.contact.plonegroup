@@ -81,17 +81,27 @@ def get_organization(plone_group_id_or_org_uid):
 def get_organizations(only_selected=True,
                       the_objects=True,
                       not_empty_suffix=None,
+                      kept_org_uids=[],
                       caching=True):
     """
-        Return every organizations.
+        Return organizations.
+        If only_selected, check registry if org is selected.
+        If the objects, return organization objects, either return UIDs.
+        If not_empty_suffix, return organizations for which Plone group using
+        given suffix is not empty.
+        If kept_org_uids, return only organizations with these UIDs.
+        If caching, use REQUEST caching.
     """
     orgs = None
     if caching:
         request = getRequest()
         if request:
             # in some cases like in tests, request can not be retrieved
-            key = "plonegroup-utils-get_organizations-{0}-{1}-{2}".format(
-                not_empty_suffix or '', str(only_selected), str(the_objects))
+            key = "plonegroup-utils-get_organizations-{0}-{1}-{2}-{3}".format(
+                not_empty_suffix or '',
+                str(only_selected),
+                str(the_objects),
+                '_'.join(sorted(kept_org_uids)))
             cache = IAnnotations(getRequest())
             orgs = cache.get(key, None)
         else:
@@ -99,7 +109,7 @@ def get_organizations(only_selected=True,
 
     if orgs is None:
         if only_selected:
-            org_uids = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
+            org_uids = [org_uid for org_uid in api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)]
         else:
             # use the vocabulary to get selectable organizations so if vocabulary
             # is overrided get_organizations is still consistent
@@ -108,6 +118,9 @@ def get_organizations(only_selected=True,
                 name=u'collective.contact.plonegroup.organization_services')
             portal = api.portal.get()
             org_uids = [term.value for term in vocab(portal)._terms]
+        # filter out regarding parameter kept_org_uids
+        if kept_org_uids:
+            org_uids = [org_uid for org_uid in org_uids if org_uid in kept_org_uids]
         # we only keep orgs for which Plone group with not_empty_suffix suffix contains members
         if not_empty_suffix:
             filtered_orgs = []

@@ -296,6 +296,7 @@ class TestSettings(IntegrationTestCase):
         factory_wrp = getUtility(IVocabularyFactory, "collective.contact.plonegroup.selected_organization_services")
         vocab_wrp = factory_wrp(self.portal)
         self.assertEqual(len(vocab_wrp), 3)
-        self.assertListEqual([v.value for v in vocab_wrp], registry[ORGANIZATIONS_REGISTRY])
-        self.assertListEqual([v.title for v in vocab_wrp], ['Department 2', 'Department 1'])
+        # values are sorted by title
+        self.assertListEqual(sorted([v.value for v in vocab_wrp]), sorted(registry[ORGANIZATIONS_REGISTRY]))
+        self.assertListEqual([v.title for v in vocab_wrp], ['Department 1', 'Department 2'])
         self.assertEqual(vocab_wrp.getTerm(vocab_all_values[1]).title, 'Department 1 - Service 1')

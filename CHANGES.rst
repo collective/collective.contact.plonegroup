@@ -5,8 +5,12 @@ Changelog
 1.12 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter `kept_org_uids` to `utils.get_organizations` to only keep
+  organizations having defined UID.
+  [gbastien]
+- Sort `collective.contact.plonegroup.selected_organization_services`
+  vocabulary by value title.
+  [gbastien]
 
 1.11 (2018-11-20)
 -----------------

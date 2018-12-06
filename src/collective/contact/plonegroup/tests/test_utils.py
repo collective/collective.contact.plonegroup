@@ -136,6 +136,14 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(get_organizations(only_selected=True, caching=False),
                          [self.dep2, self.dep1])
 
+    def test_get_organizations_kept_org_uids(self):
+        self.assertEqual(get_organizations(), [self.dep1])
+        self.assertEqual(get_organizations(kept_org_uids=['some_unexisting_uid']), [])
+        self.assertEqual(get_organizations(kept_org_uids=[self.dep1.UID()]), [self.dep1])
+        self.assertEqual(
+            get_organizations(kept_org_uids=['some_unexisting_uid', self.dep1.UID()]),
+            [self.dep1])
+
     def test_get_all_suffixes(self):
         self.assertEqual(get_all_suffixes(self.uid), [u'observer', u'director'])
         dep2_uid = self.dep2.UID()
