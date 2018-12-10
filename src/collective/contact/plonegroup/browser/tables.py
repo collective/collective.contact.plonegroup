@@ -92,7 +92,8 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
         # find first_index relative to PLONEGROUP_ORG organization
         path = self.context.getPhysicalPath()
         first_index = len(path) - path.index(PLONEGROUP_ORG)
-        return item.get_full_title(first_index=first_index)
+        return u'{0} <span class="discreet">({1})</span>'.format(
+            item.get_full_title(first_index=first_index), item.UID())
 
 
 class SelectedInPlonegroupColumn(BooleanColumn):

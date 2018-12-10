@@ -11,6 +11,8 @@ Changelog
 - Sort `collective.contact.plonegroup.selected_organization_services`
   vocabulary by value title.
   [gbastien]
+- Display the organization UID next to title in the `suborganizations` view.
+  [gbastien]
 
 1.11 (2018-11-20)
 -----------------
