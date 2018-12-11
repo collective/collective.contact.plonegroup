@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.12 (unreleased)
+1.12 (2018-12-11)
 -----------------
 
 - Added parameter `kept_org_uids` to `utils.get_organizations` to only keep
