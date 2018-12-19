@@ -5,8 +5,8 @@ Changelog
 1.13 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Use unrestrictedSearchResults to check link integrity.
+  [sgeulette]
 
 1.12 (2018-12-11)
 -----------------

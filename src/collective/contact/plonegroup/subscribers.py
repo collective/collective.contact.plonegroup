@@ -103,8 +103,9 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
             return res
         return []
 
-    for brain in catalog.searchResults(portal_types=p_types, object_provides=IDexterityContent.__identifier__):
-        obj = brain.getObject()
+    for brain in catalog.unrestrictedSearchResults(portal_types=p_types,
+                                                   object_provides=IDexterityContent.__identifier__):
+        obj = brain._unrestrictedGetObject()
         ptype = obj.portal_type
         for attr in list_fields(ptype):
             if base_hasattr(obj, attr):
