@@ -8,17 +8,17 @@ ORGANIZATIONS_REGISTRY = 'collective.contact.plonegroup.browser.settings.IContac
 FUNCTIONS_REGISTRY = 'collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.functions'
 PLONEGROUP_ORG = 'plonegroup-organization'
 
-def get_organizations():
+def get_registry_organizations():
     return api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
 
 
-def get_functions():
+def get_registry_functions():
     return api.portal.get_registry_record(FUNCTIONS_REGISTRY)
 
 
-def set_organizations(value):
+def set_registry_organizations(value):
     api.portal.set_registry_record(ORGANIZATIONS_REGISTRY, value)
 
 
-def set_functions(value):
+def set_registry_functions(value):
     api.portal.set_registry_record(FUNCTIONS_REGISTRY, value)
