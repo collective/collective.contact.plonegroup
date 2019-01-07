@@ -7,6 +7,10 @@ Changelog
 
 - Use unrestrictedSearchResults to check link integrity.
   [sgeulette]
+- Added helpers config.get_organizations, config.get_functions,
+  config.set_organizations and config.set_functions to easily get and set
+  organizations/functions registry records.
+  [gbastien]
 
 1.12 (2018-12-11)
 -----------------
