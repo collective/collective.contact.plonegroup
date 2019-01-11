@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.13 (unreleased)
+1.13 (2019-01-11)
 -----------------
 
 - Use unrestrictedSearchResults to check link integrity.
