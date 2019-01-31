@@ -28,6 +28,7 @@ setup(
         "Framework :: Plone",
         "Framework :: Plone :: 4.2",
         "Framework :: Plone :: 4.3",
+        "Framework :: Plone :: 5.1",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
     ],
@@ -42,7 +43,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'five.grok',
         'plone.api',
         'setuptools',
         'collective.contact.core',

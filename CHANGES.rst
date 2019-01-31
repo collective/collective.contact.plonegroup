@@ -5,7 +5,10 @@ Changelog
 1.14 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Plone 5 compatible.
+  [thomasdesvenain]
+
+- Removed grok dependency.
 
 
 1.13 (2019-01-11)
