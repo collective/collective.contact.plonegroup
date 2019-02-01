@@ -391,7 +391,7 @@ def adaptPloneGroupDefinition(organization, event):
     for brain in brains:
         orga = brain.getObject()
         orga_uid = orga.UID()
-        if orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+        if orga_uid in registry.get(ORGANIZATIONS_REGISTRY, []):
             if addOrModifyOrganizationGroups(orga, orga_uid):
                 changes = True
     if changes:

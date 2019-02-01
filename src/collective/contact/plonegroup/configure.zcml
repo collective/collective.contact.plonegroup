@@ -1,33 +1,32 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
-    xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="collective.contact.plonegroup">
 
-    <include package="collective.contact.core" />
+  <include package="collective.contact.core"/>
 
-    <i18n:registerTranslations directory="locales" />
+  <i18n:registerTranslations directory="locales"/>
 
-    <five:registerPackage package="." initialize=".initialize" />
+  <five:registerPackage package="." initialize=".initialize"/>
 
-    <include package=".browser" />
-    <include package=".content" />
-    <include package=".upgrades" />
-    <include package="plone.api" />
+  <include package=".browser"/>
+  <include package=".content"/>
+  <include package=".upgrades"/>
+  <include package="plone.api"/>
 
-    <include file="subscribers.zcml" />
-    <include zcml:condition="have plone-5" file="plone5.zcml" />
-    <include zcml:condition="not-have plone-5" file="plone4.zcml" />
+  <include file="subscribers.zcml"/>
+  <include zcml:condition="have plone-5" file="plone5.zcml"/>
+  <include zcml:condition="not-have plone-5" file="plone4.zcml"/>
 
-    <genericsetup:registerProfile
-        name="default"
-        title="collective.contact.plonegroup"
-        directory="profiles/default"
-        description="Installs the collective.contact.plonegroup add-on."
-        provides="Products.GenericSetup.interfaces.EXTENSION"
-        />
+  <genericsetup:registerProfile
+      name="install-base"
+      title="collective.contact.plonegroup"
+      directory="profiles/base"
+      description="Installs the collective.contact.plonegroup add-on."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
 
 </configure>

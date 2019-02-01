@@ -1,0 +1,20 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.contact.plonegroup">
+
+    <genericsetup:registerProfile
+        name="default"
+        title="collective.contact.plonegroup"
+        directory="profiles/plone5"
+        description="Installs the collective.contact.plonegroup add-on."
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        />
+
+    <subscriber
+        for=".interfaces.IPloneGroupContact
+             Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
+        handler=".plone5.plonegroup_contact_transition"
+        />
+
+</configure>
