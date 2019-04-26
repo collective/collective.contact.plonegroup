@@ -5,8 +5,10 @@ Changelog
 1.14 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Make `OrgaPrettyLinkWithAdditionalInfosColumn` work if displaying the
+  `plonegroup-organization`, include link to plonegroup configuration panel in
+  `SelectedInPlonegroupColumn` header.
+  [gbastien]
 
 1.13 (2019-01-11)
 -----------------

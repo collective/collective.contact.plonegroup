@@ -11,6 +11,7 @@ from collective.eeafaceted.z3ctable.columns import PrettyLinkWithAdditionalInfos
 from plone import api
 from Products.Five import BrowserView
 from zope.cachedescriptors.property import CachedProperty
+from zope.i18n import translate
 
 
 class SubOrganizationsTable(ExtendedCSSTable):
@@ -90,8 +91,11 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
     def contentValue(self, item):
         """Display get_full_title instead title."""
         # find first_index relative to PLONEGROUP_ORG organization
-        path = self.context.getPhysicalPath()
-        first_index = len(path) - path.index(PLONEGROUP_ORG)
+        if item.getId() == PLONEGROUP_ORG:
+            first_index = 0
+        else:
+            path = item.getPhysicalPath()
+            first_index = len(path) - path.index(PLONEGROUP_ORG)
         return u'{0} <span class="discreet">({1})</span>'.format(
             item.get_full_title(first_index=first_index), item.UID())
 
@@ -102,6 +106,15 @@ class SelectedInPlonegroupColumn(BooleanColumn):
 
     header = _("Selected in plonegroup")
     weight = 10
+
+    def renderHeadCell(self):
+        """ """
+        portal = api.portal.get()
+        plonegroup_url = '{0}/@@contact-plonegroup-settings'.format(portal.absolute_url())
+        return translate("Selected in plonegroup",
+                         domain='collective.contact.plonegroup',
+                         mapping={'plonegroup_url': plonegroup_url},
+                         context=self.request)
 
     def getValue(self, item):
         """ """
