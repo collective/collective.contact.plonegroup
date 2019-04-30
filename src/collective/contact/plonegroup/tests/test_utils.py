@@ -4,6 +4,7 @@
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.testing import IntegrationTestCase
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organization
@@ -15,6 +16,7 @@ from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_plone_groups
 from collective.contact.plonegroup.utils import get_selected_org_suffix_users
 from collective.contact.plonegroup.utils import organizations_with_suffixes
+from collective.contact.plonegroup.utils import select_org_for_function
 from collective.contact.plonegroup.utils import select_organization
 from collective.contact.plonegroup.utils import voc_selected_org_suffix_users
 from copy import deepcopy
@@ -167,4 +169,10 @@ class TestUtils(IntegrationTestCase):
 
     def test_select_org_for_function(self):
         """ """
-        import ipdb; ipdb.set_trace()
+        self.assertEqual(get_registry_functions(),
+                         [{'fct_title': u'Observers', 'fct_orgs': [], 'fct_id': u'observer'},
+                          {'fct_title': u'Director', 'fct_orgs': [], 'fct_id': u'director'}])
+        select_org_for_function(self.uid, 'director')
+        self.assertTrue(self.uid in get_registry_functions()[1]['fct_orgs'])
+        select_org_for_function(self.uid, 'director', remove=True)
+        self.assertFalse(self.uid in get_registry_functions()[1]['fct_orgs'])
