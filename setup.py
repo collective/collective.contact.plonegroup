@@ -54,7 +54,6 @@ setup(
         'test': [
             'ecreall.helpers.testing',
             'plone.app.testing',
-            'unittest2',
         ],
     },
     entry_points="""

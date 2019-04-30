@@ -13,7 +13,7 @@ from plone.app.testing import TEST_USER_NAME
 from plone.testing import z2
 
 import collective.contact.plonegroup
-import unittest2 as unittest
+import unittest
 
 
 class CollectiveContactPlonegroupLayer(PloneSandboxLayer):

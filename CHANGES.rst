@@ -9,6 +9,15 @@ Changelog
   `plonegroup-organization`, include link to plonegroup configuration panel in
   `SelectedInPlonegroupColumn` header.
   [gbastien]
+- Changed first parameter name for `utils.get_plone_group` and
+  `utils.get_plone_group_id` from `org_uid` to `prefix` as it can be used in
+  other cases.
+  [gbastien]
+- Added helper method `utils.select_org_for_function` to be able to add/remove
+  an organization uid from `fct_orgs` defined on a `function`.
+  [gbastien]
+- Removed dependency on `unittest2`.
+  [gbastien]
 
 1.13 (2019-01-11)
 -----------------

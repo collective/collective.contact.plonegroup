@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
+from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.config import set_registry_functions
+from copy import deepcopy
 from imio.helpers.content import uuidsToObjects
 from operator import attrgetter
 from operator import methodcaller
@@ -31,21 +34,21 @@ def organizations_with_suffixes(groups, suffixes):
     return orgs
 
 
-def get_plone_group_id(org_uid, suffix):
+def get_plone_group_id(prefix, suffix):
     """
-        Return Plone group id corresponding to org_uid/suffix.
+        Return Plone group id corresponding to prefix/suffix.
     """
     # make sure we received an str as org_uid, not an org
-    if not isinstance(org_uid, (str, unicode)):
-        raise TypeError('Parameter org_uid must be str or unicode instance!')
-    return '{0}_{1}'.format(org_uid, suffix)
+    if not isinstance(prefix, (str, unicode)):
+        raise TypeError('Parameter prefix must be str or unicode instance!')
+    return '{0}_{1}'.format(prefix, suffix)
 
 
-def get_plone_group(org_uid, suffix):
+def get_plone_group(prefix, suffix):
     """
-        Return Plone group corresponding to org_uid/suffix.
+        Return Plone group corresponding to prefix/suffix.
     """
-    plone_group_id = get_plone_group_id(org_uid, suffix)
+    plone_group_id = get_plone_group_id(prefix, suffix)
     plone_group = api.group.get(plone_group_id)
     return plone_group
 
@@ -221,3 +224,15 @@ def select_organization(org_uid, remove=False):
     else:
         plonegroup_organizations.append(org_uid)
     api.portal.set_registry_record(ORGANIZATIONS_REGISTRY, plonegroup_organizations)
+
+
+def select_org_for_function(org_uid, function_id, remove=False):
+    """Select an organization UID in the list of fct_orgs of a function."""
+    functions = deepcopy(get_registry_functions())
+    for function in functions:
+        if function['fct_id'] == function_id:
+            if remove and org_uid in function['fct_orgs']:
+                function['fct_orgs'].remove(org_uid)
+            elif org_uid not in function['fct_orgs']:
+                function['fct_orgs'].append(org_uid)
+    set_registry_functions(functions)

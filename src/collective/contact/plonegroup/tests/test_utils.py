@@ -164,3 +164,7 @@ class TestUtils(IntegrationTestCase):
         self.assertIsNone(get_own_organization())
         self.assertIsNone(get_own_organization_path())
         self.assertEqual(get_own_organization_path(not_found_value='unfound'), 'unfound')
+
+    def test_select_org_for_function(self):
+        """ """
+        import ipdb; ipdb.set_trace()
