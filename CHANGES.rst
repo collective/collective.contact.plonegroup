@@ -18,6 +18,14 @@ Changelog
   [gbastien]
 - Removed dependency on `unittest2`.
   [gbastien]
+- When calling `config.get_registry_organizations` and
+  `config.get_registry_functions`, by default return a copy of stored data to
+  avoid changing it.
+  [gbastien]
+- Added parameter `default=True` to `utils.get_own_organization`, in this case,
+  default ids for `root directory` and `own organization` are used instead
+  using a catalog query, it should be faster.
+  [gbastien]
 
 1.13 (2019-01-11)
 -----------------

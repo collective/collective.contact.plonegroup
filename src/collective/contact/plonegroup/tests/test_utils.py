@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """ utils.py tests for this package."""
 
-from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
-from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
-from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
+from collective.contact.plonegroup.config import set_registry_functions
+from collective.contact.plonegroup.config import set_registry_organizations
 from collective.contact.plonegroup.testing import IntegrationTestCase
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organization
@@ -19,7 +20,6 @@ from collective.contact.plonegroup.utils import organizations_with_suffixes
 from collective.contact.plonegroup.utils import select_org_for_function
 from collective.contact.plonegroup.utils import select_organization
 from collective.contact.plonegroup.utils import voc_selected_org_suffix_users
-from copy import deepcopy
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
@@ -33,20 +33,18 @@ class TestUtils(IntegrationTestCase):
         """Custom shared utility setup for tests."""
         self.portal = self.layer['portal']
         # Organizations creation
-        self.portal.invokeFactory('directory', 'contacts')
-        self.portal['contacts'].invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
-        self.own_orga = self.portal['contacts'][PLONEGROUP_ORG]
+        self.portal.invokeFactory('directory', DEFAULT_DIRECTORY_ID)
+        self.portal[DEFAULT_DIRECTORY_ID].invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
+        self.own_orga = get_own_organization()
         self.dep1 = api.content.create(
             container=self.own_orga, type='organization', id='department1', title='Department 1')
         self.uid = self.dep1.UID()
         self.dep2 = api.content.create(
             container=self.own_orga, type='organization', id='department2', title='Department 2')
         self.registry = getUtility(IRegistry)
-        self.registry[ORGANIZATIONS_REGISTRY] = [self.uid]
-        self.registry[FUNCTIONS_REGISTRY] = [
-            {'fct_title': u'Observers', 'fct_id': u'observer', 'fct_orgs': [], },
-            {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [], },
-        ]
+        set_registry_organizations([self.uid])
+        set_registry_functions([{'fct_title': u'Observers', 'fct_id': u'observer', 'fct_orgs': [], },
+                                {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [], }, ])
         api.group.add_user(groupname='%s_director' % self.uid, username=TEST_USER_ID)
 
     def test_organizations_with_suffixes(self):
@@ -152,19 +150,23 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(get_all_suffixes(dep2_uid), [u'observer', u'director'])
         self.assertEqual(get_all_suffixes(), [u'observer', u'director'])
         # is 'fct_orgs' aware
-        functions = deepcopy(self.registry[FUNCTIONS_REGISTRY])
+        functions = get_registry_functions()
         functions[0]['fct_orgs'] = [self.uid]
-        api.portal.set_registry_record(FUNCTIONS_REGISTRY, functions)
+        set_registry_functions(functions)
         self.assertEqual(get_all_suffixes(dep2_uid), [u'director'])
 
     def test_get_own_organization_path(self):
         """ Test the returned organization path """
-        self.assertEqual(get_own_organization(), self.portal['contacts'][PLONEGROUP_ORG])
-        self.assertEqual(get_own_organization_path(), '/plone/contacts/plonegroup-organization')
+        self.assertEqual(get_own_organization(default=True), self.portal[DEFAULT_DIRECTORY_ID][PLONEGROUP_ORG])
+        self.assertEqual(get_own_organization(default=False), self.portal[DEFAULT_DIRECTORY_ID][PLONEGROUP_ORG])
+        self.assertEqual(get_own_organization_path(default=True), '/plone/contacts/plonegroup-organization')
+        self.assertEqual(get_own_organization_path(default=False), '/plone/contacts/plonegroup-organization')
         # remove own organization
         api.content.delete(self.own_orga)
-        self.assertIsNone(get_own_organization())
-        self.assertIsNone(get_own_organization_path())
+        self.assertIsNone(get_own_organization(default=True))
+        self.assertIsNone(get_own_organization(default=False))
+        self.assertIsNone(get_own_organization_path(default=True))
+        self.assertIsNone(get_own_organization_path(default=False))
         self.assertEqual(get_own_organization_path(not_found_value='unfound'), 'unfound')
 
     def test_select_org_for_function(self):

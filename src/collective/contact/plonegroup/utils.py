@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
-from copy import deepcopy
 from imio.helpers.content import uuidsToObjects
 from operator import attrgetter
 from operator import methodcaller
@@ -196,21 +196,26 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None):
     return SimpleVocabulary(terms)
 
 
-def get_own_organization():
+def get_own_organization(default=True):
     """
         get plonegroup-organization object
+        If p_default is True, we get it in a "contacts" directory added to the portal root.
     """
-    catalog = api.portal.get_tool('portal_catalog')
-    brains = catalog(portal_type='organization', id=PLONEGROUP_ORG)
-    if brains:
-        return brains[0].getObject()
+    if default:
+        portal = api.portal.get()
+        return portal.get(DEFAULT_DIRECTORY_ID).get(PLONEGROUP_ORG)
+    else:
+        catalog = api.portal.get_tool('portal_catalog')
+        brains = catalog(portal_type='organization', id=PLONEGROUP_ORG)
+        if brains:
+            return brains[0].getObject()
 
 
-def get_own_organization_path(not_found_value=None):
+def get_own_organization_path(not_found_value=None, default=True):
     """
         get plonegroup-organization path
     """
-    own_org = get_own_organization()
+    own_org = get_own_organization(default=default)
     if own_org:
         return '/'.join(own_org.getPhysicalPath())
     return not_found_value
@@ -228,7 +233,7 @@ def select_organization(org_uid, remove=False):
 
 def select_org_for_function(org_uid, function_id, remove=False):
     """Select an organization UID in the list of fct_orgs of a function."""
-    functions = deepcopy(get_registry_functions())
+    functions = get_registry_functions()
     for function in functions:
         if function['fct_id'] == function_id:
             if remove and org_uid in function['fct_orgs']:
