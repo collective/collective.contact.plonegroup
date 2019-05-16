@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.14 (unreleased)
+1.14 (2019-05-16)
 -----------------
 
 - Make `OrgaPrettyLinkWithAdditionalInfosColumn` work if displaying the
