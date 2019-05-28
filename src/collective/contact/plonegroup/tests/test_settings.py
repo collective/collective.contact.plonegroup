@@ -162,6 +162,17 @@ class TestSettings(IntegrationTestCase):
         set_registry_functions(functions)
         self.assertTrue(api.group.get(dep1_plone_group_id))
         self.assertTrue(api.group.get(dep2_plone_group_id))
+        # Changing function title
+        dep1_plone_group = api.group.get(dep1_plone_group_id)
+        self.assertEquals(dep1_plone_group.getProperty('title'), 'Department 1 (Director)')
+        dep2_plone_group = api.group.get(dep2_plone_group_id)
+        self.assertEquals(dep2_plone_group.getProperty('title'), 'Department 2 (Director)')
+        functions[0]['fct_title'] = u'New title'
+        set_registry_functions(functions)
+        dep1_plone_group = api.group.get(dep1_plone_group_id)
+        self.assertEquals(dep1_plone_group.getProperty('title'), 'Department 1 (New title)')
+        dep2_plone_group = api.group.get(dep2_plone_group_id)
+        self.assertEquals(dep2_plone_group.getProperty('title'), 'Department 2 (New title)')
 
     def test_validateSettingsRemoveFunction(self):
         """A function may only be removed if every linked Plone groups are empty."""

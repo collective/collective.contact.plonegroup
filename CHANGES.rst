@@ -5,8 +5,12 @@ Changelog
 1.15 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed problem, linked Plone groups title were not updated when suffix title
+  changed and some `fct_orgs` were defined.
+  [gbastien]
+- In `settings.detectContactPlonegroupChange`, set `changes = True` only when
+  relevant, due to wrong indentation, it was done systematically.
+  [gbastien]
 
 1.14 (2019-05-16)
 -----------------

@@ -300,24 +300,23 @@ def detectContactPlonegroupChange(event):
                     plone_group = api.group.get(plone_group_id)
                     if plone_group:
                         api.group.delete(plone_group_id)
-            changes = True
+                        changes = True
             # we detect existing functions for which 'fct_orgs' changed
             for new_id, new_function_infos in new_functions.items():
                 new_title = new_function_infos['fct_title']
                 new_orgs = new_function_infos['fct_orgs']
-                old_function = old_functions.get(new_id, None)
                 if not new_orgs:
                     # we have to make sure Plone groups are created for every selected organizations
                     for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
                         orga = uuidToObject(orga_uid)
                         if addOrModifyGroup(orga, new_id, new_title):
                             changes = True
-                elif (not old_function and new_orgs) or old_functions[new_id]['fct_orgs'] != new_orgs:
+                else:
                     # fct_orgs changed, we remove every linked Plone groups
                     # except ones defined in new_orgs
                     for orga_uid in get_organizations(only_selected=False, the_objects=False):
                         if orga_uid in new_orgs:
-                            # make sure Plone group is created
+                            # make sure Plone group is created or updated if suffix title changed
                             orga = uuidToObject(orga_uid)
                             if addOrModifyGroup(orga, new_id, new_title):
                                 changes = True
@@ -327,7 +326,7 @@ def detectContactPlonegroupChange(event):
                             plone_group = api.group.get(plone_group_id)
                             if plone_group:
                                 api.group.delete(plone_group_id)
-                changes = True
+                                changes = True
 
         if changes:
             invalidate_sopgv_cache()
