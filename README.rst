@@ -1,4 +1,9 @@
-.. contents::
+.. image:: https://secure.travis-ci.org/collective/collective.contact.plonegroup.png
+    :target: http://travis-ci.org/collective/collective.contact.plonegroup
+
+=============================
+collective.contact.plonegroup
+=============================
 
 Introduction
 ============
@@ -32,14 +37,6 @@ Installation
 * Add collective.contact.plonegroup to your eggs.
 * Re-run buildout.
 * Install the product in your plone site.
-
-Tests
-=====
-
-This add-on is tested using Travis CI. The current status of the add-on is :
-
-.. image:: https://secure.travis-ci.org/collective/collective.contact.plonegroup.png
-    :target: http://travis-ci.org/collective/collective.contact.plonegroup
 
 Credits
 =======
