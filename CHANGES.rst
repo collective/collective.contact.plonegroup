@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.15 (unreleased)
+1.15 (2019-06-07)
 -----------------
 
 - Fixed problem, linked Plone groups title were not updated when suffix title
