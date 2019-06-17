@@ -5,8 +5,9 @@ Changelog
 1.16 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed error in `OrgaPrettyLinkWithAdditionalInfosColumn` when displaying
+  organizations out of `PLONEGROUP_ORG`.
+  [gbastien]
 
 1.15 (2019-06-07)
 -----------------

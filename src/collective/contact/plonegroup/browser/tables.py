@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collective.contact.plonegroup import _
-from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.interfaces import IPloneGroupContact
 from collective.eeafaceted.z3ctable.browser.views import ExtendedCSSTable
@@ -91,10 +91,10 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
     def contentValue(self, item):
         """Display get_full_title instead title."""
         # find first_index relative to PLONEGROUP_ORG organization
-        if item.getId() == PLONEGROUP_ORG:
+        path = item.getPhysicalPath()
+        if item.getId() == PLONEGROUP_ORG or PLONEGROUP_ORG not in path:
             first_index = 0
         else:
-            path = item.getPhysicalPath()
             first_index = len(path) - path.index(PLONEGROUP_ORG)
         return u'{0} <span class="discreet">({1})</span>'.format(
             item.get_full_title(first_index=first_index), item.UID())
@@ -118,7 +118,7 @@ class SelectedInPlonegroupColumn(BooleanColumn):
 
     def getValue(self, item):
         """ """
-        plonegroup_organizations = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
+        plonegroup_organizations = get_registry_organizations()
         orga_uid = item.UID
         return bool(orga_uid in plonegroup_organizations)
 
