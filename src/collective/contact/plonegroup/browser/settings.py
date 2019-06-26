@@ -16,6 +16,7 @@ from imio.helpers.cache import invalidate_cachekey_volatile_for
 from imio.helpers.content import safe_encode
 from operator import attrgetter
 from plone import api
+from plone.api.exc import InvalidParameterError
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.app.uuid.utils import uuidToObject
@@ -255,8 +256,12 @@ def detectContactPlonegroupChange(event):
     """
     if IRecordModifiedEvent.providedBy(event):  # and event.record.interface == IContactPlonegroupConfig:
         changes = False
-        registry_orgs = get_registry_organizations()
-        if event.record.fieldName == 'organizations' and get_registry_functions():
+        # this can be called before plonegroup is installed and registry contains relevant keys
+        try:
+            registry_orgs = get_registry_organizations()
+        except InvalidParameterError:
+            registry_orgs = []
+        if event.record.fieldName == 'organizations' and registry_orgs:
             old_set = set(event.oldValue)
             new_set = set(event.newValue)
             # we detect a new organization
