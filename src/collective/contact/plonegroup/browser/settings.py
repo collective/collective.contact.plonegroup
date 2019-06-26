@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from collective.contact.plonegroup import _
-from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
-from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import get_registry_functions
+from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.events import PlonegroupGroupCreatedEvent
 from collective.contact.plonegroup.utils import get_all_suffixes
@@ -23,7 +23,6 @@ from plone.autoform.directives import widget
 from plone.memoize import ram
 from plone.memoize.interfaces import ICacheChooser
 from plone.registry.interfaces import IRecordModifiedEvent
-from plone.registry.interfaces import IRegistry
 from plone.z3cform import layout
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import form
@@ -173,7 +172,7 @@ class IContactPlonegroupConfig(Interface):
 
         # only able to select orgs for an existing function (suffix) if
         # every linked Plone groups of not selected orgs are empty
-        stored_functions = api.portal.get_registry_record(FUNCTIONS_REGISTRY)
+        stored_functions = get_registry_functions()
         old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
                          for dic in stored_functions}
         new_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
@@ -255,16 +254,16 @@ def detectContactPlonegroupChange(event):
         Manage our record changes
     """
     if IRecordModifiedEvent.providedBy(event):  # and event.record.interface == IContactPlonegroupConfig:
-        registry = getUtility(IRegistry)
         changes = False
-        if event.record.fieldName == 'organizations' and registry[FUNCTIONS_REGISTRY]:
+        registry_orgs = get_registry_organizations()
+        if event.record.fieldName == 'organizations' and get_registry_functions():
             old_set = set(event.oldValue)
             new_set = set(event.newValue)
             # we detect a new organization
             add_set = new_set.difference(old_set)
             for orga_uid in add_set:
                 orga = uuidToObject(orga_uid)
-                for fct_dic in registry[FUNCTIONS_REGISTRY]:
+                for fct_dic in get_registry_functions():
                     fct_orgs = fct_dic['fct_orgs']
                     if fct_orgs and orga_uid not in fct_orgs:
                         continue
@@ -273,7 +272,7 @@ def detectContactPlonegroupChange(event):
             # we detect a removed organization. We dont do anything on exsiting groups
             if old_set.difference(new_set):
                 changes = True
-        elif event.record.fieldName == 'functions' and registry[ORGANIZATIONS_REGISTRY]:
+        elif event.record.fieldName == 'functions' and registry_orgs:
             old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
                              for dic in event.oldValue}
             old_set = set(old_functions.keys())
@@ -285,7 +284,7 @@ def detectContactPlonegroupChange(event):
             for new_id in add_set:
                 new_title = new_functions[new_id]['fct_title']
                 new_orgs = new_functions[new_id]['fct_orgs']
-                for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+                for orga_uid in registry_orgs:
                     if new_orgs and orga_uid not in new_orgs:
                         continue
                     orga = uuidToObject(orga_uid)
@@ -307,7 +306,7 @@ def detectContactPlonegroupChange(event):
                 new_orgs = new_function_infos['fct_orgs']
                 if not new_orgs:
                     # we have to make sure Plone groups are created for every selected organizations
-                    for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+                    for orga_uid in registry_orgs:
                         orga = uuidToObject(orga_uid)
                         if addOrModifyGroup(orga, new_id, new_title):
                             changes = True
@@ -348,9 +347,8 @@ def addOrModifyOrganizationGroups(organization, uid):
     """
         Modify groups linked to an organization
     """
-    registry = getUtility(IRegistry)
     changes = False
-    for dic in registry[FUNCTIONS_REGISTRY]:
+    for dic in get_registry_functions():
         if addOrModifyGroup(organization, dic['fct_id'], dic['fct_title']):
             changes = True
     return changes
@@ -373,9 +371,9 @@ def adaptPloneGroupDefinition(organization, event):
        get_own_organization_path(not_found_value='unfound')):  # can be unfound too
         return
     portal = getSite()
-    registry = getUtility(IRegistry)
     # when an organization is removed (and its content), we check if it is used in plonegroup configuration
-    if IObjectRemovedEvent.providedBy(event) and organization.UID() in registry[ORGANIZATIONS_REGISTRY]:
+    registry_orgs = get_registry_organizations()
+    if IObjectRemovedEvent.providedBy(event) and organization.UID() in registry_orgs:
         smi = IStatusMessage(organization.REQUEST)
         smi.addStatusMessage(_('You cannot delete this item !'), type='error')
         smi.addStatusMessage(_("This organization or a contained organization is used in plonegroup "
@@ -390,7 +388,7 @@ def adaptPloneGroupDefinition(organization, event):
     for brain in brains:
         orga = brain.getObject()
         orga_uid = orga.UID()
-        if orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+        if orga_uid in registry_orgs:
             if addOrModifyOrganizationGroups(orga, orga_uid):
                 changes = True
     if changes:
@@ -411,11 +409,10 @@ def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     """
         Returns a vocabulary of selected organizations corresponding plone groups
     """
-    registry = getUtility(IRegistry)
     terms = []
     # if no function given, use all functions
     functions = functions or get_all_suffixes()
-    for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+    for orga_uid in get_registry_organizations():
         for fct_id in functions:
             group_id = "%s_%s" % (orga_uid, fct_id)
             group = api.group.get(groupname=group_id)
@@ -440,15 +437,15 @@ def unrestrictedUuidToObject(uid):
 def getSelectedOrganizations(separator=' - ', first_index=1):
     """ Return a list of tuples (uid, title) """
     ret = []
-    registry = getUtility(IRegistry)
+    registry_orgs = get_registry_organizations()
     # needed to get as manager because plone.formwidget.masterselect calls ++widget++ as Anonymous
     if api.user.is_anonymous():
         with api.env.adopt_roles(['Manager']):
-            for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+            for orga_uid in registry_orgs:
                 title = unrestrictedUuidToObject(orga_uid).get_full_title(separator=separator, first_index=first_index)
                 ret.append((orga_uid, title))
     else:
-        for orga_uid in registry[ORGANIZATIONS_REGISTRY]:
+        for orga_uid in registry_orgs:
             title = uuidToObject(orga_uid).get_full_title(separator=separator, first_index=first_index)
             ret.append((orga_uid, title))
     return ret
@@ -482,10 +479,9 @@ class SelectedOrganizationsElephantVocabulary(object):
     def __call__(self, context):
         factory = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
         vocab = factory(context)
-        registry = getUtility(IRegistry)
         terms = vocab.by_value
         ordered_terms = []
-        for uid in registry[ORGANIZATIONS_REGISTRY]:
+        for uid in get_registry_organizations():
             if uid in terms:
                 ordered_terms.append(terms[uid])
                 del terms[uid]

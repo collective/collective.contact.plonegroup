@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
-from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import get_registry_functions
-from collective.contact.plonegroup.config import ORGANIZATIONS_REGISTRY
+from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
+from collective.contact.plonegroup.config import set_registry_organizations
 from imio.helpers.content import uuidsToObjects
 from operator import attrgetter
 from operator import methodcaller
@@ -112,7 +112,7 @@ def get_organizations(only_selected=True,
 
     if orgs is None:
         if only_selected:
-            org_uids = [org_uid for org_uid in api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)]
+            org_uids = [org_uid for org_uid in get_registry_organizations()]
         else:
             # use the vocabulary to get selectable organizations so if vocabulary
             # is overrided get_organizations is still consistent
@@ -141,7 +141,8 @@ def get_organizations(only_selected=True,
             orgs = org_uids
 
         if caching:
-            cache[key] = orgs
+            # store a new list in cache so it can not be modified
+            cache[key] = list(orgs)
 
     return orgs
 
@@ -150,7 +151,7 @@ def get_all_suffixes(org_uid=None):
     """
         Get every suffixes defined in the configuration.
     """
-    functions = api.portal.get_registry_record(FUNCTIONS_REGISTRY)
+    functions = get_registry_functions()
     return [function['fct_id'] for function in functions
             if not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs']]
 
@@ -223,12 +224,12 @@ def get_own_organization_path(not_found_value=None, default=True):
 
 def select_organization(org_uid, remove=False):
     """Select organization in ORGANIZATIONS_REGISTRY."""
-    plonegroup_organizations = list(api.portal.get_registry_record(ORGANIZATIONS_REGISTRY))
+    plonegroup_organizations = get_registry_organizations()
     if remove:
         plonegroup_organizations.remove(org_uid)
     else:
         plonegroup_organizations.append(org_uid)
-    api.portal.set_registry_record(ORGANIZATIONS_REGISTRY, plonegroup_organizations)
+    set_registry_organizations(plonegroup_organizations)
 
 
 def select_org_for_function(org_uid, function_id, remove=False):

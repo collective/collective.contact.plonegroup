@@ -8,6 +8,13 @@ Changelog
 - Fixed error in `OrgaPrettyLinkWithAdditionalInfosColumn` when displaying
   organizations out of `PLONEGROUP_ORG`.
   [gbastien]
+- Fixed `utils.get_organizations` when `caching=True` to store a new list of
+  organizations in the cache instead returned value or value in cache may be
+  modified if we modify returned value in a sub method...
+  [gbastien]
+- Use `get_registry_organizations/set_registry_organizations` and
+  `get_registry_functions/set_registry_functions` as much as possible.
+  [gbastien]
 
 1.15 (2019-06-07)
 -----------------

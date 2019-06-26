@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+
 from Acquisition import aq_get
 from collective.contact.plonegroup import _
+from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.utils import get_all_suffixes
-from config import ORGANIZATIONS_REGISTRY
 from config import PLONEGROUP_ORG
 from interfaces import INotPloneGroupContact
 from interfaces import IPloneGroupContact
@@ -12,7 +13,6 @@ from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.behavior.interfaces import IBehavior
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.utils import base_hasattr
 from Products.CMFPlone.utils import safe_unicode
 from Products.statusmessages.interfaces import IStatusMessage
@@ -141,10 +141,9 @@ def plonegroup_contact_transition(contact, event):
     """
     if event.transition and event.transition.id == 'deactivate':
         # check if the transition is selected
-        registry = getUtility(IRegistry)
         pp = api.portal.get_tool('portal_properties')
         errors = []
-        if contact.UID() in registry[ORGANIZATIONS_REGISTRY]:
+        if contact.UID() in get_registry_organizations():
             errors.append(_('This contact is selected in configuration'))
         elif pp.site_properties.enable_link_integrity_checks:
             search_value_in_objects(contact, contact.UID(), p_types=[], type_fields={})
@@ -194,8 +193,7 @@ def group_deleted(event):
     if len(parts) == 1:
         return
     group_suffix = '_'.join(parts[1:])
-    registry = getUtility(IRegistry)
-    if parts[0] in registry[ORGANIZATIONS_REGISTRY] and group_suffix in get_all_suffixes(parts[0]):
+    if parts[0] in get_registry_organizations() and group_suffix in get_all_suffixes(parts[0]):
         orga = api.content.find(UID=parts[0])[0].getObject()
         api.portal.show_message(message=_("You cannot delete the group '${group}', linked to used organization "
                                           "'${orga}'.", mapping={'group': group, 'orga': safe_unicode(orga.Title())}),
