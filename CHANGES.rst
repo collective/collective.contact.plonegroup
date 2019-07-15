@@ -5,8 +5,8 @@ Changelog
 1.17 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Corrected bad full title shortening.
+  [sgeulette]
 
 1.16 (2019-06-30)
 -----------------

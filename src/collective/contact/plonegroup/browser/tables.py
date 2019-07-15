@@ -95,7 +95,7 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
         if item.getId() == PLONEGROUP_ORG or PLONEGROUP_ORG not in path:
             first_index = 0
         else:
-            first_index = len(path) - path.index(PLONEGROUP_ORG)
+            first_index = 1  # 1 considering that PLONEGROUP is at 1st level. Otherwise must use get_organizations_chain
         return u'{0} <span class="discreet">({1})</span>'.format(
             item.get_full_title(first_index=first_index), item.UID())
 
