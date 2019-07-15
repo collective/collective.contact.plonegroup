@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.17 (unreleased)
+1.17 (2019-07-15)
 -----------------
 
 - Corrected bad full title shortening.
