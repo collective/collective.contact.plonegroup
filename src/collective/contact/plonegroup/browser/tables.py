@@ -88,6 +88,12 @@ class SubOrganizationsTableView(BrowserView):
 class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColumn):
     """ """
 
+    params = {
+        'showContentIcon': True,
+        'target': '_blank',
+        'additionalCSSClasses': ['link-tooltip'],
+        'display_tag_title': False}
+
     def contentValue(self, item):
         """Display get_full_title instead title."""
         # find first_index relative to PLONEGROUP_ORG organization

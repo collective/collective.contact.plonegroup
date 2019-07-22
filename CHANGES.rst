@@ -5,8 +5,11 @@ Changelog
 1.18 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- In `OrgaPrettyLinkWithAdditionalInfosColumn`, set `showContentIcon` to True
+  and enable `link-tooltip`.
+  [gbastien]
+- In `SelectedInPlonegroupColumn`, display `Not` in bold.
+  [gbastien]
 
 1.17 (2019-07-15)
 -----------------
