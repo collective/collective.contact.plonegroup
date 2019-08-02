@@ -10,7 +10,8 @@ cache:
 
 install:
   - mkdir -p buildout-cache/{eggs,downloads}
-  - python bootstrap.py -c travis.cfg
+  - easy_install --version
+  - pip install setuptools==33.1.1
   - bin/buildout -N -c travis.cfg annotate
   - bin/buildout -c travis.cfg -N -q -t 3
 
