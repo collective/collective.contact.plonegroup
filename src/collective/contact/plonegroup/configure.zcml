@@ -25,7 +25,10 @@
         title="collective.contact.plonegroup"
         directory="profiles/default"
         description="Installs the collective.contact.plonegroup add-on."
-        provides="Products.GenericSetup.interfaces.EXTENSION"
-        />
+        provides="Products.GenericSetup.interfaces.EXTENSION" />
+
+    <utility
+        name="collective.contact.plonegroup.functions"
+        factory=".vocabularies.FunctionsVocabulary" />
 
 </configure>

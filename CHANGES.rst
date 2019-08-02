@@ -10,6 +10,9 @@ Changelog
   [gbastien]
 - In `SelectedInPlonegroupColumn`, display `Not` in bold.
   [gbastien]
+- Added `collective.contact.plonegroup.functions` vocabulary listing every
+  functions defined in plonegroup control panel.
+  [gbastien]
 
 1.17 (2019-07-15)
 -----------------
