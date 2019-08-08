@@ -2,7 +2,13 @@ Changelog
 =========
 
 
-1.18 (unreleased)
+1.19 (unreleased)
+-----------------
+
+- Nothing changed yet.
+
+
+1.18 (2019-08-02)
 -----------------
 
 - In `OrgaPrettyLinkWithAdditionalInfosColumn`, set `showContentIcon` to True
