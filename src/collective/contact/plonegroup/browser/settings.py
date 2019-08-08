@@ -86,21 +86,23 @@ class OwnOrganizationServicesVocabulary(object):
     valid_states = ('active',)
 
     def listSubOrganizations(self, terms, folder, parent_label=''):
-        catalog = api.portal.get_tool('portal_catalog')
-        folder_path = '/'.join(folder.getPhysicalPath())
-        brains = catalog.unrestrictedSearchResults(
-            portal_type='organization',
-            review_state=self.valid_states,
-            path={'query': folder_path, 'depth': 1},
-            sort_on='getObjPositionInParent'
-        )
-        for brain in brains:
-            orga = brain._unrestrictedGetObject()
-            term_title = orga.title
-            if parent_label:
-                term_title = "%s - %s" % (parent_label, term_title)
-            terms.append(SimpleTerm(orga.UID(), orga.UID(), term_title))
-            self.listSubOrganizations(terms, orga, term_title)
+        # query sub organizations if any to query
+        if folder.objectIds():
+            catalog = api.portal.get_tool('portal_catalog')
+            folder_path = '/'.join(folder.getPhysicalPath())
+            brains = catalog.unrestrictedSearchResults(
+                portal_type='organization',
+                review_state=self.valid_states,
+                path={'query': folder_path, 'depth': 1},
+                sort_on='getObjPositionInParent'
+            )
+            for brain in brains:
+                orga = brain._unrestrictedGetObject()
+                term_title = orga.title
+                if parent_label:
+                    term_title = "%s - %s" % (parent_label, term_title)
+                terms.append(SimpleTerm(orga.UID(), orga.UID(), term_title))
+                self.listSubOrganizations(terms, orga, term_title)
 
     def __call__(self, context):
         portal = getSite()
