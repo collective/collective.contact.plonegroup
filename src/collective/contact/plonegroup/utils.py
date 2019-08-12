@@ -105,7 +105,7 @@ def get_organizations(only_selected=True,
                 str(only_selected),
                 str(the_objects),
                 '_'.join(sorted(kept_org_uids)))
-            cache = IAnnotations(getRequest())
+            cache = IAnnotations(request)
             orgs = cache.get(key, None)
         else:
             caching = False
