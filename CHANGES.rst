@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.19 (unreleased)
+1.19 (2019-08-23)
 -----------------
 
 - Optimized `OwnOrganizationServicesVocabulary.listSubOrganizations`, do the
