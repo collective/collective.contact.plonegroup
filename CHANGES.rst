@@ -5,8 +5,9 @@ Changelog
 1.19 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Optimized `OwnOrganizationServicesVocabulary.listSubOrganizations`, do the
+  catalog query only if current organization contains something.
+  [gbastien]
 
 1.18 (2019-08-02)
 -----------------
@@ -18,9 +19,6 @@ Changelog
   [gbastien]
 - Added `collective.contact.plonegroup.functions` vocabulary listing every
   functions defined in plonegroup control panel.
-  [gbastien]
-- Optimized `OwnOrganizationServicesVocabulary.listSubOrganizations`, do the
-  catalog query only if current organization contains something.
   [gbastien]
 
 1.17 (2019-07-15)
