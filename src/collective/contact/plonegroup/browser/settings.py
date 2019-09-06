@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from collective.contact.plonegroup import _
+from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
@@ -78,9 +79,9 @@ def voc_cache_key(method, self, context):
     return get_cachekey_volatile("%s.%s" % (self.__class__.__module__, self.__class__.__name__))
 
 
-class OwnOrganizationServicesVocabulary(object):
+class BaseOrganizationServicesVocabulary(object):
     """
-        Vocabulary of all plonegroup-organizations services.
+        Base vocabulary returning organizations from a particular root level.
     """
     implements(IVocabularyFactory)
     valid_states = ('active',)
@@ -104,26 +105,49 @@ class OwnOrganizationServicesVocabulary(object):
                 terms.append(SimpleTerm(orga.UID(), orga.UID(), term_title))
                 self.listSubOrganizations(terms, orga, term_title)
 
-    def __call__(self, context):
+    def __call__(self, context, root_portal_type='organization', root_id=PLONEGROUP_ORG):
         portal = getSite()
         terms = []
         pcat = portal.portal_catalog
-        brains = pcat.unrestrictedSearchResults(portal_type='organization', id=PLONEGROUP_ORG)
+        brains = pcat.unrestrictedSearchResults(portal_type=root_portal_type, id=root_id)
         if not brains:
             terms.append(SimpleTerm(None, token="unfound",
-                                    title=_(u"You must define an organization with id '${pgo}' !",
-                                            mapping={'pgo': PLONEGROUP_ORG})))
+                                    title=_(u"You must define one '${root_portal_type}' with id '${pgo}' !",
+                                            mapping={'root_portal_type': root_portal_type,
+                                                     'pgo': root_id, })))
             return SimpleVocabulary(terms)
         elif len(brains) > 1:
-            terms.append(SimpleTerm(None, token="multifound", title=_(u"You must have only one organization "
-                                                                      "with id '${pgo}' !",
-                                                                      mapping={'pgo': PLONEGROUP_ORG})))
+            terms.append(SimpleTerm(None, token="multifound",
+                                    title=_(u"You must have only one '${root_portal_type}' "
+                                            "with id '${pgo}' !",
+                                            mapping={'root_portal_type': root_portal_type,
+                                                     'pgo': root_id})))
             return SimpleVocabulary(terms)
 
         own_orga = brains[0]._unrestrictedGetObject()
         self.listSubOrganizations(terms, own_orga)
 
         return SimpleVocabulary(terms)
+
+
+class OwnOrganizationServicesVocabulary(BaseOrganizationServicesVocabulary):
+    """
+        Returns every organiztions stored in PLONEGROUP_ORG.
+    """
+
+    def __call__(self, context):
+        return super(OwnOrganizationServicesVocabulary, self).__call__(context)
+
+
+class EveryOrganizationsVocabulary(BaseOrganizationServicesVocabulary):
+    """
+        Returns every organizations stored in DEFAULT_DIRECTORY_ID directory,
+        so inside and outside the PLONEGROUP_ORG.
+    """
+
+    def __call__(self, context):
+        return super(EveryOrganizationsVocabulary, self).__call__(
+            context, root_portal_type='directory', root_id=DEFAULT_DIRECTORY_ID)
 
 
 class IContactPlonegroupConfig(Interface):

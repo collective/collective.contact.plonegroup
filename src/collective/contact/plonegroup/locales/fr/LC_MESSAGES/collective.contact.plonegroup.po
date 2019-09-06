@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2019-04-26 11:52+0000\n"
+"POT-Creation-Date: 2019-09-03 09:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,27 +15,27 @@ msgstr ""
 "Domain: collective.contact.plonegroup\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-#: ../browser/tables.py:129
+#: ../browser/tables.py:135
 msgid "Actions"
 msgstr "Actions"
 
-#: ../browser/settings.py:135
+#: ../browser/settings.py:147
 msgid "Choose multiple organization levels for which you want to create a plone group."
 msgstr "Choisir des niveaux d'organisation pour lesquels un groupe plone sera créé."
 
-#: ../browser/settings.py:142
+#: ../browser/settings.py:154
 msgid "Each defined function will suffix each organization plone group."
 msgstr "Chaque fonction définie suffixera les groupes plone créés."
 
-#: ../browser/settings.py:144
+#: ../browser/settings.py:156
 msgid "Function"
 msgstr "Fonction"
 
-#: ../browser/settings.py:141
+#: ../browser/settings.py:153
 msgid "Function list"
 msgstr "Liste de fonctions"
 
-#: ../configure.zcml:29
+#: ../configure.zcml:28
 msgid "Installs the collective.contact.plonegroup add-on."
 msgstr "Installs the collective.contact.plonegroup add-on."
 
@@ -71,11 +71,11 @@ msgstr "Titre du suffixe"
 msgid "Plone group title description"
 msgstr ""
 
-#: ../browser/tables.py:107
+#: ../browser/tables.py:113
 msgid "Selected in plonegroup"
 msgstr "Sélectionné dans <a href='${plonegroup_url}'>\"Configuration des groupes plone via contact\"</a>"
 
-#: ../browser/settings.py:134
+#: ../browser/settings.py:146
 msgid "Selected organizations"
 msgstr "Organisations"
 
@@ -83,59 +83,59 @@ msgstr "Organisations"
 msgid "Steps to ease tests of collective.contact.plonegroup"
 msgstr "Steps to ease tests of collective.contact.plonegroup"
 
-#: ../subscribers.py:148
+#: ../subscribers.py:147
 msgid "This contact is selected in configuration"
 msgstr "Ce contact est sélectionné dans la configuration"
 
-#: ../subscribers.py:154
+#: ../subscribers.py:153
 msgid "This contact is used in following content: ${items}"
 msgstr "Ce contact est utilisé dans le contenu suivant: ${items}"
 
-#: ../browser/settings.py:382
+#: ../browser/settings.py:396
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 msgstr "Cette organisation ou une organisation contenue est utilisée dans la configuration de groupe plone via contact ! Il faut d'abord l'enlever de la configuration !"
 
-#: ../subscribers.py:160
+#: ../subscribers.py:159
 msgid "You cannot deactivate this item !"
 msgstr "Vous ne pouvez pas désactiver cet élément !"
 
-#: ../subscribers.py:200
+#: ../subscribers.py:198
 msgid "You cannot delete the group '${group}', linked to used organization '${orga}'."
 msgstr "Vous ne pouvez pas effacer le groupe '${group}', lié à l'organisation utilisée '${orga}'."
 
-#: ../browser/settings.py:381
+#: ../browser/settings.py:395
 msgid "You cannot delete this item !"
 msgstr "Vous ne pouvez pas effacer cet élément !"
 
-#: ../browser/settings.py:152
+#: ../browser/settings.py:164
 msgid "You must choose at least one organization !"
 msgstr "Vous devez au moins choisir une organisation !"
 
-#: ../browser/settings.py:154
+#: ../browser/settings.py:166
 msgid "You must correct the organization error first !"
 msgstr "Vous devez corriger l'erreur sur l'organisation !"
 
-#: ../browser/settings.py:112
-msgid "You must define an organization with id '${pgo}' !"
-msgstr "Vous devez définir une organisation dont l'id est '${pgo}' !"
-
-#: ../browser/settings.py:156
+#: ../browser/settings.py:168
 msgid "You must define at least one function !"
 msgstr "Vous devez au moins choisir une fonction !"
 
-#: ../browser/settings.py:116
-msgid "You must have only one organization with id '${pgo}' !"
-msgstr "Vous devez avoir une seule organisation avec l'id '${pgo}' !"
+#: ../browser/settings.py:114
+msgid "You must define one '${root_portal_type}' with id '${pgo}' !"
+msgstr "Vous devez définir un élément '${root_portal_type}' dont l'id est '${pgo}' !"
 
-#: ../browser/settings.py:170
+#: ../browser/settings.py:120
+msgid "You must have only one '${root_portal_type}' with id '${pgo}' !"
+msgstr "Vous devez avoir un seul élément de type '${root_portal_type}' avec l'id '${pgo}' !"
+
+#: ../browser/settings.py:182
 msgid "can_not_remove_function_every_plone_groups_not_empty"
 msgstr "Vous ne pouvez pas supprimer la fonction \"${removed_function}\" car certains groupes Plone liés ne sont pas vides (vérifiez par exemple \"${plone_group_id}\") !"
 
-#: ../browser/settings.py:192
+#: ../browser/settings.py:204
 msgid "can_not_select_function_orgs_every_other_plone_groups_not_empty"
 msgstr "Vous ne pouvez pas restreindre le suffix \"${function}\" aux organisations sélectionnées car les groupes Plone utilisant ce suffixe d'autres organisations non sélectionnées ne sont pas vides (vérifiez par exemple \"${plone_group_id}\") !"
 
-#: ../configure.zcml:29
+#: ../configure.zcml:28
 msgid "collective.contact.plonegroup"
 msgstr "collective.contact.plonegroup"
 

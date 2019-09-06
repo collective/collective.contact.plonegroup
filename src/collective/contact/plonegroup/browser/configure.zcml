@@ -22,6 +22,10 @@
         factory=".settings.OwnOrganizationServicesVocabulary" />
 
     <utility
+        name="collective.contact.plonegroup.every_organizations"
+        factory=".settings.EveryOrganizationsVocabulary" />
+
+    <utility
         name="collective.contact.plonegroup.selected_organization_services"
         factory=".settings.SelectedOrganizationsElephantVocabulary" />
 

@@ -5,8 +5,11 @@ Changelog
 1.20 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `collective.contact.plonegroup.every_organizations` vocabulary, to do
+  this needed to write `BaseOrganizationServicesVocabulary` from which
+  `OwnOrganizationServicesVocabulary` and `EveryOrganizationsVocabulary`
+  inherits.
+  [gbastien]
 
 1.19 (2019-08-23)
 -----------------
