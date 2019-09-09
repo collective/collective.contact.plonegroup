@@ -29,6 +29,10 @@
         name="collective.contact.plonegroup.selected_organization_services"
         factory=".settings.SelectedOrganizationsElephantVocabulary" />
 
+    <utility
+        name="collective.contact.plonegroup.sorted_selected_organization_services"
+        factory=".settings.SortedSelectedOrganizationsElephantVocabulary" />
+
     <!-- z3c.table -->
     <browser:page
         for="collective.contact.plonegroup.interfaces.IPloneGroupContact"

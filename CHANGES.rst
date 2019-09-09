@@ -10,6 +10,12 @@ Changelog
   `OwnOrganizationServicesVocabulary` and `EveryOrganizationsVocabulary`
   inherits.
   [gbastien]
+- Removed sorting on term title for
+  `collective.contact.plonegroup.selected_organization_services`, terms are
+  displayed following selection order in plonegroup organizations like before.
+  Added new vocabulary sorted on term title and available as
+  `collective.contact.plonegroup.sorted_selected_organization_services`.
+  [gbastien]
 
 1.19 (2019-08-23)
 -----------------

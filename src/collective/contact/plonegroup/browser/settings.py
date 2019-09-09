@@ -521,6 +521,16 @@ class SelectedOrganizationsElephantVocabulary(object):
         # ordered_vocab = SearchableSimpleVocabulary(ordered_terms + extra_terms)  # bug in widget, trac #15186
         ordered_vocab = SimpleVocabulary(ordered_terms + extra_terms)
         wrapped_vocab = wrap_vocabulary(ordered_vocab, hidden_terms=extra_uids)(context)
+        return wrapped_vocab
+
+
+class SortedSelectedOrganizationsElephantVocabulary(SelectedOrganizationsElephantVocabulary):
+    """ Vocabulary of selected plonegroup-organizations services sorted on title. """
+    implements(IVocabularyFactory)
+
+    @ram.cache(voc_cache_key)
+    def __call__(self, context):
+        wrapped_vocab = super(SortedSelectedOrganizationsElephantVocabulary, self).__call__(context)
         # sort by title
         sorted_vocab = sorted(wrapped_vocab.vocab, key=attrgetter('title'))
         wrapped_vocab.vocab = SimpleVocabulary(sorted_vocab)
