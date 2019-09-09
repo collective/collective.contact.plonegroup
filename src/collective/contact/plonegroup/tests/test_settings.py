@@ -64,14 +64,20 @@ class TestSettings(IntegrationTestCase):
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, [u"You must have only one organization with id '${pgo}' !"])
+        self.assertEqual(len(voc_list), 1)
+        self.assertEqual(
+            translate(voc_list[0]),
+            u"You must have only one 'organization' with id 'plonegroup-organization' !")
         self.portal[DEFAULT_DIRECTORY_ID].manage_delObjects(ids=['temporary'])
         # When own organization not found
         self.portal[DEFAULT_DIRECTORY_ID].manage_delObjects(ids=[PLONEGROUP_ORG])
         services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
         voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(voc_list, [u"You must define an organization with id '${pgo}' !"])
+        self.assertEqual(len(voc_list), 1)
+        self.assertEqual(
+            translate(voc_list[0]),
+            u"You must define one 'organization' with id 'plonegroup-organization' !")
 
     def test_detectContactPlonegroupChange(self):
         """Test if group creation works correctly"""
@@ -304,7 +310,7 @@ class TestSettings(IntegrationTestCase):
         factory_wrp = getUtility(IVocabularyFactory, "collective.contact.plonegroup.selected_organization_services")
         vocab_wrp = factory_wrp(self.portal)
         self.assertEqual(len(vocab_wrp), 3)
-        # values are sorted by title
-        self.assertListEqual(sorted([v.value for v in vocab_wrp]), sorted(get_registry_organizations()))
-        self.assertListEqual([v.title for v in vocab_wrp], ['Department 1', 'Department 2'])
+        # values are shown as selected in plonegroup organizations
+        self.assertListEqual([v.title for v in vocab_wrp], ['Department 2', 'Department 1'])
+        self.assertListEqual([v.token for v in vocab_wrp], get_registry_organizations())
         self.assertEqual(vocab_wrp.getTerm(vocab_all_values[1]).title, 'Department 1 - Service 1')
