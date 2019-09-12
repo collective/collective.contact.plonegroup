@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.20 (unreleased)
+1.20 (2019-09-12)
 -----------------
 
 - Added `collective.contact.plonegroup.every_organizations` vocabulary, to do
