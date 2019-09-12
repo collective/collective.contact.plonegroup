@@ -5,8 +5,9 @@ Changelog
 1.21 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `BaseOrganizationServicesVocabulary._term_title` to ease override of
+  rendered term title.
+  [gbastien]
 
 1.20 (2019-09-12)
 -----------------

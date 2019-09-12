@@ -99,11 +99,16 @@ class BaseOrganizationServicesVocabulary(object):
             )
             for brain in brains:
                 orga = brain._unrestrictedGetObject()
-                term_title = orga.title
-                if parent_label:
-                    term_title = "%s - %s" % (parent_label, term_title)
+                term_title = self._term_title(orga, parent_label)
                 terms.append(SimpleTerm(orga.UID(), orga.UID(), term_title))
                 self.listSubOrganizations(terms, orga, term_title)
+
+    def _term_title(self, orga, parent_label):
+        '''Method that render term title, separated to ease override.'''
+        term_title = orga.title
+        if parent_label:
+            term_title = "%s - %s" % (parent_label, term_title)
+        return term_title
 
     def __call__(self, context, root_portal_type='organization', root_id=PLONEGROUP_ORG):
         portal = getSite()
