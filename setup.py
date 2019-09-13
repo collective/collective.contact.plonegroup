@@ -19,7 +19,7 @@ long_description = (
 
 setup(
     name='collective.contact.plonegroup',
-    version='1.21',
+    version='1.22.dev0',
     description="Organizations and functions combinations to create plone groups",
     long_description=long_description,
     # Get more from http://pypi.python.org/pypi?%3Aaction=list_classifiers
