@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.21 (unreleased)
+1.21 (2019-09-13)
 -----------------
 
 - Added `BaseOrganizationServicesVocabulary._term_title` to ease override of
