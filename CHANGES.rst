@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.22 (unreleased)
+1.22 (2019-09-26)
 -----------------
 
 - When passing `kept_org_uids` to `utils.get_organizations`,
