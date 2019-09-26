@@ -143,6 +143,11 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(
             get_organizations(kept_org_uids=['some_unexisting_uid', self.dep1.UID()]),
             [self.dep1])
+        # make sure order is preserved
+        self.assertEqual(
+            get_organizations(only_selected=False,
+                              kept_org_uids=[self.dep2.UID(), self.dep1.UID()]),
+            [self.dep2, self.dep1])
 
     def test_get_all_suffixes(self):
         self.assertEqual(get_all_suffixes(self.uid), [u'observer', u'director'])

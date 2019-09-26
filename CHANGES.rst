@@ -5,8 +5,9 @@ Changelog
 1.22 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- When passing `kept_org_uids` to `utils.get_organizations`,
+  make sure order is preserved.
+  [gbastien]
 
 1.21 (2019-09-13)
 -----------------

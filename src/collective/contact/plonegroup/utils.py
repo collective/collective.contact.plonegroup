@@ -123,7 +123,9 @@ def get_organizations(only_selected=True,
             org_uids = [term.value for term in vocab(portal)._terms]
         # filter out regarding parameter kept_org_uids
         if kept_org_uids:
-            org_uids = [org_uid for org_uid in org_uids if org_uid in kept_org_uids]
+            # make sure order defined by kept_org_uids is kept
+            org_uids = [kept_org_uid for kept_org_uid in kept_org_uids
+                        if kept_org_uid in org_uids]
         # we only keep orgs for which Plone group with not_empty_suffix suffix contains members
         if not_empty_suffix:
             filtered_orgs = []
