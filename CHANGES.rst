@@ -5,8 +5,9 @@ Changelog
 1.23 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter `caching=True` to `utils.get_organization`, this will store
+  the organization object in the REQUEST and avoid too much catalog queries.
+  [gbastien]
 
 1.22 (2019-09-26)
 -----------------

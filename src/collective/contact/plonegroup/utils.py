@@ -70,7 +70,7 @@ def get_plone_groups(org_uid, ids_only=False, suffixes=[]):
     return plone_groups
 
 
-def get_organization(plone_group_id_or_org_uid):
+def get_organization(plone_group_id_or_org_uid, caching=True):
     """
         Return organization corresponding to given plone_group_id_or_org_uid.
         We can receive either a plone_grou_id or an org_uid.
@@ -78,7 +78,24 @@ def get_organization(plone_group_id_or_org_uid):
     # there is no '_' in organization UID so when receiving a Plone group id,
     # we are sure that first part is the organization UID
     organization_uid = plone_group_id_or_org_uid.split('_')[0]
-    return uuidToObject(organization_uid)
+
+    org = None
+    if caching:
+        request = getRequest()
+        if request:
+            # in some cases like in tests, request can not be retrieved
+            key = "plonegroup-utils-get_organization-{0}".format(organization_uid)
+            cache = IAnnotations(request)
+            org = cache.get(key, None)
+        else:
+            caching = False
+
+    if not org:
+        org = uuidToObject(organization_uid)
+        if caching:
+            cache[key] = org
+
+    return org
 
 
 def get_organizations(only_selected=True,
