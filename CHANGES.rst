@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.23 (unreleased)
+1.23 (2019-11-04)
 -----------------
 
 - Added parameter `caching=True` to `utils.get_organization`, this will store
