@@ -5,8 +5,8 @@ Changelog
 1.24 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added group_as_str param in organizations_with_suffixes function.
+  [sgeulette]
 
 1.23 (2019-11-04)
 -----------------

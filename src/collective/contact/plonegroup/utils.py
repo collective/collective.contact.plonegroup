@@ -19,13 +19,13 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
-def organizations_with_suffixes(groups, suffixes):
+def organizations_with_suffixes(groups, suffixes, group_as_str=False):
     """
         Return organization uids for given plone groups and without suffixes
     """
     orgs = []
     for group in groups:
-        parts = group.id.split('_')
+        parts = (group_as_str and group or group.id).split('_')
         if len(parts) == 1:
             continue
         group_suffix = '_'.join(parts[1:])
