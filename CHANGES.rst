@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.24 (unreleased)
+1.24 (2019-11-25)
 -----------------
 
 - Added group_as_str param in organizations_with_suffixes function.
