@@ -5,8 +5,10 @@ Changelog
 1.25 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Use `collective.contact.plonegroup.sorted_selected_organization_services`
+  for `settings.IFunctionSchema.fct_orgs`
+  (field for restricting a suffix to some organizations).
+  [gbastien]
 
 1.24 (2019-11-25)
 -----------------

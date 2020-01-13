@@ -71,7 +71,7 @@ class IFunctionSchema(Interface):
         title=_("Plone group suffix organizations"),
         description=_("Plone group organizations description"),
         value_type=schema.Choice(
-            vocabulary='collective.contact.plonegroup.selected_organization_services'),
+            vocabulary='collective.contact.plonegroup.sorted_selected_organization_services'),
         required=True)
 
 
