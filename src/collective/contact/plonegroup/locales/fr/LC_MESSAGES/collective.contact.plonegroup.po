@@ -133,7 +133,7 @@ msgstr "Vous ne pouvez pas supprimer la fonction \"${removed_function}\" car cer
 
 #: ../browser/settings.py:204
 msgid "can_not_select_function_orgs_every_other_plone_groups_not_empty"
-msgstr "Vous ne pouvez pas restreindre le suffix \"${function}\" aux organisations sélectionnées car les groupes Plone utilisant ce suffixe d'autres organisations non sélectionnées ne sont pas vides (vérifiez par exemple \"${plone_group_id}\") !"
+msgstr "Vous ne pouvez pas restreindre le suffix \"${function}\" aux organisations sélectionnées car des groupes Plone utilisant ce suffixe d'organisations non sélectionnées ne sont pas vides (vérifiez par exemple \"${plone_group_id}\") !"
 
 #: ../configure.zcml:28
 msgid "collective.contact.plonegroup"
