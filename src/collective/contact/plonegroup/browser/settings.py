@@ -218,7 +218,8 @@ class IContactPlonegroupConfig(Interface):
                         continue
                     plone_group_id = get_plone_group_id(org_uid, new_function)
                     plone_group = api.group.get(plone_group_id)
-                    if plone_group and plone_group.getMemberIds():
+                    # use getGroupMembers to ignore '<not found>' users
+                    if plone_group and plone_group.getGroupMembers():
                         raise Invalid(
                             _(u"can_not_select_function_orgs_every_other_plone_groups_not_empty",
                               mapping={'function': new_function,

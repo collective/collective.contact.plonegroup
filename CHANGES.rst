@@ -9,6 +9,9 @@ Changelog
   for `settings.IFunctionSchema.fct_orgs`
   (field for restricting a suffix to some organizations).
   [gbastien]
+- In `validateSettings` invariant check if Plone group is empty using
+  `getGroupMembers` that ignores `<not found>` users instead `getMemberIds`.
+  [gbastien]
 
 1.24 (2019-11-25)
 -----------------
