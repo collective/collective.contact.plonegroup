@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.25 (unreleased)
+1.25 (2020-02-06)
 -----------------
 
 - Use `collective.contact.plonegroup.sorted_selected_organization_services`
