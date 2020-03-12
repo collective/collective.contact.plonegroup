@@ -300,17 +300,70 @@ class TestSettings(IntegrationTestCase):
 
     def test_SelectedOrganizationsElephantVocabulary(self):
         """ Test elephant vocabulary """
-        factory_all = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
+        factory_all = getUtility(
+            IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
         vocab_all = factory_all(self.portal)
         vocab_all_values = [v.value for v in vocab_all]
         self.assertEqual(len(vocab_all), 3)
         self.assertListEqual([v.title for v in vocab_all],
                              ['Department 1', 'Department 1 - Service 1', 'Department 2'])
         set_registry_organizations([vocab_all_values[2], vocab_all_values[0]])
-        factory_wrp = getUtility(IVocabularyFactory, "collective.contact.plonegroup.selected_organization_services")
+        factory_wrp = getUtility(
+            IVocabularyFactory,
+            'collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary')
         vocab_wrp = factory_wrp(self.portal)
         self.assertEqual(len(vocab_wrp), 3)
         # values are shown as selected in plonegroup organizations
         self.assertListEqual([v.title for v in vocab_wrp], ['Department 2', 'Department 1'])
         self.assertListEqual([v.token for v in vocab_wrp], get_registry_organizations())
         self.assertEqual(vocab_wrp.getTerm(vocab_all_values[1]).title, 'Department 1 - Service 1')
+        # vocabulary use caching, when new values added, the vocabulary is correct
+        own_orga = get_own_organization()
+        own_orga.invokeFactory('organization', 'department3', title='Department 3')
+        set_registry_organizations(
+            [vocab_all_values[0],
+             vocab_all_values[2],
+             vocab_all_values[1],
+             own_orga['department3'].UID()])
+        vocab_wrp = factory_wrp(self.portal)
+        self.assertListEqual(
+            [v.title for v in vocab_wrp],
+            [u'Department 1', u'Department 2', u'Department 1 - Service 1', u'Department 3'])
+        self.assertListEqual(
+            [v.token for v in vocab_wrp],
+            get_registry_organizations())
+
+    def test_SortedSelectedOrganizationsElephantVocabulary(self):
+        """ Test sorted elephant vocabulary """
+        factory_all = getUtility(
+            IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
+        vocab_all = factory_all(self.portal)
+        vocab_all_values = [v.value for v in vocab_all]
+        self.assertEqual(len(vocab_all), 3)
+        self.assertListEqual([v.title for v in vocab_all],
+                             ['Department 1', 'Department 1 - Service 1', 'Department 2'])
+        set_registry_organizations([vocab_all_values[2], vocab_all_values[0]])
+        factory_wrp = getUtility(
+            IVocabularyFactory,
+            'collective.contact.plonegroup.browser.settings.SortedSelectedOrganizationsElephantVocabulary')
+        vocab_wrp = factory_wrp(self.portal)
+        self.assertEqual(len(vocab_wrp), 3)
+        # values are shown sorted, no matter how it is selected in plonegroup organizations
+        self.assertListEqual([v.title for v in vocab_wrp], [u'Department 1', u'Department 2'])
+        self.assertListEqual(sorted([v.token for v in vocab_wrp]),
+                             sorted(get_registry_organizations()))
+        self.assertEqual(vocab_wrp.getTerm(vocab_all_values[1]).title, u'Department 1 - Service 1')
+        # vocabulary use caching, when new values added, the vocabulary is correct
+        own_orga = get_own_organization()
+        own_orga.invokeFactory('organization', 'department3', title='Department 3')
+        set_registry_organizations(
+            [vocab_all_values[2],
+             vocab_all_values[0],
+             own_orga['department3'].UID()])
+        vocab_wrp = factory_wrp(self.portal)
+        self.assertListEqual(
+            [v.title for v in vocab_wrp],
+            [u'Department 1', u'Department 2', u'Department 3'])
+        self.assertListEqual(
+            sorted([v.token for v in vocab_wrp]),
+            sorted(get_registry_organizations()))

@@ -5,8 +5,14 @@ Changelog
 1.26 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- As vocabulary `ram.cache` cachekey are generated based on
+  module/class names, renamed vocabularies
+  `collective.contact.plonegroup.selected_organization_services` to
+  `collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary`
+  and `collective.contact.plonegroup.sorted_selected_organization_services` to
+  `collective.contact.plonegroup.browser.settings.SortedSelectedOrganizationsElephantVocabulary`.
+  Added tests showing that cache is correctly invalidated when selected organizations changed.
+  [gbastien]
 
 1.25 (2020-02-06)
 -----------------

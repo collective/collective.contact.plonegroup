@@ -71,7 +71,7 @@ class IFunctionSchema(Interface):
         title=_("Plone group suffix organizations"),
         description=_("Plone group organizations description"),
         value_type=schema.Choice(
-            vocabulary='collective.contact.plonegroup.sorted_selected_organization_services'),
+            vocabulary='collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary'),
         required=True)
 
 
@@ -278,8 +278,16 @@ def invalidate_soev_cache():
     """
         invalidate cache of SelectedOrganizationsElephantVocabulary
     """
-    invalidate_cachekey_volatile_for('collective.contact.plonegroup.browser.settings.'
-                                     'SelectedOrganizationsElephantVocabulary')
+    invalidate_cachekey_volatile_for(
+        'collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary')
+
+
+def invalidate_ssoev_cache():
+    """
+        invalidate cache of SortedSelectedOrganizationsElephantVocabulary
+    """
+    invalidate_cachekey_volatile_for(
+        'collective.contact.plonegroup.browser.settings.SortedSelectedOrganizationsElephantVocabulary')
 
 
 def detectContactPlonegroupChange(event):
@@ -368,6 +376,7 @@ def detectContactPlonegroupChange(event):
             invalidate_sopgv_cache()
             invalidate_sov_cache()
             invalidate_soev_cache()
+            invalidate_ssoev_cache()
 
 
 class SettingsEditForm(RegistryEditForm):
@@ -432,6 +441,7 @@ def adaptPloneGroupDefinition(organization, event):
         invalidate_sopgv_cache()
         invalidate_sov_cache()
         invalidate_soev_cache()
+        invalidate_ssoev_cache()
 
 
 def sopgv_cache_key(function, functions=[], group_title=True):

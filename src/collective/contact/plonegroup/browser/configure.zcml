@@ -26,11 +26,11 @@
         factory=".settings.EveryOrganizationsVocabulary" />
 
     <utility
-        name="collective.contact.plonegroup.selected_organization_services"
+        name="collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary"
         factory=".settings.SelectedOrganizationsElephantVocabulary" />
 
     <utility
-        name="collective.contact.plonegroup.sorted_selected_organization_services"
+        name="collective.contact.plonegroup.browser.settings.SortedSelectedOrganizationsElephantVocabulary"
         factory=".settings.SortedSelectedOrganizationsElephantVocabulary" />
 
     <!-- z3c.table -->
