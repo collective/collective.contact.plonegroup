@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.26 (unreleased)
+1.26 (2020-03-12)
 -----------------
 
 - As vocabulary `ram.cache` cachekey are generated based on
