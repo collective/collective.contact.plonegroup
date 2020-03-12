@@ -71,7 +71,8 @@ class IFunctionSchema(Interface):
         title=_("Plone group suffix organizations"),
         description=_("Plone group organizations description"),
         value_type=schema.Choice(
-            vocabulary='collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary'),
+            vocabulary='collective.contact.plonegroup.browser.settings.'
+                       'SortedSelectedOrganizationsElephantVocabulary'),
         required=True)
 
 
