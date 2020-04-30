@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collective.contact.core.content.organization import IOrganization
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
@@ -96,14 +97,20 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
 
     def contentValue(self, item):
         """Display get_full_title instead title."""
-        # find first_index relative to PLONEGROUP_ORG organization
-        path = item.getPhysicalPath()
-        if item.getId() == PLONEGROUP_ORG or PLONEGROUP_ORG not in path:
-            first_index = 0
+        pattern = u'{0} <span class="discreet">({1})</span>'
+        if IOrganization.providedBy(item):
+            # find first_index relative to PLONEGROUP_ORG organization
+            path = item.getPhysicalPath()
+            if item.getId() == PLONEGROUP_ORG or PLONEGROUP_ORG not in path:
+                first_index = 0
+            else:
+                # 1 considering that PLONEGROUP is at 1st level.
+                # Otherwise must use get_organizations_chain
+                first_index = 1
+            return pattern.format(
+                item.get_full_title(first_index=first_index), item.UID())
         else:
-            first_index = 1  # 1 considering that PLONEGROUP is at 1st level. Otherwise must use get_organizations_chain
-        return u'{0} <span class="discreet">({1})</span>'.format(
-            item.get_full_title(first_index=first_index), item.UID())
+            return pattern.format(item.get_full_title(), item.UID())
 
 
 class SelectedInPlonegroupColumn(BooleanColumn):
