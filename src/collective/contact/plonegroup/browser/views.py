@@ -4,7 +4,7 @@ from collective.contact.core import _ as _ccc
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.interfaces import IDGFVocabularyField
-from collective.contact.plonegroup.interfaces import IOrganizationField
+from collective.contact.plonegroup.interfaces import IOrganizationField, IOrganisationsUsersField
 from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.z3cform.datagridfield import DataGridFieldFactory
@@ -22,6 +22,9 @@ from zope import schema
 from zope.component import adapts
 from zope.interface import implements
 from zope.interface import Interface
+from z3c.form.widget import FieldWidget
+from collective.z3cform.datagridfield import DataGridField
+from z3c.form.interfaces import DISPLAY_MODE
 
 
 class OrganizationField(schema.Choice):
@@ -39,19 +42,24 @@ class DGFVocabularyField(schema.Choice):
     implements(IDGFVocabularyField)
 
 
+class OrganisationsUsersField(schema.List):
+    implements(IOrganisationsUsersField)
+
+
+def organizations_users_widget(field, request):
+    return FieldWidget(field, DataGridField(request))
+
+
 class IOrganisationsUsers(Interface):
 
-    # organization = OrganizationField(
-    #     title=_ccc(u'Organization'),
-    #     required=True)
-    #
-    # user = DGFVocabularyField(
-    #     title=PMF('text_user'),
-    #     vocabulary='plone.app.vocabularies.Users',
-    #     required=True)
+    organization = OrganizationField(
+        title=_ccc(u'Organization'),
+        required=True)
 
-    related = schema.Text(title=_(u'related role configuration'),
-                          required=False)
+    user = DGFVocabularyField(
+        title=PMF('text_user'),
+        vocabulary='plone.app.vocabularies.Users',
+        required=True)
 
 
 class GroupsConfigurationAdapter(object):
@@ -72,7 +80,6 @@ class GroupsConfigurationAdapter(object):
             users = api.user.get_users(groupname=group_id)
             for user in sorted(users, key=lambda u: u.getProperty('fullname', None) or u.id):
                 values.append({'organization': org_uid, 'user': user.id})
-        return [{'related': ''}]
         return values
 
     def __setattr__(self, name, value):
@@ -128,19 +135,19 @@ class ManageOwnGroupUsers(EditForm):
         fields = []
         self.get_user_manageable_functions(self.current_user)
         for function in self.functions_orgs:
-            fld = schema.List(
+            fld = OrganisationsUsersField(
                 __name__=function,
                 title=self.functions[function],
                 description=u'',
                 required=False,
                 value_type=DictRow(title=u"org_users", schema=IOrganisationsUsers, required=False))
-            fld.widgetFactory = DataGridFieldFactory
+            #fld.widgetFactory = DataGridFieldFactory
             fields.append(fld)
         fields = sorted(fields, key=lambda x: x.title)
         return field.Fields(*fields)
 
-#    def datagridUpdateWidgets(self, subform, widgets, widget):
-#        pass
+    def datagridUpdateWidgets(self, subform, widgets, widget):
+        pass
 
     def updateWidgets(self):
         super(ManageOwnGroupUsers, self).updateWidgets()

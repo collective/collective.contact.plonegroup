@@ -37,7 +37,7 @@ class OrganizationsTerms(ChoiceTermsVocabulary):
         mainform = self.form.parentForm
         # like 'form.widgets.encodeur.0'
         fieldname = self.form.__parent__.name.split('.')[2]
-        terms = []
+        terms = [SimpleTerm('', title='NO_VALUE')]
         for org in mainform.functions_orgs[fieldname]:
             terms.append(SimpleTerm(org.UID(), title=org.get_full_title(separator=' - ', first_index=1)))
         self.terms = SimpleVocabulary(terms)

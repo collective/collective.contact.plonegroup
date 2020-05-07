@@ -85,4 +85,10 @@
         provides="z3c.table.interfaces.IColumn"
         factory=".tables.PlonegroupActionsColumn" />
 
+    <adapter
+        for="collective.contact.plonegroup.interfaces.IOrganisationsUsersField
+             z3c.form.interfaces.IFormLayer"
+        provides="z3c.form.interfaces.IFieldWidget"
+        factory=".views.organizations_users_widget" />
+
 </configure>

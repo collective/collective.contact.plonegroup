@@ -38,3 +38,9 @@ class IDGFVocabularyField(Interface):
     """
         Interface for the DGFVocabularyField
     """
+
+
+class IOrganisationsUsersField(Interface):
+    """
+        Interface for the OrganisationsUsersField
+    """
