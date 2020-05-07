@@ -23,5 +23,18 @@ class INotPloneGroupContact(Interface):
 
 
 class IPlonegroupGroupCreatedEvent(IPASEvent):
-    """A new Plone group linked to an organization has been created.
+    """
+        A new Plone group linked to an organization has been created.
+    """
+
+
+class IOrganizationField(Interface):
+    """
+        Interface for the OrganizationField
+    """
+
+
+class IDGFVocabularyField(Interface):
+    """
+        Interface for the DGFVocabularyField
     """

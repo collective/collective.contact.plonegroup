@@ -17,6 +17,13 @@
         permission="plone.app.controlpanel.Site"
         class=".settings.SettingsView" />
 
+    <browser:page
+        for="OFS.interfaces.IItem"
+        name="manage-own-groups-users"
+        class=".views.ManageOwnGroupUsers"
+        permission="zope2.View"
+        />
+
     <utility
         name="collective.contact.plonegroup.organization_services"
         factory=".settings.OwnOrganizationServicesVocabulary" />
