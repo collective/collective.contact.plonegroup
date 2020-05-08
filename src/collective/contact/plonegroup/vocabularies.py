@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from collective.contact.plonegroup.config import get_registry_functions
+from operator import methodcaller
 from z3c.form.term import ChoiceTermsVocabulary
 from zope.component import getUtility
 from zope.interface import implements
@@ -24,6 +25,23 @@ class FunctionsVocabulary(object):
         return SimpleVocabulary(terms)
 
 
+class GroupsTerms(ChoiceTermsVocabulary):
+
+    def __init__(self, context, request, form, field, widget):
+        self.context = context
+        self.request = request
+        self.form = form
+        self.field = field
+        self.widget = widget
+        # see DataGridFieldObjectSubForm
+        mainform = self.form.parentForm
+        terms = []
+        for group_id in sorted(mainform.groupids, key=mainform.groupids.get):
+            terms.append(SimpleTerm(group_id, title=mainform.groupids[group_id]))
+        self.terms = SimpleVocabulary(terms)
+        field.vocabulary = self.terms
+
+
 class OrganizationsTerms(ChoiceTermsVocabulary):
 
     def __init__(self, context, request, form, field, widget):
@@ -32,13 +50,12 @@ class OrganizationsTerms(ChoiceTermsVocabulary):
         self.form = form
         self.field = field
         self.widget = widget
-        #import ipdb; ipdb.set_trace()
         # see DataGridFieldObjectSubForm
         mainform = self.form.parentForm
         # like 'form.widgets.encodeur.0'
         fieldname = self.form.__parent__.name.split('.')[2]
-        terms = [SimpleTerm('', title='NO_VALUE')]
-        for org in mainform.functions_orgs[fieldname]:
+        terms = []
+        for org in sorted(mainform.functions_orgs[fieldname], key=methodcaller('get_full_title')):
             terms.append(SimpleTerm(org.UID(), title=org.get_full_title(separator=' - ', first_index=1)))
         self.terms = SimpleVocabulary(terms)
         field.vocabulary = self.terms

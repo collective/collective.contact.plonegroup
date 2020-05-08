@@ -86,9 +86,9 @@
         factory=".tables.PlonegroupActionsColumn" />
 
     <adapter
-        for="collective.contact.plonegroup.interfaces.IOrganisationsUsersField
+        for="collective.contact.plonegroup.interfaces.IDGFListField
              z3c.form.interfaces.IFormLayer"
         provides="z3c.form.interfaces.IFieldWidget"
-        factory=".views.organizations_users_widget" />
+        factory=".views.dgf_list_widget" />
 
 </configure>

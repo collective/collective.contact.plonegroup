@@ -35,6 +35,16 @@
         for="zope.interface.Interface
              z3c.form.interfaces.IFormLayer
              zope.interface.Interface
+             collective.contact.plonegroup.interfaces.IGroupField
+             z3c.form.interfaces.IWidget"
+        provides="z3c.form.interfaces.ITerms"
+        factory=".vocabularies.GroupsTerms"
+        />
+
+    <adapter
+        for="zope.interface.Interface
+             z3c.form.interfaces.IFormLayer
+             zope.interface.Interface
              collective.contact.plonegroup.interfaces.IOrganizationField
              z3c.form.interfaces.IWidget"
         provides="z3c.form.interfaces.ITerms"

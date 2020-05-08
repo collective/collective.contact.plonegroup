@@ -3,20 +3,24 @@
     font-weight: bold;
 }
 
-table.datagridwidget-table-view :not(.auto-append):not(.new-row).datagridwidget-row select {
+.template-manage-own-groups-users table.datagridwidget-table-view :not(.auto-append):not(.new-row).datagridwidget-row select {
     -webkit-appearance: none;
     -moz-appearance: none;
     border: 0px;
 }
 
-table.datagridwidget-table-view .new-row.datagridwidget-row {
+.template-manage-own-groups-users table.datagridwidget-table-view .new-row.datagridwidget-row {
     background-color: burlywood;
 }
 
-table.datagridwidget-table-view .auto-append.datagridwidget-row {
+.template-manage-own-groups-users table.datagridwidget-table-view .auto-append.datagridwidget-row {
     background-color: cadetblue;
 }
 
-body.template-manage-own-groups-users table.datagridwidget-table-view {
+.template-manage-own-groups-users table.datagridwidget-table-view {
     width: min-content;
+}
+
+.template-manage-own-groups-users #edit-bar {
+    display: none;
 }

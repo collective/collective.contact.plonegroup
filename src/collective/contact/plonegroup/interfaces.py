@@ -28,6 +28,12 @@ class IPlonegroupGroupCreatedEvent(IPASEvent):
     """
 
 
+class IGroupField(Interface):
+    """
+        Interface for the GroupField
+    """
+
+
 class IOrganizationField(Interface):
     """
         Interface for the OrganizationField
@@ -40,7 +46,7 @@ class IDGFVocabularyField(Interface):
     """
 
 
-class IOrganisationsUsersField(Interface):
+class IDGFListField(Interface):
     """
-        Interface for the OrganisationsUsersField
+        Interface for the DGFListField
     """
