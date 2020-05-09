@@ -12,16 +12,15 @@ from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.z3cform.datagridfield import DataGridField
 from collective.z3cform.datagridfield import DictRow
-from copy import deepcopy
-from OFS.interfaces import IItem
 from operator import methodcaller
 from plone import api
 from Products.CMFPlone import PloneMessageFactory as PMF
 from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import field
 from z3c.form.form import EditForm
+from z3c.form.i18n import MessageFactory as _z3cf
+from z3c.form.interfaces import HIDDEN_MODE
 from z3c.form.widget import FieldWidget
 from zope import schema
 from zope.component import adapts
@@ -72,7 +71,7 @@ class IGroupsUsers(Interface):
 
 class IOrganisationsUsers(Interface):
 
-    organization = OrganizationField(
+    group = OrganizationField(
         title=_ccc(u'Organization'),
         required=False)
 
@@ -84,29 +83,33 @@ class IOrganisationsUsers(Interface):
 
 class GroupsConfigurationAdapter(object):
 #    adapts(IPloneSiteRoot)
-    adapts(IItem)
+#    adapts(IItem)
 
-    def __init__(self, context, functions_orgs, groupids):
-        self.__dict__['context'] = context
-        self.__dict__['functions_orgs'] = functions_orgs
-        self.__dict__['groupids'] = groupids
+    def __init__(self, form):
+        self.__dict__['context'] = form.context
+        self.__dict__['form'] = form
+        self.__dict__['old_values'] = {}
 
     def __getattr__(self, name):
-        if name.startswith('__'):
+        if name not in self.form.fieldnames:
             return getattr(self.context, name)
         values = []
-        if name == '_groups_':
-            for group_id in sorted(self.groupids, key=self.groupids.get):
+        if name == '_old_values_':
+            values = str(self.old_values)
+        elif name == '_groups_':
+            for group_id in sorted(self.form.groupids, key=self.form.groupids.get):
                 users = api.user.get_users(groupname=group_id)
                 for user in sorted(users, key=lambda u: u.getProperty('fullname', None) or u.id):
                     values.append({'group': group_id, 'user': user.id})
+            self.old_values[name] = values
         else:
-            for org in sorted(self.functions_orgs[name], key=methodcaller('get_full_title')):
+            for org in sorted(self.form.functions_orgs[name], key=methodcaller('get_full_title')):
                 org_uid = org.UID()
                 group_id = get_plone_group_id(org_uid, name)
                 users = api.user.get_users(groupname=group_id)
                 for user in sorted(users, key=lambda u: u.getProperty('fullname', None) or u.id):
-                    values.append({'organization': org_uid, 'user': user.id})
+                    values.append({'group': org_uid, 'user': user.id})
+            self.old_values[name] = values
         return values
 
     def __setattr__(self, name, value):
@@ -120,19 +123,17 @@ class ManageOwnGroupUsers(EditForm):
     label = _(u'Own groups management')
     successMessage = _(u'Own groups users succesfully updated.')
     noChangesMessage = _(u'No changes were made.')
-    buttons = deepcopy(EditForm.buttons)
-    buttons['apply'].title = PMF(u'Save')
 
     def __init__(self, context, request):
-        self.original_context = context
         self.context = context
         self.request = request
         self.current_user = api.user.get_current()
-        self.current_user = api.user.get(userid='chef')
+#        self.current_user = api.user.get(userid='chef')
         self.functions = {}  # will contain function title by function id
         self.functions_orgs = {}  # will contain org list by function id
         self.groupids = {}  # will contain group title by group id
         self.current_user_groups = api.group.get_groups(user=self.current_user)
+        self.fieldnames = []
 
     def get_manageable_functions(self):
         """ get all manageable functions """
@@ -152,7 +153,9 @@ class ManageOwnGroupUsers(EditForm):
                 continue
             if group_suffix not in self.functions_orgs:
                 self.functions_orgs[group_suffix] = []
-            self.functions_orgs[group_suffix].append(get_organization(parts[0]))
+            org = get_organization(parts[0])
+            if org not in self.functions_orgs[group_suffix]:
+                self.functions_orgs[group_suffix].append(get_organization(parts[0]))
 
     def get_manageable_groups(self):
         """ get all manageable groups. Return all groups but suffixed groups """
@@ -178,8 +181,7 @@ class ManageOwnGroupUsers(EditForm):
             self.groupids[group.id] = group.getProperty('title')
 
     def getContent(self):
-        adapted = GroupsConfigurationAdapter(self.original_context, self.functions_orgs, self.groupids)
-        return adapted
+        return GroupsConfigurationAdapter(self)
 
     @property
     def fields(self):
@@ -205,21 +207,70 @@ class ManageOwnGroupUsers(EditForm):
                 value_type=DictRow(title=u"users", schema=IGroupsUsers, required=False))
             fields.insert(0, fld)
 
+        fld = schema.TextLine(
+            __name__='_old_values_',
+            title=u'not_showed',
+            required=False,
+        )
+        fields.append(fld)
+
+        self.fieldnames = [afield.__name__ for afield in fields]
         return field.Fields(*fields)
 
-    def datagridInitialise(self, subform, widget):
-        pass
+#    def datagridInitialise(self, subform, widget):
+#        pass
 
-    def datagridUpdateWidgets(self, subform, widgets, widget):
-        pass
+#    def datagridUpdateWidgets(self, subform, widgets, widget):
+#        pass
 
     def updateWidgets(self):
         super(ManageOwnGroupUsers, self).updateWidgets()
         for wid in self.widgets:
-            self.widgets[wid].allow_reorder = False
-            self.widgets[wid].allow_insert = False
-            self.widgets[wid].allow_delete = True
-            self.widgets[wid].auto_append = True
+            if wid == '_old_values_':
+                self.widgets[wid].mode = HIDDEN_MODE
+            else:
+                self.widgets[wid].allow_reorder = False
+                self.widgets[wid].allow_insert = False
+                self.widgets[wid].allow_delete = True
+                self.widgets[wid].auto_append = True
+
+    @button.buttonAndHandler(_z3cf('Apply'), name='apply')
+    def handleApply(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        changes = False
+        users = {}
+        old_values = eval(data.pop('_old_values_'))
+        for name in old_values:
+            try:
+                new_value = data[name]  # If the field is not in the data, then go on to the next one
+            except KeyError:
+                continue
+            new_value = set([(dic['group'], dic['user']) for dic in data[name]])
+            old_value = set([(dic['group'], dic['user']) for dic in old_values[name]])
+            if old_value == new_value:
+                continue
+            for action, result in (('removed', old_value - new_value), ('added', new_value - old_value)):
+                for (group_id, user_id) in result:
+                    if name != '_groups_':
+                        group_id = get_plone_group_id(group_id, name)
+                    if group_id not in users:
+                        users[group_id] = [u.id for u in api.user.get_users(groupname=group_id)]
+                    if action == 'removed' and user_id in users[group_id]:
+                        pass
+                        api.group.remove_user(groupname=group_id, username=user_id)
+                        changes = True
+                    elif action == 'added' and user_id not in users[group_id]:
+                        pass
+                        api.group.add_user(groupname=group_id, username=user_id)
+                        changes = True
+        if changes:
+            api.portal.show_message(message=self.successMessage, request=self.request)
+        else:
+            api.portal.show_message(message=self.noChangesMessage, request=self.request, type='warn')
+        self.request.response.redirect(self.request.get('ACTUAL_URL'))
 
     @button.buttonAndHandler(PMF(u'return_to_view'), name='cancel')
     def handleCancel(self, action):

@@ -24,3 +24,7 @@
 .template-manage-own-groups-users #edit-bar {
     display: none;
 }
+
+.template-manage-own-groups-users .datagridwidget-cell {
+    padding: 1px 5px 1px 10px;
+}

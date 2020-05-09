@@ -8,7 +8,8 @@ $(document).ready(function(){
 
 var handleDGFAfterAuto = function(event, dgf, row) {
     row = $(row);
-    $('tr.datagridwidget-row.row-'+row.data('index')).addClass('new-row')
+    parents=row.parents('table.datagridwidget-table-view');
+    $('#' + parents[0].id + ' tr.datagridwidget-row.row-' + row.data('index')).addClass('new-row');
 };
 
 // Bind all DGF handlers on the page
