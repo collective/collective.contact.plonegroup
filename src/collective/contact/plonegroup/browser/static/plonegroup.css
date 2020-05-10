@@ -9,12 +9,24 @@
     border: 0px;
 }
 
+.template-manage-own-groups-users span.cross_icon {
+    color: indianred;
+}
+
 .template-manage-own-groups-users table.datagridwidget-table-view .new-row.datagridwidget-row {
     background-color: burlywood;
 }
 
+.template-manage-own-groups-users span.new_line {
+    color: burlywood;
+}
+
 .template-manage-own-groups-users table.datagridwidget-table-view .auto-append.datagridwidget-row {
     background-color: cadetblue;
+}
+
+.template-manage-own-groups-users span.auto_append {
+    color: cadetblue;
 }
 
 .template-manage-own-groups-users table.datagridwidget-table-view {
@@ -25,6 +37,9 @@
     display: none;
 }
 
+.template-manage-own-groups-users .field {
+    margin-top: 2em;
+}
 .template-manage-own-groups-users .datagridwidget-cell {
     padding: 1px 5px 1px 10px;
 }

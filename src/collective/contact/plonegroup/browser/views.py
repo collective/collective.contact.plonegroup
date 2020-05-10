@@ -132,7 +132,7 @@ class ManageOwnGroupUsers(EditForm):
         self.functions = {}  # will contain function title by function id
         self.functions_orgs = {}  # will contain org list by function id
         self.groupids = {}  # will contain group title by group id
-        self.current_user_groups = api.group.get_groups(user=self.current_user)
+        self.current_user_groups = [g for g in api.group.get_groups(user=self.current_user) if g]
         self.fieldnames = []
 
     def get_manageable_functions(self):
@@ -186,12 +186,19 @@ class ManageOwnGroupUsers(EditForm):
     @property
     def fields(self):
         fields = []
+        description = _(u'You can <span class="cross_icon">remove</span> an assignment with the '
+                        u'<span class="cross_icon">cross icon</span>. '
+                        u'You can <span class="auto_append">add</span> a new assignment with the '
+                        u'<span class="auto_append">blue line</span>. '
+                        u'You can <span class="new_line">complete</span> it on the '
+                        u'<span class="new_line">brown line</span>.')
         self.get_user_manageable_functions(self.current_user)
         for function in self.functions_orgs:
             fld = DGFListField(
                 __name__=function,
-                title=self.functions[function],
-                description=u'',
+                title=_(u"Assignments for groups related to '${function}' function",
+                        mapping={'function': self.functions[function]}),
+                description=description,
                 required=False,
                 value_type=DictRow(title=u"org_users", schema=IOrganisationsUsers, required=False))
             fields.append(fld)
@@ -201,8 +208,8 @@ class ManageOwnGroupUsers(EditForm):
         if self.groupids:
             fld = DGFListField(
                 __name__='_groups_',
-                title=_('Global groups'),
-                description=u'',
+                title=_('Global groups assignments.'),
+                description=description,
                 required=False,
                 value_type=DictRow(title=u"users", schema=IGroupsUsers, required=False))
             fields.insert(0, fld)
