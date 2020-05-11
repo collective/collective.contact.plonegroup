@@ -21,11 +21,14 @@ from z3c.form import field
 from z3c.form.form import EditForm
 from z3c.form.i18n import MessageFactory as _z3cf
 from z3c.form.interfaces import HIDDEN_MODE
+from z3c.form.validator import SimpleFieldValidator
 from z3c.form.widget import FieldWidget
+from zExceptions import Redirect
 from zope import schema
 from zope.component import adapts
 from zope.interface import implements
 from zope.interface import Interface
+from zope.schema._bootstrapinterfaces import RequiredMissing
 
 
 class DGFListField(schema.List):
@@ -81,6 +84,14 @@ class IOrganisationsUsers(Interface):
         required=False)
 
 
+class FieldValidator(SimpleFieldValidator):
+    """ Not used """
+
+    def validate(self, value, force=False):
+        if value is None or value is self.field.missing_value:
+            raise RequiredMissing
+
+
 class GroupsConfigurationAdapter(object):
 #    adapts(IPloneSiteRoot)
 #    adapts(IItem)
@@ -129,6 +140,7 @@ class ManageOwnGroupUsers(EditForm):
         self.request = request
         self.current_user = api.user.get_current()
 #        self.current_user = api.user.get(userid='chef')
+        self.current_user_id = self.current_user.getId()
         self.functions = {}  # will contain function title by function id
         self.functions_orgs = {}  # will contain org list by function id
         self.groupids = {}  # will contain group title by group id
@@ -261,16 +273,24 @@ class ManageOwnGroupUsers(EditForm):
                 continue
             for action, result in (('removed', old_value - new_value), ('added', new_value - old_value)):
                 for (group_id, user_id) in result:
+                    if group_id is None or user_id is None:
+                        required_message = _(u"There was a problem in added assignments. "
+                                             u"Don't forget to complete the 2 columns! "
+                                             u"You have to redo all the manipulations.")
+                        api.portal.show_message(message=required_message, request=self.request, type='error')
+                        raise Redirect(self.request.get('ACTUAL_URL'))
+                    if user_id == self.current_user_id:
+                        user_message = _(u"You cannot remove your user from a group!")
+                        api.portal.show_message(message=user_message, request=self.request, type='error')
+                        raise Redirect(self.request.get('ACTUAL_URL'))
                     if name != '_groups_':
                         group_id = get_plone_group_id(group_id, name)
                     if group_id not in users:
                         users[group_id] = [u.id for u in api.user.get_users(groupname=group_id)]
                     if action == 'removed' and user_id in users[group_id]:
-                        pass
                         api.group.remove_user(groupname=group_id, username=user_id)
                         changes = True
                     elif action == 'added' and user_id not in users[group_id]:
-                        pass
                         api.group.add_user(groupname=group_id, username=user_id)
                         changes = True
         if changes:

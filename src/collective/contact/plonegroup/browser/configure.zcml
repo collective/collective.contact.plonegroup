@@ -91,4 +91,13 @@
         provides="z3c.form.interfaces.IFieldWidget"
         factory=".views.dgf_list_widget" />
 
+    <!--adapter
+        for="zope.interface.Interface
+             zope.interface.Interface
+             zope.interface.Interface
+             collective.contact.plonegroup.interfaces.IGroupField
+             zope.interface.Interface"
+        provides="z3c.form.interfaces.IValidator"
+        factory=".views.FieldValidator" /-->
+
 </configure>
