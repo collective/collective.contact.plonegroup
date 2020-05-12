@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from collective.contact.plonegroup.config import get_registry_functions
+from collective.contact.plonegroup.utils import get_all_suffixes
 from operator import methodcaller
+from plone import api
 from z3c.form.term import ChoiceTermsVocabulary
 from zope.component import getUtility
 from zope.interface import implements
@@ -22,6 +24,26 @@ class FunctionsVocabulary(object):
                 SimpleTerm(function['fct_id'],
                            function['fct_id'],
                            function['fct_title']))
+        return SimpleVocabulary(terms)
+
+
+class GlobalGroupsVocabulary(object):
+    """ Vocabulary of global groups. Return all groups but suffixed groups and special groups """
+
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        all_suffixes = get_all_suffixes()
+        terms = []
+        for group in api.group.get_groups():
+            if group.id in ('Administrators', 'Reviewers', 'Site Administrators', 'AuthenticatedUsers'):
+                continue
+            parts = group.id.split('_')
+            if len(parts) > 1:
+                group_suffix = '_'.join(parts[1:])
+                if group_suffix in all_suffixes:
+                    continue
+            terms.append(SimpleTerm(group.id, title=group.getProperty('title')))
         return SimpleVocabulary(terms)
 
 

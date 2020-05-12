@@ -31,6 +31,10 @@
         name="collective.contact.plonegroup.functions"
         factory=".vocabularies.FunctionsVocabulary" />
 
+    <utility
+        name="collective.contact.plonegroup.global_groups"
+        factory=".vocabularies.GlobalGroupsVocabulary" />
+
     <adapter
         for="zope.interface.Interface
              z3c.form.interfaces.IFormLayer

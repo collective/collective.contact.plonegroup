@@ -74,6 +74,11 @@ class IFunctionSchema(Interface):
             vocabulary='collective.contact.plonegroup.browser.settings.'
                        'SortedSelectedOrganizationsElephantVocabulary'),
         required=True)
+    fct_management = schema.Bool(
+        title=_("Function groups assignments can be managed by a contained user."),
+        required=False,
+        default=False,
+    )
 
 
 def voc_cache_key(method, self, context):
@@ -177,6 +182,12 @@ class IContactPlonegroupConfig(Interface):
                            schema=IFunctionSchema)
     )
     widget('functions', DataGridFieldFactory, auto_append=False)
+
+    groups_management = schema.List(
+        title=_(u'Selected global groups can be managed by a contained user.'),
+        required=False,
+        value_type=schema.Choice(vocabulary=u'collective.contact.plonegroup.global_groups'),
+    )
 
     @invariant
     def validateSettings(data):

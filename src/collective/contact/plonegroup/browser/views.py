@@ -7,7 +7,6 @@ from collective.contact.plonegroup.interfaces import IDGFListField
 from collective.contact.plonegroup.interfaces import IDGFVocabularyField
 from collective.contact.plonegroup.interfaces import IGroupField
 from collective.contact.plonegroup.interfaces import IOrganizationField
-from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.z3cform.datagridfield import DataGridField
@@ -15,7 +14,6 @@ from collective.z3cform.datagridfield import DictRow
 from operator import methodcaller
 from plone import api
 from Products.CMFPlone import PloneMessageFactory as PMF
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 from z3c.form import button
 from z3c.form import field
 from z3c.form.form import EditForm
@@ -25,7 +23,6 @@ from z3c.form.validator import SimpleFieldValidator
 from z3c.form.widget import FieldWidget
 from zExceptions import Redirect
 from zope import schema
-from zope.component import adapts
 from zope.interface import implements
 from zope.interface import Interface
 from zope.schema._bootstrapinterfaces import RequiredMissing
@@ -93,8 +90,6 @@ class FieldValidator(SimpleFieldValidator):
 
 
 class GroupsConfigurationAdapter(object):
-#    adapts(IPloneSiteRoot)
-#    adapts(IItem)
 
     def __init__(self, form):
         self.__dict__['context'] = form.context
@@ -150,7 +145,8 @@ class ManageOwnGroupUsers(EditForm):
     def get_manageable_functions(self):
         """ get all manageable functions """
         for fct in get_registry_functions(as_copy=False):
-            self.functions[fct['fct_id']] = fct['fct_title']
+            if fct['fct_management']:
+                self.functions[fct['fct_id']] = fct['fct_title']
         return self.functions.keys()
 
     def get_user_manageable_functions(self, user):
@@ -170,19 +166,10 @@ class ManageOwnGroupUsers(EditForm):
                 self.functions_orgs[group_suffix].append(get_organization(parts[0]))
 
     def get_manageable_groups(self):
-        """ get all manageable groups. Return all groups but suffixed groups """
-        all_suffixes = get_all_suffixes()
-        ret = []
-        for group in api.group.get_groups():
-            if group.id in ('Administrators', 'Reviewers', 'Site Administrators', 'AuthenticatedUsers'):
-                continue
-            parts = group.id.split('_')
-            if len(parts) > 1:
-                group_suffix = '_'.join(parts[1:])
-                if group_suffix in all_suffixes:
-                    continue
-            ret.append(group.id)
-        return ret
+        """ get selected manageable groups """
+        groups = api.portal.get_registry_record('collective.contact.plonegroup.browser.settings.'
+                                                'IContactPlonegroupConfig.groups_management') or []
+        return groups
 
     def get_user_manageable_groups(self, user):
         """ get user manageable groups """

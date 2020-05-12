@@ -69,3 +69,19 @@ def v5(context):
             # already migrated
             return
     api.portal.set_registry_record(FUNCTIONS_REGISTRY, res)
+
+
+def v6(context):
+    logger.info("Migrate to v6")
+    functions = api.portal.get_registry_record(name=FUNCTIONS_REGISTRY)
+    res = []
+    for function in functions:
+        if 'fct_management' not in function:
+            function['fct_management'] = False
+            res.append(function)
+        else:
+            # already migrated
+            return
+    api.portal.set_registry_record(FUNCTIONS_REGISTRY, res)
+    setup = api.portal.get_tool('portal_setup')
+    setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'plone.app.registry')

@@ -12,14 +12,14 @@ DEFAULT_DIRECTORY_ID = 'contacts'
 
 
 def get_registry_organizations(as_copy=True):
-    org_uids = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY)
+    org_uids = api.portal.get_registry_record(ORGANIZATIONS_REGISTRY) or []
     if as_copy:
         org_uids = deepcopy(org_uids)
     return org_uids
 
 
 def get_registry_functions(as_copy=True):
-    functions = api.portal.get_registry_record(FUNCTIONS_REGISTRY)
+    functions = api.portal.get_registry_record(FUNCTIONS_REGISTRY) or []
     if as_copy:
         functions = deepcopy(functions)
     return functions

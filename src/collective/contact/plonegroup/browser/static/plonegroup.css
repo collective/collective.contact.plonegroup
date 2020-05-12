@@ -3,6 +3,10 @@
     font-weight: bold;
 }
 
+.template-contact-plonegroup-settings #form-widgets-functions td.cell-4 label {
+    display: none;
+}
+
 .template-manage-own-groups-users table.datagridwidget-table-view :not(.auto-append):not(.new-row).datagridwidget-row select {
     -webkit-appearance: none;
     -moz-appearance: none;
