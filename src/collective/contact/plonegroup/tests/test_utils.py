@@ -43,8 +43,10 @@ class TestUtils(IntegrationTestCase):
             container=self.own_orga, type='organization', id='department2', title='Department 2')
         self.registry = getUtility(IRegistry)
         set_registry_organizations([self.uid])
-        set_registry_functions([{'fct_title': u'Observers', 'fct_id': u'observer', 'fct_orgs': [], },
-                                {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [], }, ])
+        set_registry_functions([{'fct_title': u'Observers', 'fct_id': u'observer', 'fct_orgs': [],
+                                 'fct_management': False},
+                                {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [],
+                                 'fct_management': False}, ])
         api.group.add_user(groupname='%s_director' % self.uid, username=TEST_USER_ID)
 
     def test_organizations_with_suffixes(self):
@@ -177,8 +179,8 @@ class TestUtils(IntegrationTestCase):
     def test_select_org_for_function(self):
         """ """
         self.assertEqual(get_registry_functions(),
-                         [{'fct_title': u'Observers', 'fct_orgs': [], 'fct_id': u'observer'},
-                          {'fct_title': u'Director', 'fct_orgs': [], 'fct_id': u'director'}])
+                         [{'fct_title': u'Observers', 'fct_management': False, 'fct_orgs': [], 'fct_id': u'observer'},
+                          {'fct_title': u'Director', 'fct_management': False, 'fct_orgs': [], 'fct_id': u'director'}])
         select_org_for_function(self.uid, 'director')
         self.assertTrue(self.uid in get_registry_functions()[1]['fct_orgs'])
         select_org_for_function(self.uid, 'director', remove=True)

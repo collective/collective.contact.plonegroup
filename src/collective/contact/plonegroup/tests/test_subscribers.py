@@ -32,7 +32,8 @@ class TestSubscribers(IntegrationTestCase):
         self.contacts = [own_orga['department1'], own_orga['department2']]
 
         set_registry_organizations([c.UID() for c in self.contacts])
-        set_registry_functions([{'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': []}])
+        set_registry_functions([{'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [],
+                                 'fct_management': False}])
 
         self.portal.invokeFactory('acontent',
                                   'acontent1',

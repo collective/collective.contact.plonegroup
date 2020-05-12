@@ -75,7 +75,7 @@ class IFunctionSchema(Interface):
                        'SortedSelectedOrganizationsElephantVocabulary'),
         required=True)
     fct_management = schema.Bool(
-        title=_("Function groups assignments can be managed by a contained user."),
+        title=_("Manageable function groups."),
         required=False,
         default=False,
     )

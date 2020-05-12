@@ -7,6 +7,7 @@ from plone import api
 # Registry keys
 ORGANIZATIONS_REGISTRY = 'collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.organizations'
 FUNCTIONS_REGISTRY = 'collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.functions'
+GROUPS_MGT_REGISTRY = 'collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.groups_management'
 PLONEGROUP_ORG = 'plonegroup-organization'
 DEFAULT_DIRECTORY_ID = 'contacts'
 
@@ -25,9 +26,20 @@ def get_registry_functions(as_copy=True):
     return functions
 
 
+def get_registry_groups_mgt(as_copy=True):
+    groups = api.portal.get_registry_record(GROUPS_MGT_REGISTRY) or []
+    if as_copy:
+        groups = deepcopy(groups)
+    return groups
+
+
 def set_registry_organizations(value):
     api.portal.set_registry_record(ORGANIZATIONS_REGISTRY, value)
 
 
 def set_registry_functions(value):
     api.portal.set_registry_record(FUNCTIONS_REGISTRY, value)
+
+
+def set_registry_groups_mgt(value):
+    api.portal.set_registry_record(GROUPS_MGT_REGISTRY, value)

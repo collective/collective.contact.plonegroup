@@ -3,6 +3,7 @@
 from collective.contact.core import _ as _ccc
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_functions
+from collective.contact.plonegroup.config import get_registry_groups_mgt
 from collective.contact.plonegroup.interfaces import IDGFListField
 from collective.contact.plonegroup.interfaces import IDGFVocabularyField
 from collective.contact.plonegroup.interfaces import IGroupField
@@ -149,7 +150,7 @@ class ManageOwnGroupUsers(EditForm):
                 self.functions[fct['fct_id']] = fct['fct_title']
         return self.functions.keys()
 
-    def get_user_manageable_functions(self, user):
+    def get_user_manageable_functions(self):
         """ get user manageable functions """
         manageable_functions = self.get_manageable_functions()
         for group in self.current_user_groups:
@@ -167,11 +168,9 @@ class ManageOwnGroupUsers(EditForm):
 
     def get_manageable_groups(self):
         """ get selected manageable groups """
-        groups = api.portal.get_registry_record('collective.contact.plonegroup.browser.settings.'
-                                                'IContactPlonegroupConfig.groups_management') or []
-        return groups
+        return get_registry_groups_mgt()
 
-    def get_user_manageable_groups(self, user):
+    def get_user_manageable_groups(self):
         """ get user manageable groups """
         manageable_groups = self.get_manageable_groups()
         for group in self.current_user_groups:
@@ -191,7 +190,7 @@ class ManageOwnGroupUsers(EditForm):
                         u'<span class="auto_append">blue line</span>. '
                         u'You can <span class="new_line">complete</span> it on the '
                         u'<span class="new_line">brown line</span>.')
-        self.get_user_manageable_functions(self.current_user)
+        self.get_user_manageable_functions()
         for function in self.functions_orgs:
             fld = DGFListField(
                 __name__=function,
@@ -203,7 +202,7 @@ class ManageOwnGroupUsers(EditForm):
             fields.append(fld)
         fields = sorted(fields, key=lambda x: x.title)
 
-        self.get_user_manageable_groups(self.current_user)
+        self.get_user_manageable_groups()
         if self.groupids:
             fld = DGFListField(
                 __name__='_groups_',
