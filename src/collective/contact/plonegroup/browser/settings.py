@@ -61,11 +61,11 @@ class IFunctionSchema(Interface):
     """
     fct_id = schema.TextLine(
         title=_("Plone group suffix id"),
-        description=_("Plone group suffix description"),
+#        description=_("Plone group suffix description"),
         required=True)
     fct_title = schema.TextLine(
         title=_("Plone group suffix title"),
-        description=_("Plone group title description"),
+#        description=_("Plone group title description"),
         required=True)
     fct_orgs = schema.List(
         title=_("Plone group suffix organizations"),
@@ -397,6 +397,7 @@ class SettingsEditForm(RegistryEditForm):
     """
     form.extends(RegistryEditForm)
     schema = IContactPlonegroupConfig
+
 
 SettingsView = layout.wrap_form(SettingsEditForm, ControlPanelFormWrapper)
 

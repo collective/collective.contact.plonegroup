@@ -135,7 +135,7 @@ class ManageOwnGroupUsers(EditForm):
         self.context = context
         self.request = request
         self.current_user = api.user.get_current()
-#        self.current_user = api.user.get(userid='chef')
+        self.current_user = api.user.get(userid='chef')
         self.current_user_id = self.current_user.getId()
         self.functions = {}  # will contain function title by function id
         self.functions_orgs = {}  # will contain org list by function id
