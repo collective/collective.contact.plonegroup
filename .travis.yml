@@ -9,10 +9,10 @@ cache:
     - buildout-cache/eggs
 
 install:
-  - easy_install --version
-  - pip install setuptools==33.1.1
   - mkdir -p buildout-cache/{eggs,downloads}
-  - python bootstrap.py -c travis.cfg --setuptools-version=33.1.1 --version=2.13.1
+  - virtualenv .
+  - bin/pip install --upgrade pip
+  - bin/pip install -r requirements.txt
   - bin/buildout -c travis.cfg
 
 script:
