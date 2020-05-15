@@ -5,8 +5,11 @@ Changelog
 1.28 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added manage-own-groups-users view and functions/groups selection configuration.
+  A user can manage the user assignments of his groups.
+  [sgeulette]
+- Avoid getting groups (only users) from get_selected_org_suffix_users function.
+  [sgeulette]
 
 1.27 (2020-05-08)
 -----------------
