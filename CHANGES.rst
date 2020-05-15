@@ -2,7 +2,13 @@ Changelog
 =========
 
 
-1.27 (unreleased)
+1.28 (unreleased)
+-----------------
+
+- Nothing changed yet.
+
+
+1.27 (2020-05-08)
 -----------------
 
 - Make the `OrgaPrettyLinkWithAdditionalInfosColumn` also work for `person` and `held_position`.
