@@ -11,6 +11,7 @@ from operator import attrgetter
 from operator import methodcaller
 from plone import api
 from plone.app.uuid.utils import uuidToObject
+from Products.CMFPlone.utils import base_hasattr
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.globalrequest import getRequest
@@ -185,6 +186,8 @@ def get_selected_org_suffix_users(org_uid, suffixes):
         groupname = "{}_{}".format(org_uid, function_id)
         members = api.user.get_users(groupname=groupname)
         for member in members:
+            if base_hasattr(member, "isGroup") and member.isGroup():
+                continue
             if member not in org_members:
                 org_members.append(member)
     return org_members
