@@ -134,14 +134,17 @@ class ManageOwnGroupUsers(EditForm):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        self.current_user = api.user.get_current()
-#        self.current_user = api.user.get(userid='chef')
-        self.current_user_id = self.current_user.getId()
         self.functions = {}  # will contain function title by function id
         self.functions_orgs = {}  # will contain org list by function id
         self.groupids = {}  # will contain group title by group id
-        self.current_user_groups = [g for g in api.group.get_groups(user=self.current_user) if g]
         self.fieldnames = []
+
+    def init(self):
+        """ user is now recognized """
+        self.current_user = api.user.get_current()
+#        self.current_user = api.user.get(userid='chef')
+        self.current_user_id = self.current_user.getId()
+        self.current_user_groups = [g for g in api.group.get_groups(user=self.current_user) if g]
 
     def get_manageable_functions(self):
         """ get all manageable functions """
@@ -183,6 +186,7 @@ class ManageOwnGroupUsers(EditForm):
 
     @property
     def fields(self):
+        self.init()  # second init with user recognized
         fields = []
         description = _(u'You can <span class="cross_icon">remove</span> an assignment with the '
                         u'<span class="cross_icon">cross icon</span>. '
