@@ -129,7 +129,7 @@ def get_organizations(only_selected=True,
 
     if orgs is None:
         if only_selected:
-            org_uids = [org_uid for org_uid in get_registry_organizations()]
+            org_uids = get_registry_organizations()
         else:
             # use the vocabulary to get selectable organizations so if vocabulary
             # is overrided get_organizations is still consistent

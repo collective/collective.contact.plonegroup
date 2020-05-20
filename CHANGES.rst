@@ -5,8 +5,12 @@ Changelog
 1.28 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- In `utils.get_organizations`, do not use a `list comprehension` to turn
+  result of `get_registry_organizations` into a list as it is already the case
+  (was not the case a long time ago), `get_registry_organizations` returns a
+  new list and values stored in the registry will not be changed anymore by
+  default.
+  [gbastien]
 
 1.27 (2020-05-08)
 -----------------
