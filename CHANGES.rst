@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.28 (unreleased)
+1.28 (2020-05-26)
 -----------------
 
 - In `utils.get_organizations`, do not use a `list comprehension` to turn
