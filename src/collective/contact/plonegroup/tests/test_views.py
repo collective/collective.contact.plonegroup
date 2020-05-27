@@ -53,6 +53,7 @@ class TestViews(IntegrationTestCase):
         functions = get_registry_functions(as_copy=False)
         functions[0]['fct_management'] = True
         set_registry_groups_mgt(['investigators'])
+        view.init()
         self.assertListEqual(view.get_manageable_groups(), ['investigators'])
         self.assertListEqual(view.get_manageable_functions(), [u'observer'])
         view.get_user_manageable_groups()  # fill in view.groupids
@@ -69,6 +70,7 @@ class TestViews(IntegrationTestCase):
 
         self.assertListEqual(get_user_groups(TEST_USER_ID), ['{}_observer'.format(self.uid), u'investigators'])
         view = self.portal.unrestrictedTraverse('@@manage-own-groups-users')
+        view.init()
         self.assertListEqual(view.get_manageable_groups(), ['investigators'])
         self.assertListEqual(view.get_manageable_functions(), [u'observer'])
         view.get_user_manageable_groups()  # fill in view.groupids
