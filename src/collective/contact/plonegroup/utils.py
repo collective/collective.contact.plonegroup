@@ -10,6 +10,7 @@ from imio.helpers.content import uuidsToObjects
 from operator import attrgetter
 from operator import methodcaller
 from plone import api
+from plone.api.exc import GroupNotFoundError
 from plone.app.uuid.utils import uuidToObject
 from Products.CMFPlone.utils import base_hasattr
 from zope.annotation.interfaces import IAnnotations
@@ -184,7 +185,10 @@ def get_selected_org_suffix_users(org_uid, suffixes):
     # only add to vocabulary users with these functions in the organization
     for function_id in suffixes:
         groupname = "{}_{}".format(org_uid, function_id)
-        members = api.user.get_users(groupname=groupname)
+        try:
+            members = api.user.get_users(groupname=groupname)
+        except GroupNotFoundError:  # suffix can be limited to some organization...
+            continue
         for member in members:
             if base_hasattr(member, "isGroup") and member.isGroup():
                 continue

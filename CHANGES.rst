@@ -8,7 +8,9 @@ Changelog
 - Added manage-own-groups-users view and functions/groups selection configuration.
   A user can manage the user assignments of his groups.
   [sgeulette]
-- Avoid getting groups (only users) from get_selected_org_suffix_users function.
+- Avoid getting groups (only users) in `get_selected_org_suffix_users` function.
+  [sgeulette]
+- Avoid GroupNotFoundError in `get_selected_org_suffix_users` if suffix is limited to some organizations.
   [sgeulette]
 
 1.27 (2020-05-08)
