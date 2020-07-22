@@ -10,7 +10,7 @@ cache:
 
 install:
   - virtualenv .
-  - pip install -r requirements.txt
+  - bin/pip install -r requirements.txt
   - bin/buildout -Nc travis.cfg
 
 script:
