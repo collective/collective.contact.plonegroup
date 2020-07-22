@@ -71,6 +71,14 @@
         factory=".tables.SelectedInPlonegroupColumn" />
 
     <adapter
+        name="PloneGroupUsersGroupsColumn"
+        for="zope.interface.Interface
+             zope.interface.Interface
+             .tables.SubOrganizationsTable"
+        provides="z3c.table.interfaces.IColumn"
+        factory=".tables.PloneGroupUsersGroupsColumn" />
+
+    <adapter
         name="ActionsColumn"
         for="zope.interface.Interface
              zope.interface.Interface

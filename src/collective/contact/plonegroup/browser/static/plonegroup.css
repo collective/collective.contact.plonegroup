@@ -2,3 +2,7 @@
     color: red;
     font-weight: bold;
 }
+
+th.th_header_PloneGroupUsersGroupsColumn {
+    width: 250px;
+}

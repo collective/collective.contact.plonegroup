@@ -5,8 +5,9 @@ Changelog
 1.29 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `PloneGroupUsersGroupsColumn`, a column that displays suffixed groups
+  and users, to be called on dashboard displaying organizations.
+  [gbastien]
 
 1.28 (2020-05-26)
 -----------------
