@@ -32,7 +32,10 @@ class TestSubscribers(IntegrationTestCase):
         self.contacts = [own_orga['department1'], own_orga['department2']]
 
         set_registry_organizations([c.UID() for c in self.contacts])
-        set_registry_functions([{'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': []}])
+        set_registry_functions([{'fct_title': u'Director',
+                                 'fct_id': u'director',
+                                 'fct_orgs': [],
+                                 'enabled': True}])
 
         self.portal.invokeFactory('acontent',
                                   'acontent1',
@@ -142,8 +145,8 @@ class TestSubscribers(IntegrationTestCase):
         uid = self.contacts[0].UID()
         self.assertRaises(Redirect, api.group.delete, groupname='%s_director' % uid)
         msgs = smi.show()
-        self.assertEqual(msgs[0].message, u"You cannot delete the group '%s_director', linked to used organization "
-                         "'Department 1'." % uid)
+        self.assertEqual(msgs[0].message, u"You cannot delete the group '%s_director', "
+                         "linked to used organization 'Department 1'." % uid)
         api.group.create(groupname='%s_other' % uid)
         api.group.create(groupname='12345_director')
         api.group.delete(groupname='%s_other' % uid)

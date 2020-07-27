@@ -45,10 +45,12 @@ class TestSettings(IntegrationTestCase):
                                    own_orga['department2'].UID()])
         set_registry_functions([{'fct_title': u'Director',
                                  'fct_id': u'director',
-                                 'fct_orgs': []},
+                                 'fct_orgs': [],
+                                 'enabled': True},
                                 {'fct_title': u'Worker',
                                  'fct_id': u'worker',
-                                 'fct_orgs': []}])
+                                 'fct_orgs': [],
+                                 'enabled': True}])
 
     def test_OwnOrganizationServicesVocabulary(self):
         """ Test vocabulary """
@@ -91,8 +93,14 @@ class TestSettings(IntegrationTestCase):
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
         self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Director)')
         # Changing function title
-        set_registry_functions([{'fct_title': u'Directors', 'fct_id': u'director', 'fct_orgs': []},
-                                {'fct_title': u'Worker', 'fct_id': u'worker', 'fct_orgs': []}])
+        set_registry_functions([{'fct_title': u'Directors',
+                                 'fct_id': u'director',
+                                 'fct_orgs': [],
+                                 'enabled': True},
+                                {'fct_title': u'Worker',
+                                 'fct_id': u'worker',
+                                 'fct_orgs': [],
+                                 'enabled': True}])
         d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
         self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Directors)')
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
@@ -108,7 +116,10 @@ class TestSettings(IntegrationTestCase):
         self.assertIn('%s_director' % last_uid, group_ids)
         self.assertIn('%s_worker' % last_uid, group_ids)
         # Adding new function
-        newValue = get_registry_functions() + [{'fct_title': u'Chief', 'fct_id': u'chief', 'fct_orgs': []}]
+        newValue = get_registry_functions() + [{'fct_title': u'Chief',
+                                                'fct_id': u'chief',
+                                                'fct_orgs': [],
+                                                'enabled': True}]
         set_registry_functions(newValue)
         group_ids = [group.id for group in api.group.get_groups() if '_' in group.id]
         self.assertEquals(len(group_ids), 12)
@@ -127,6 +138,20 @@ class TestSettings(IntegrationTestCase):
         functions = get_registry_functions()
         # remove 'director'
         functions.pop(0)
+        set_registry_functions(functions)
+        # the linked Plone groups are deleted
+        self.assertFalse(api.group.get(plone_group_id))
+
+    def test_detectContactPlonegroupChangeDisableFunction(self):
+        """When a function is disabled (enabled=False), every linked Plone groups are deleted as well.
+           This is protected by validateSettings that checks first that every Plone groups are empty."""
+        own_orga = get_own_organization()
+        dep1 = own_orga['department1']
+        plone_group_id = get_plone_group_id(dep1.UID(), 'director')
+        self.assertTrue(api.group.get(plone_group_id))
+        functions = get_registry_functions()
+        # disable 'director'
+        functions[0]['enabled'] = False
         set_registry_functions(functions)
         # the linked Plone groups are deleted
         self.assertFalse(api.group.get(plone_group_id))
@@ -208,6 +233,35 @@ class TestSettings(IntegrationTestCase):
         api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
         self.assertFalse(invariants.validate(data))
 
+    def test_validateSettingsDisableFunction(self):
+        """A function may only be disabled (enabled=False)
+           if every linked Plone groups are empty."""
+        # add a user to group department1 director
+        own_orga = get_own_organization()
+        dep1 = own_orga['department1']
+        plone_group_id = get_plone_group_id(dep1.UID(), 'director')
+        api.group.add_user(groupname=plone_group_id, username=TEST_USER_ID)
+        invariants = validator.InvariantsValidator(
+            None, None, None, settings.IContactPlonegroupConfig, None)
+        orgs = get_registry_organizations()
+        functions = get_registry_functions()
+        data = {'organizations': orgs, 'functions': functions}
+        # for now it validates correctly
+        self.assertFalse(invariants.validate(data))
+        # disable 'director'
+        functions[0]['enabled'] = False
+        errors = invariants.validate(data)
+        self.assertTrue(isinstance(errors[0], Invalid))
+        error_msg = translate(
+            msgid=u"can_not_disable_suffix_plone_groups_not_empty",
+            domain='collective.contact.plonegroup',
+            mapping={'removed_function': 'director',
+                     'plone_group_id': plone_group_id})
+        self.assertEqual(translate(errors[0].message), error_msg)
+        # remove user from plone group, now it validates
+        api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
+        self.assertFalse(invariants.validate(data))
+
     def test_validateSettingsSelectFunctionOrgsOnExistingFunction(self):
         """Selecting 'fct_orgs' for an existing function (so for which Plone groups are already created),
            is only possible if groups that will be deleted (Plone groups of organizations not selected
@@ -273,7 +327,10 @@ class TestSettings(IntegrationTestCase):
         dep2 = own_orga['department2']
         dep2_uid = dep2.UID()
         functions = get_registry_functions()
-        new_function = {'fct_id': u'new', 'fct_title': u'New', 'fct_orgs': [dep1_uid]}
+        new_function = {'fct_id': u'new',
+                        'fct_title': u'New',
+                        'fct_orgs': [dep1_uid],
+                        'enabled': True}
         functions.append(new_function)
         set_registry_functions(functions)
         # 'new' suffixed Plone group was created only for dep1

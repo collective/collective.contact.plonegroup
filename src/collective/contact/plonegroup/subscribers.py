@@ -192,9 +192,10 @@ def group_deleted(event):
     parts = group.split('_')
     if len(parts) == 1:
         return
+    org_uid = parts[0]
     group_suffix = '_'.join(parts[1:])
-    if parts[0] in get_registry_organizations() and group_suffix in get_all_suffixes(parts[0]):
-        orga = api.content.find(UID=parts[0])[0].getObject()
+    if org_uid in get_registry_organizations() and group_suffix in get_all_suffixes(org_uid):
+        orga = api.content.find(UID=org_uid)[0].getObject()
         api.portal.show_message(message=_("You cannot delete the group '${group}', linked to used organization "
                                           "'${orga}'.", mapping={'group': group, 'orga': safe_unicode(orga.Title())}),
                                 request=request, type='error')

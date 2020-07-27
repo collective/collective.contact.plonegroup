@@ -43,8 +43,14 @@ class TestUtils(IntegrationTestCase):
             container=self.own_orga, type='organization', id='department2', title='Department 2')
         self.registry = getUtility(IRegistry)
         set_registry_organizations([self.uid])
-        set_registry_functions([{'fct_title': u'Observers', 'fct_id': u'observer', 'fct_orgs': [], },
-                                {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [], }, ])
+        set_registry_functions([{'fct_title': u'Observers',
+                                 'fct_id': u'observer',
+                                 'fct_orgs': [],
+                                 'enabled': True},
+                                {'fct_title': u'Director',
+                                 'fct_id': u'director',
+                                 'fct_orgs': [],
+                                 'enabled': True}, ])
         api.group.add_user(groupname='%s_director' % self.uid, username=TEST_USER_ID)
 
     def test_organizations_with_suffixes(self):
@@ -154,11 +160,23 @@ class TestUtils(IntegrationTestCase):
         dep2_uid = self.dep2.UID()
         self.assertEqual(get_all_suffixes(dep2_uid), [u'observer', u'director'])
         self.assertEqual(get_all_suffixes(), [u'observer', u'director'])
-        # is 'fct_orgs' aware
+
+    def test_get_all_suffixes_fct_orgs(self):
+        dep2_uid = self.dep2.UID()
+        self.assertEqual(get_all_suffixes(dep2_uid), [u'observer', u'director'])
         functions = get_registry_functions()
         functions[0]['fct_orgs'] = [self.uid]
         set_registry_functions(functions)
         self.assertEqual(get_all_suffixes(dep2_uid), [u'director'])
+
+    def test_get_all_suffixes_only_enabled(self):
+        dep2_uid = self.dep2.UID()
+        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=True), [u'observer', u'director'])
+        functions = get_registry_functions()
+        functions[0]['enabled'] = False
+        set_registry_functions(functions)
+        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=True), [u'director'])
+        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=False), [u'observer', u'director'])
 
     def test_get_own_organization_path(self):
         """ Test the returned organization path """
@@ -177,8 +195,14 @@ class TestUtils(IntegrationTestCase):
     def test_select_org_for_function(self):
         """ """
         self.assertEqual(get_registry_functions(),
-                         [{'fct_title': u'Observers', 'fct_orgs': [], 'fct_id': u'observer'},
-                          {'fct_title': u'Director', 'fct_orgs': [], 'fct_id': u'director'}])
+                         [{'fct_title': u'Observers',
+                           'fct_orgs': [],
+                           'fct_id': u'observer',
+                           'enabled': True},
+                          {'fct_title': u'Director',
+                           'fct_orgs': [],
+                           'fct_id': u'director',
+                           'enabled': True}])
         select_org_for_function(self.uid, 'director')
         self.assertTrue(self.uid in get_registry_functions()[1]['fct_orgs'])
         select_org_for_function(self.uid, 'director', remove=True)

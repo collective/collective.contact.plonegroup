@@ -242,7 +242,7 @@ class IContactPlonegroupConfig(Interface):
                     if plone_group and plone_group.getGroupMembers():
                         raise Invalid(
                             _(u"can_not_disable_suffix_plone_groups_not_empty",
-                              mapping={'function': new_function,
+                              mapping={'disabled_function': new_function,
                                        'plone_group_id': plone_group_id}))
 
 
