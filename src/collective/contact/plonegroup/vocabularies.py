@@ -43,7 +43,7 @@ class GlobalGroupsVocabulary(object):
                 group_suffix = '_'.join(parts[1:])
                 if group_suffix in all_suffixes:
                     continue
-            terms.append(SimpleTerm(group.id, title=group.getProperty('title')))
+            terms.append(SimpleTerm(group.id, title=group.getProperty('title') or group.id))
         return SimpleVocabulary(terms)
 
 
