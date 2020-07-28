@@ -76,7 +76,7 @@ class IFunctionSchema(Interface):
                        'SortedSelectedOrganizationsElephantVocabulary'),
         required=True)
     fct_management = schema.Bool(
-        title=_("Manageable function groups."),
+        title=_("Manageable function groups?"),
         required=False,
         default=False,
     )

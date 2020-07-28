@@ -6,8 +6,17 @@ th.th_header_PloneGroupUsersGroupsColumn {
     width: 250px;
 }
 
-.template-contact-plonegroup-settings #form-widgets-functions td.cell-4 label {
+.template-contact-plonegroup-settings #form-widgets-functions label[for*='fct_management'],
+.template-contact-plonegroup-settings #form-widgets-functions label[for*='enabled'] {
     display: none;
+}
+
+/* avoid too long groups_management list of checkboxes in configuration */
+.template-contact-plonegroup-settings span#form-widgets-groups_management {
+    max-height: 500px;
+    display: block;
+    overflow-x: auto;
+    max-width: 500px;
 }
 
 .template-manage-own-groups-users table.datagridwidget-table-view :not(.auto-append):not(.new-row).datagridwidget-row select {
@@ -50,12 +59,4 @@ th.th_header_PloneGroupUsersGroupsColumn {
 
 .template-manage-own-groups-users .datagridwidget-cell {
     padding: 1px 5px 1px 10px;
-}
-
-/* avoid too long groups_management list of checkboxes in configuration */
-span#form-widgets-groups_management {
-    max-height: 500px;
-    display: block;
-    overflow-x: auto;
-    max-width: 500px;
 }

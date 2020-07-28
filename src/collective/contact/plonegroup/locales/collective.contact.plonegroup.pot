@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-07-28 09:33+0000\n"
+"POT-Creation-Date: 2020-07-28 10:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,31 +21,31 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: ../browser/views.py:201
+#: ../browser/views.py:202
 msgid "Assignments for groups related to '${function}' function"
 msgstr ""
 
-#: ../browser/settings.py:176
+#: ../browser/settings.py:177
 msgid "Choose multiple organization levels for which you want to create a plone group."
 msgstr ""
 
-#: ../browser/settings.py:183
+#: ../browser/settings.py:184
 msgid "Each defined function will suffix each organization plone group."
 msgstr ""
 
-#: ../browser/settings.py:83
+#: ../browser/settings.py:84
 msgid "Enabled?"
 msgstr ""
 
-#: ../browser/settings.py:185
+#: ../browser/settings.py:186
 msgid "Function"
 msgstr ""
 
-#: ../browser/settings.py:182
+#: ../browser/settings.py:183
 msgid "Function list"
 msgstr ""
 
-#: ../browser/views.py:213
+#: ../browser/views.py:214
 msgid "Global groups assignments."
 msgstr ""
 
@@ -57,11 +57,11 @@ msgstr ""
 msgid "Installs the collective.contact.plonegroup add-on."
 msgstr ""
 
-#: ../browser/settings.py:78
-msgid "Manageable function groups."
+#: ../browser/settings.py:79
+msgid "Manageable function groups?"
 msgstr ""
 
-#: ../browser/views.py:132
+#: ../browser/views.py:133
 msgid "No changes were made."
 msgstr ""
 
@@ -69,11 +69,11 @@ msgstr ""
 msgid "No user was found in this group."
 msgstr ""
 
-#: ../browser/settings.py:54
+#: ../browser/settings.py:55
 msgid "Organization id"
 msgstr ""
 
-#: ../browser/settings.py:55
+#: ../browser/settings.py:56
 msgid "Organization title"
 msgstr ""
 
@@ -82,26 +82,30 @@ msgid "Own groups management"
 msgstr ""
 
 #: ../browser/views.py:131
+msgid "Own groups management description"
+msgstr ""
+
+#: ../browser/views.py:132
 msgid "Own groups users succesfully updated."
 msgstr ""
 
-#: ../browser/settings.py:72
+#: ../browser/settings.py:73
 msgid "Plone group organizations description"
 msgstr ""
 
-#: ../browser/settings.py:63
+#: ../browser/settings.py:64
 msgid "Plone group suffix id"
 msgstr ""
 
-#: ../browser/settings.py:71
+#: ../browser/settings.py:72
 msgid "Plone group suffix organizations"
 msgstr ""
 
-#: ../browser/settings.py:67
+#: ../browser/settings.py:68
 msgid "Plone group suffix title"
 msgstr ""
 
-#: ../browser/settings.py:191
+#: ../browser/settings.py:192
 msgid "Selected global groups can be managed by a contained user"
 msgstr ""
 
@@ -109,7 +113,7 @@ msgstr ""
 msgid "Selected in plonegroup"
 msgstr ""
 
-#: ../browser/settings.py:175
+#: ../browser/settings.py:176
 msgid "Selected organizations"
 msgstr ""
 
@@ -117,7 +121,7 @@ msgstr ""
 msgid "Steps to ease tests of collective.contact.plonegroup"
 msgstr ""
 
-#: ../browser/views.py:267
+#: ../browser/views.py:268
 msgid "There was a problem in added assignments. Don't forget to complete the 2 columns! You have to redo all the manipulations."
 msgstr ""
 
@@ -129,11 +133,11 @@ msgstr ""
 msgid "This contact is used in following content: ${items}"
 msgstr ""
 
-#: ../browser/settings.py:468
+#: ../browser/settings.py:470
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 msgstr ""
 
-#: ../browser/views.py:191
+#: ../browser/views.py:192
 msgid "You can <span class=\"cross_icon\">remove</span> an assignment with the <span class=\"cross_icon\">cross icon</span>. You can <span class=\"auto_append\">add</span> a new assignment with the <span class=\"auto_append\">blue line</span>. You can <span class=\"new_line\">complete</span> it on the <span class=\"new_line\">brown line</span>."
 msgstr ""
 
@@ -145,43 +149,43 @@ msgstr ""
 msgid "You cannot delete the group '${group}', linked to used organization '${orga}'."
 msgstr ""
 
-#: ../browser/settings.py:467
+#: ../browser/settings.py:469
 msgid "You cannot delete this item !"
 msgstr ""
 
-#: ../browser/views.py:273
+#: ../browser/views.py:274
 msgid "You cannot remove your user from a group!"
 msgstr ""
 
-#: ../browser/settings.py:199
+#: ../browser/settings.py:201
 msgid "You must choose at least one organization !"
 msgstr ""
 
-#: ../browser/settings.py:201
+#: ../browser/settings.py:203
 msgid "You must correct the organization error first !"
 msgstr ""
 
-#: ../browser/settings.py:203
+#: ../browser/settings.py:205
 msgid "You must define at least one function !"
 msgstr ""
 
-#: ../browser/settings.py:130
+#: ../browser/settings.py:131
 msgid "You must define one '${root_portal_type}' with id '${pgo}' !"
 msgstr ""
 
-#: ../browser/settings.py:136
+#: ../browser/settings.py:137
 msgid "You must have only one '${root_portal_type}' with id '${pgo}' !"
 msgstr ""
 
-#: ../browser/settings.py:255
+#: ../browser/settings.py:257
 msgid "can_not_disable_suffix_plone_groups_not_empty"
 msgstr ""
 
-#: ../browser/settings.py:217
+#: ../browser/settings.py:219
 msgid "can_not_remove_function_every_plone_groups_not_empty"
 msgstr ""
 
-#: ../browser/settings.py:244
+#: ../browser/settings.py:246
 msgid "can_not_select_function_orgs_every_other_plone_groups_not_empty"
 msgstr ""
 
