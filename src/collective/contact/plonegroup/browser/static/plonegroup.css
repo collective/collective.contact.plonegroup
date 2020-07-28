@@ -2,6 +2,9 @@
     color: red;
     font-weight: bold;
 }
+th.th_header_PloneGroupUsersGroupsColumn {
+    width: 250px;
+}
 
 .template-contact-plonegroup-settings #form-widgets-functions td.cell-4 label {
     display: none;
@@ -46,4 +49,3 @@
 }
 .template-manage-own-groups-users .datagridwidget-cell {
     padding: 1px 5px 1px 10px;
-}

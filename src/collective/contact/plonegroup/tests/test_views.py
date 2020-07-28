@@ -39,9 +39,9 @@ class TestViews(IntegrationTestCase):
         self.registry = getUtility(IRegistry)
         set_registry_organizations([self.uid])
         set_registry_functions([{'fct_title': u'Observers', 'fct_id': u'observer', 'fct_orgs': [],
-                                 'fct_management': False},
+                                 'fct_management': False, 'enabled': True},
                                 {'fct_title': u'Director', 'fct_id': u'director', 'fct_orgs': [],
-                                 'fct_management': False}, ])
+                                 'fct_management': False, 'enabled': True}, ])
 
     def test_management_view(self):
         view = self.portal.unrestrictedTraverse('@@manage-own-groups-users')

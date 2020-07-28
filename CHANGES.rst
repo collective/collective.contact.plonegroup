@@ -2,9 +2,19 @@ Changelog
 =========
 
 
-1.28 (unreleased)
+1.29 (unreleased)
 -----------------
 
+- Added `PloneGroupUsersGroupsColumn`, a column that displays suffixed groups
+  and users, to be called on dashboard displaying organizations.
+  [gbastien]
+- Added possibility to disable a `function` (`enabled=True` by default),
+  this is useful to avoid deleting a `function` and re-adding it after,
+  sometimes faultly.  Adapted `utils.get_all_suffixes(only_enabled=True)`
+  to only get enabled functions.
+  Added upgrade step to version `6` to manage new value `enabled=True`
+  in `functions` stored in the `regsitry`.
+  [gbastien]
 - Added manage-own-groups-users view and functions/groups selection configuration.
   A user can manage the user assignments of his groups.
   [sgeulette]
@@ -12,6 +22,16 @@ Changelog
   [sgeulette]
 - Avoid GroupNotFoundError in `get_selected_org_suffix_users` if suffix is limited to some organizations.
   [sgeulette]
+
+1.28 (2020-05-26)
+-----------------
+
+- In `utils.get_organizations`, do not use a `list comprehension` to turn
+  result of `get_registry_organizations` into a list as it is already the case
+  (was not the case a long time ago), `get_registry_organizations` returns a
+  new list and values stored in the registry will not be changed anymore by
+  default.
+  [gbastien]
 
 1.27 (2020-05-08)
 -----------------
