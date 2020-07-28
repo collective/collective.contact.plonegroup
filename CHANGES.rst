@@ -8,6 +8,13 @@ Changelog
 - Added `PloneGroupUsersGroupsColumn`, a column that displays suffixed groups
   and users, to be called on dashboard displaying organizations.
   [gbastien]
+- Added possibility to disable a `function` (`enabled=True` by default),
+  this is useful to avoid deleting a `function` and re-adding it after,
+  sometimes faultly.  Adapted `utils.get_all_suffixes(only_enabled=True)`
+  to only get enabled functions.
+  Added upgrade step to version `6` to manage new value `enabled=True`
+  in `functions` stored in the `regsitry`.
+  [gbastien]
 
 1.28 (2020-05-26)
 -----------------

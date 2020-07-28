@@ -74,6 +74,10 @@ class IFunctionSchema(Interface):
             vocabulary='collective.contact.plonegroup.browser.settings.'
                        'SortedSelectedOrganizationsElephantVocabulary'),
         required=True)
+    enabled = schema.Bool(
+        title=_(u'Enabled?'),
+        default=True,
+        required=False,)
 
 
 def voc_cache_key(method, self, context):
@@ -206,9 +210,13 @@ class IContactPlonegroupConfig(Interface):
         # only able to select orgs for an existing function (suffix) if
         # every linked Plone groups of not selected orgs are empty
         stored_functions = get_registry_functions()
-        old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
+        old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'],
+                                         'fct_orgs': dic['fct_orgs'],
+                                         'enabled': dic['enabled']}
                          for dic in stored_functions}
-        new_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
+        new_functions = {dic['fct_id']: {'fct_title': dic['fct_title'],
+                                         'fct_orgs': dic['fct_orgs'],
+                                         'enabled': dic['enabled']}
                          for dic in data.functions}
         for new_function, new_function_infos in new_functions.items():
             if new_function_infos['fct_orgs'] and \
@@ -224,6 +232,17 @@ class IContactPlonegroupConfig(Interface):
                         raise Invalid(
                             _(u"can_not_select_function_orgs_every_other_plone_groups_not_empty",
                               mapping={'function': new_function,
+                                       'plone_group_id': plone_group_id}))
+            elif new_function_infos['enabled'] is False:
+                # check that Plone groups are all empty
+                for org_uid in get_organizations(only_selected=False, the_objects=False):
+                    plone_group_id = get_plone_group_id(org_uid, new_function)
+                    plone_group = api.group.get(plone_group_id)
+                    # use getGroupMembers to ignore '<not found>' users
+                    if plone_group and plone_group.getGroupMembers():
+                        raise Invalid(
+                            _(u"can_not_disable_suffix_plone_groups_not_empty",
+                              mapping={'disabled_function': new_function,
                                        'plone_group_id': plone_group_id}))
 
 
@@ -310,6 +329,9 @@ def detectContactPlonegroupChange(event):
             for orga_uid in add_set:
                 orga = uuidToObject(orga_uid)
                 for fct_dic in get_registry_functions():
+                    enabled = fct_dic['enabled']
+                    if enabled is False:
+                        continue
                     fct_orgs = fct_dic['fct_orgs']
                     if fct_orgs and orga_uid not in fct_orgs:
                         continue
@@ -319,10 +341,14 @@ def detectContactPlonegroupChange(event):
             if old_set.difference(new_set):
                 changes = True
         elif event.record.fieldName == 'functions' and registry_orgs:
-            old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
+            old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'],
+                                             'fct_orgs': dic['fct_orgs'],
+                                             'enabled': dic['enabled']}
                              for dic in event.oldValue}
             old_set = set(old_functions.keys())
-            new_functions = {dic['fct_id']: {'fct_title': dic['fct_title'], 'fct_orgs': dic['fct_orgs']}
+            new_functions = {dic['fct_id']: {'fct_title': dic['fct_title'],
+                                             'fct_orgs': dic['fct_orgs'],
+                                             'enabled': dic['enabled']}
                              for dic in event.newValue}
             new_set = set(new_functions.keys())
             # we detect a new function
@@ -330,8 +356,11 @@ def detectContactPlonegroupChange(event):
             for new_id in add_set:
                 new_title = new_functions[new_id]['fct_title']
                 new_orgs = new_functions[new_id]['fct_orgs']
+                enabled = new_functions[new_id]['enabled']
                 for orga_uid in registry_orgs:
                     if new_orgs and orga_uid not in new_orgs:
+                        continue
+                    if enabled is False:
                         continue
                     orga = uuidToObject(orga_uid)
                     if addOrModifyGroup(orga, new_id, new_title):
@@ -350,7 +379,8 @@ def detectContactPlonegroupChange(event):
             for new_id, new_function_infos in new_functions.items():
                 new_title = new_function_infos['fct_title']
                 new_orgs = new_function_infos['fct_orgs']
-                if not new_orgs:
+                enabled = new_function_infos['enabled']
+                if not new_orgs and enabled is True:
                     # we have to make sure Plone groups are created for every selected organizations
                     for orga_uid in registry_orgs:
                         orga = uuidToObject(orga_uid)
@@ -360,7 +390,7 @@ def detectContactPlonegroupChange(event):
                     # fct_orgs changed, we remove every linked Plone groups
                     # except ones defined in new_orgs
                     for orga_uid in get_organizations(only_selected=False, the_objects=False):
-                        if orga_uid in new_orgs:
+                        if enabled is True and orga_uid in new_orgs:
                             # make sure Plone group is created or updated if suffix title changed
                             orga = uuidToObject(orga_uid)
                             if addOrModifyGroup(orga, new_id, new_title):

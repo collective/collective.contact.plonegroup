@@ -166,13 +166,14 @@ def get_organizations(only_selected=True,
     return orgs
 
 
-def get_all_suffixes(org_uid=None):
+def get_all_suffixes(org_uid=None, only_enabled=True):
     """
         Get every suffixes defined in the configuration.
     """
     functions = get_registry_functions()
     return [function['fct_id'] for function in functions
-            if not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs']]
+            if (not only_enabled or function['enabled']) and
+               (not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs'])]
 
 
 def get_selected_org_suffix_users(org_uid, suffixes):
