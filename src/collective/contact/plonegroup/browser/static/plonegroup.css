@@ -47,5 +47,15 @@ th.th_header_PloneGroupUsersGroupsColumn {
 .template-manage-own-groups-users .field {
     margin-top: 2em;
 }
+
 .template-manage-own-groups-users .datagridwidget-cell {
     padding: 1px 5px 1px 10px;
+}
+
+/* avoid too long groups_management list of checkboxes in configuration */
+span#form-widgets-groups_management {
+    max-height: 500px;
+    display: block;
+    overflow-x: auto;
+    max-width: 500px;
+}
