@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-07-28 09:09+0000\n"
+"POT-Creation-Date: 2020-07-28 09:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,8 +100,8 @@ msgid "Plone group suffix title"
 msgstr "Plone group suffix title"
 
 #: ../browser/settings.py:191
-msgid "Selected global groups can be managed by a contained user."
-msgstr "Selected global groups can be managed by a contained user."
+msgid "Selected global groups can be managed by a contained user"
+msgstr "Selected global groups can be managed by a contained user"
 
 #: ../browser/tables.py:171
 msgid "Selected in plonegroup"

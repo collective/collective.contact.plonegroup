@@ -28,6 +28,7 @@ from plone.registry.interfaces import IRecordModifiedEvent
 from plone.z3cform import layout
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import form
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zExceptions import Redirect
 from zope import schema
 from zope.component import getMultiAdapter
@@ -188,10 +189,11 @@ class IContactPlonegroupConfig(Interface):
     widget('functions', DataGridFieldFactory, auto_append=False)
 
     groups_management = schema.List(
-        title=_(u'Selected global groups can be managed by a contained user.'),
+        title=_(u'Selected global groups can be managed by a contained user'),
         required=False,
         value_type=schema.Choice(vocabulary=u'collective.contact.plonegroup.global_groups'),
     )
+    widget('groups_management', CheckBoxFieldWidget, multiple='multiple', size=15)
 
     @invariant
     def validateSettings(data):
