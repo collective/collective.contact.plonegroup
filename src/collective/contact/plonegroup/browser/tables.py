@@ -8,6 +8,7 @@ from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.interfaces import IPloneGroupContact
 from collective.contact.plonegroup.utils import get_plone_groups
 from collective.eeafaceted.z3ctable.browser.views import ExtendedCSSTable
+from collective.eeafaceted.z3ctable.columns import get_user_fullname
 from collective.eeafaceted.z3ctable.columns import ActionsColumn
 from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import BooleanColumn
@@ -140,8 +141,7 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
             data[group_identifier] = []
             for member in plone_group.getGroupMembers():
                 data[group_identifier].append(
-                    "{0} ({1})".format(
-                        member.getProperty('fullname') or member.getId(), member.getId())
+                    "{0} ({1})".format(get_user_fullname(member), member.getId())
                 )
         # format data
         res = u''
