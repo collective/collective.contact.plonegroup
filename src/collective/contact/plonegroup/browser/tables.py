@@ -102,7 +102,6 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
 
     def contentValue(self, item):
         """Display get_full_title instead title."""
-        pattern = u'{0} <span class="discreet">({1})</span>'
         if IOrganization.providedBy(item):
             # find first_index relative to PLONEGROUP_ORG organization
             path = item.getPhysicalPath()
@@ -112,10 +111,9 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
                 # 1 considering that PLONEGROUP is at 1st level.
                 # Otherwise must use get_organizations_chain
                 first_index = 1
-            return pattern.format(
-                item.get_full_title(first_index=first_index), item.UID())
+            return item.get_full_title(first_index=first_index)
         else:
-            return pattern.format(item.get_full_title(), item.UID())
+            return item.get_full_title()
 
 
 class PloneGroupUsersGroupsColumn(BaseColumn):

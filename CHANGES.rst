@@ -15,6 +15,9 @@ Changelog
   Added upgrade step to version `6` to manage new value `enabled=True`
   in `functions` stored in the `regsitry`.
   [gbastien]
+- Remove item `UID` from link in `OrgaPrettyLinkWithAdditionalInfosColumn`
+  as it is now displayed as additional information by default.
+  [gbastien]
 
 1.28 (2020-05-26)
 -----------------
