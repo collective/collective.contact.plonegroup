@@ -137,7 +137,10 @@ class DisplayGroupUsersView(BrowserView):
         return suffixes
 
     def __call__(self, group_ids, short=False):
-        """ """
+        """p_groups_ids is a list of group ids.
+           If p_group_ids is a string :
+           - if ends with '*', it is an organization UID, we return every suffixed groups;
+           - if a simple str, we turn it into a list."""
         self.short = short
         self.is_manager = self._is_manager
         if not hasattr(group_ids, '__iter__'):
