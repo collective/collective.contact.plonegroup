@@ -8,15 +8,16 @@ from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.interfaces import IPloneGroupContact
 from collective.contact.plonegroup.utils import get_plone_groups
 from collective.eeafaceted.z3ctable.browser.views import ExtendedCSSTable
-from collective.eeafaceted.z3ctable.columns import get_user_fullname
 from collective.eeafaceted.z3ctable.columns import ActionsColumn
 from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import BooleanColumn
+from collective.eeafaceted.z3ctable.columns import get_user_fullname
 from collective.eeafaceted.z3ctable.columns import PrettyLinkWithAdditionalInfosColumn
 from plone import api
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five import BrowserView
 from zope.cachedescriptors.property import CachedProperty
+from zope.globalrequest import getRequest
 from zope.i18n import translate
 
 
@@ -116,6 +117,40 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
             return item.get_full_title()
 
 
+def renderGroupsAndUsers(plone_groups):
+    """Render in HTML groups and users."""
+    data = OrderedDict()
+    for plone_group in plone_groups:
+        group_title = plone_group.getProperty('title')
+        group_suffix = group_title[group_title.rfind('(') + 1:-1]
+        group_identifier = (plone_group.getId(), group_suffix)
+        data[group_identifier] = []
+        for member in plone_group.getGroupMembers():
+            data[group_identifier].append(
+                "{0} ({1})".format(get_user_fullname(member), member.getId())
+            )
+    # format data
+    res = u''
+    portal = api.portal.get()
+    portal_url = portal.absolute_url()
+    no_members_msg = _('No user was found in this group.')
+    request = getRequest()
+    no_members_msg = translate(no_members_msg, context=request)
+    for group_infos, members in sorted(data.items()):
+        group_id, group_suffix = group_infos
+        res += u'<a href="%s/@@usergroup-groupmembership?groupname=%s">%s</a><br/>' % (
+            portal_url, group_id, safe_unicode(group_suffix))
+        if not members:
+            res += u'<em class="discreet">%s</em><br/>' % no_members_msg
+        else:
+            res += u'<ul class="discreet">'
+            members = sorted(members)
+            member_infos = [u'<li>%s</li>' % safe_unicode(member) for member in members]
+            res += u''.join(member_infos)
+            res += u'</ul>'
+    return res
+
+
 class PloneGroupUsersGroupsColumn(BaseColumn):
     """Column that displays Plone groups and users linked to an organization."""
 
@@ -130,35 +165,7 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
             return "-"
 
         plone_groups = get_plone_groups(org_uid)
-        # prepare data
-        data = OrderedDict()
-        for plone_group in plone_groups:
-            group_title = plone_group.getProperty('title')
-            group_suffix = group_title[group_title.rfind('(') + 1:-1]
-            group_identifier = (plone_group.getId(), group_suffix)
-            data[group_identifier] = []
-            for member in plone_group.getGroupMembers():
-                data[group_identifier].append(
-                    "{0} ({1})".format(get_user_fullname(member), member.getId())
-                )
-        # format data
-        res = u''
-        portal = api.portal.get()
-        portal_url = portal.absolute_url()
-        no_members_msg = _('No user was found in this group.')
-        no_members_msg = translate(no_members_msg, context=self.request)
-        for group_infos, members in sorted(data.items()):
-            group_id, group_suffix = group_infos
-            res += u'<a href="%s/@@usergroup-groupmembership?groupname=%s">%s</a><br/>' % (
-                portal_url, group_id, safe_unicode(group_suffix))
-            if not members:
-                res += u'<em class="discreet">%s</em><br/>' % no_members_msg
-            else:
-                res += u'<ul class="discreet">'
-                members = sorted(members)
-                member_infos = [u'<li>%s</li>' % safe_unicode(member) for member in members]
-                res += u''.join(member_infos)
-                res += u'</ul>'
+        res = renderGroupsAndUsers(plone_groups)
         return res
 
 
