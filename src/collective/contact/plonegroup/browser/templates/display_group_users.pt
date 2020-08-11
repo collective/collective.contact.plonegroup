@@ -18,7 +18,7 @@
             <span tal:condition="users"
                   tal:content="structure users"
                   class="users"></span>
-            <span class="no_users"
+            <span class="discreet no_users"
                   tal:condition="not:users"
                   i18n:domain="collective.contact.plonegroup"
                   i18n:translate="">No user was found in this group.</span>

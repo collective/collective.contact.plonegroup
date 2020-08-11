@@ -6,3 +6,12 @@
 th.th_header_PloneGroupUsersGroupsColumn {
     width: 250px;
 }
+
+span.no_users {
+    font-style: italic;
+}
+span.no_users,
+span.users {
+    display: block;
+    margin-bottom: 0.5em;
+}
