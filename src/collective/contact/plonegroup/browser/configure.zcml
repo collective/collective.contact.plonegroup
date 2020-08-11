@@ -42,6 +42,13 @@
         template="templates/suborganizations.pt"
         layer="collective.contact.plonegroup.interfaces.ICollectiveContactPlonegroupLayer" />
 
+    <browser:page
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        name="display-group-users"
+        template="templates/display_group_users.pt"
+        class=".tables.DisplayGroupUsersView"
+        permission="zope2.View" />
+
     <!-- Make original suborganizations view still available for IPloneGroupContact
          using another name, we need it when it is displayed in a tooltip -->
     <configure package="collective.contact.core.browser">

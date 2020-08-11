@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 
-from collections import OrderedDict
 from collective.contact.core.content.organization import IOrganization
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.interfaces import IPloneGroupContact
-from collective.contact.plonegroup.utils import get_plone_groups
+from collective.contact.plonegroup.utils import get_all_suffixes
+from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.eeafaceted.z3ctable.browser.views import ExtendedCSSTable
 from collective.eeafaceted.z3ctable.columns import ActionsColumn
 from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import BooleanColumn
-from collective.eeafaceted.z3ctable.columns import get_user_fullname
 from collective.eeafaceted.z3ctable.columns import PrettyLinkWithAdditionalInfosColumn
 from plone import api
-from Products.CMFPlone.utils import safe_unicode
+from Products.CMFCore.permissions import ManagePortal
+from Products.CMFCore.utils import _checkPermission
+from Products.CMFPlone.utils import base_hasattr
 from Products.Five import BrowserView
 from zope.cachedescriptors.property import CachedProperty
-from zope.globalrequest import getRequest
 from zope.i18n import translate
 
 
@@ -117,38 +117,78 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
             return item.get_full_title()
 
 
-def renderGroupsAndUsers(plone_groups):
-    """Render in HTML groups and users."""
-    data = OrderedDict()
-    for plone_group in plone_groups:
-        group_title = plone_group.getProperty('title')
-        group_suffix = group_title[group_title.rfind('(') + 1:-1]
-        group_identifier = (plone_group.getId(), group_suffix)
-        data[group_identifier] = []
-        for member in plone_group.getGroupMembers():
-            data[group_identifier].append(
-                "{0} ({1})".format(get_user_fullname(member), member.getId())
-            )
-    # format data
-    res = u''
-    portal = api.portal.get()
-    portal_url = portal.absolute_url()
-    no_members_msg = _('No user was found in this group.')
-    request = getRequest()
-    no_members_msg = translate(no_members_msg, context=request)
-    for group_infos, members in sorted(data.items()):
-        group_id, group_suffix = group_infos
-        res += u'<a href="%s/@@usergroup-groupmembership?groupname=%s">%s</a><br/>' % (
-            portal_url, group_id, safe_unicode(group_suffix))
-        if not members:
-            res += u'<em class="discreet">%s</em><br/>' % no_members_msg
-        else:
-            res += u'<ul class="discreet">'
-            members = sorted(members)
-            member_infos = [u'<li>%s</li>' % safe_unicode(member) for member in members]
-            res += u''.join(member_infos)
-            res += u'</ul>'
-    return res
+class DisplayGroupUsersView(BrowserView):
+    """
+      View that display the users of a Plone group.
+    """
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        self.portal_url = api.portal.get().absolute_url()
+
+    def _check_auth(self, group_id):
+        """When using '*' make it possible to check if authorized."""
+        return
+
+    def _get_suffixes(self, group_id):
+        """Make it possible to ignore some suffixes for p_group_id."""
+        suffixes = get_all_suffixes(group_id)
+        return suffixes
+
+    def __call__(self, group_ids, short=False):
+        """ """
+        self.short = short
+        self.is_manager = self._is_manager
+        if not hasattr(group_ids, '__iter__'):
+            if group_ids.endswith('*'):
+                # remove ending '*'
+                group_id = group_ids[:-1]
+                self._check_auth(group_id)
+                # me received a organization UID, get the Plone group ids
+                suffixes = self._get_suffixes(group_id)
+                group_ids = [get_plone_group_id(group_id, suffix)
+                             for suffix in suffixes]
+            else:
+                group_ids = [group_ids]
+        self.groups = [api.group.get(tmp_group_id) for tmp_group_id in group_ids]
+        return self.index()
+
+    def group_title(self, group):
+        """ """
+        group_title = group.getProperty('title')
+        if self.short:
+            group_title = group_title.split('(')[-1][:-1]
+        return group_title
+
+    def group_users(self, group):
+        """ """
+        res = []
+        patterns = {}
+        patterns[0] = "<img style='width: 16px; height: 16px;' src='%s/user.png'> " % self.portal_url
+        patterns[1] = "<img style='width: 16px; height: 16px;' src='%s/group.png'> " % self.portal_url
+        if self.is_manager:
+            patterns[0] = "<a href='{portal_url}/@@user-information?userid={{member_id}}'>" \
+                "<acronym>{pattern}</acronym></a> ".format(
+                **{'portal_url': self.portal_url, 'pattern': patterns[0].strip()})
+            patterns[1] = "<a href='{portal_url}/@@usergroup-groupmembership?groupname={{member_id}}'>" \
+                "<acronym>{pattern}</acronym></a> ".format(
+                **{'portal_url': self.portal_url, 'pattern': patterns[1].strip()})
+        for member in group.getAllGroupMembers():
+            # member may be a user or group
+            isGroup = base_hasattr(member, 'isGroup') and member.isGroup() or 0
+            member_title = member.getProperty('fullname') or member.getProperty('title') or member.getId()
+            value = patterns[isGroup].format(**{'member_id': member.id}) + member_title
+            if self.is_manager:
+                value = value + " ({0})".format(member.id)
+            res.append(value)
+        res.sort()
+        return "<br />".join(res)
+
+    @property
+    def _is_manager(self):
+        """ """
+        return _checkPermission(ManagePortal, self.context)
 
 
 class PloneGroupUsersGroupsColumn(BaseColumn):
@@ -164,8 +204,10 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
         if org_uid not in plonegroup_organizations:
             return "-"
 
-        plone_groups = get_plone_groups(org_uid)
-        res = renderGroupsAndUsers(plone_groups)
+        suffixes = get_all_suffixes(org_uid)
+        group_ids = [get_plone_group_id(org_uid, suffix)
+                     for suffix in suffixes]
+        res = self.table.portal.restrictedTraverse('@@display-group-users')(group_ids=group_ids, short=True)
         return res
 
 
