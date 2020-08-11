@@ -20,8 +20,8 @@
                   class="users"></span>
             <span class="no_users"
                   tal:condition="not:users"
-                  i18n:domain="PloneMeeting"
-                  i18n:translate="no_users_in_group">No user was found in this group.</span>
+                  i18n:domain="collective.contact.plonegroup"
+                  i18n:translate="">No user was found in this group.</span>
         </tal:users>
     </tal:loop>
 </div>

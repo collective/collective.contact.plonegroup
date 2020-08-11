@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-07-27 08:59+0000\n"
+"POT-Creation-Date: 2020-08-11 16:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Domain: collective.contact.plonegroup\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-#: ../browser/tables.py:193
+#: ../browser/tables.py:243
 msgid "Actions"
 msgstr "Actions"
 
@@ -29,7 +29,7 @@ msgstr "Each defined function will suffix each organization plone group."
 
 #: ../browser/settings.py:78
 msgid "Enabled?"
-msgstr ""
+msgstr "Enabled?"
 
 #: ../browser/settings.py:180
 msgid "Function"
@@ -39,17 +39,17 @@ msgstr "Function"
 msgid "Function list"
 msgstr "Function list"
 
-#: ../browser/tables.py:123
+#: ../browser/tables.py:200
 msgid "Groups and users"
-msgstr ""
+msgstr "Groups and users"
 
 #: ../configure.zcml:28
 msgid "Installs the collective.contact.plonegroup add-on."
 msgstr "Installs the collective.contact.plonegroup add-on."
 
-#: ../browser/tables.py:150
+#: ../browser/templates/display_group_users.pt:21
 msgid "No user was found in this group."
-msgstr ""
+msgstr "No user was found in this group."
 
 #: ../browser/settings.py:54
 msgid "Organization id"
@@ -83,7 +83,7 @@ msgstr "Plone group suffix title"
 msgid "Plone group title description"
 msgstr "Plone group title description"
 
-#: ../browser/tables.py:171
+#: ../browser/tables.py:221
 msgid "Selected in plonegroup"
 msgstr "Selected in plonegroup"
 

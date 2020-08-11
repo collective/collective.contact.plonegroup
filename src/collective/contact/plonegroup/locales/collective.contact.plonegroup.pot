@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-07-27 08:59+0000\n"
+"POT-Creation-Date: 2020-08-11 16:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.contact.plonegroup\n"
 
-#: ../browser/tables.py:193
+#: ../browser/tables.py:243
 msgid "Actions"
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Function list"
 msgstr ""
 
-#: ../browser/tables.py:123
+#: ../browser/tables.py:200
 msgid "Groups and users"
 msgstr ""
 
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Installs the collective.contact.plonegroup add-on."
 msgstr ""
 
-#: ../browser/tables.py:150
+#: ../browser/templates/display_group_users.pt:21
 msgid "No user was found in this group."
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Plone group title description"
 msgstr ""
 
-#: ../browser/tables.py:171
+#: ../browser/tables.py:221
 msgid "Selected in plonegroup"
 msgstr ""
 
