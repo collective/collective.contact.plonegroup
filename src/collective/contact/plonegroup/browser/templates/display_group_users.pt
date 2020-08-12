@@ -17,8 +17,8 @@
         <tal:users define="users python: view.group_users(group)">
             <span tal:condition="users"
                   tal:content="structure users"
-                  class="users"></span>
-            <span class="discreet no_users"
+                  class="pg_group_users"></span>
+            <span class="discreet pg_group_no_users"
                   tal:condition="not:users"
                   i18n:translate="">No user was found in this group.</span>
         </tal:users>

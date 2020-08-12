@@ -15,3 +15,9 @@ span.users {
     display: block;
     margin-bottom: 0.5em;
 }
+
+/* define width/height for img so it behaves correctly with collective.js.tooltipster */
+div#content span.pg_group_users img {
+   width: 16px;
+   height: 16px;
+}

@@ -173,8 +173,8 @@ class DisplayGroupUsersView(BrowserView):
         user_tag_title = translate(user_tag_title, context=self.request)
         group_tag_title = _('View Plone group')
         group_tag_title = translate(group_tag_title, context=self.request)
-        patterns[0] = "<img style='width: 16px; height: 16px;' src='%s/user.png'> " % self.portal_url
-        patterns[1] = "<img style='width: 16px; height: 16px;' src='%s/group.png'> " % self.portal_url
+        patterns[0] = "<img src='%s/user.png'> " % self.portal_url
+        patterns[1] = "<img src='%s/group.png'> " % self.portal_url
         if self.is_manager:
             patterns[0] = "<a href='{portal_url}/@@user-information?userid={{member_id}}' " \
                 "title=\"{user_tag_title}\"><acronym>{pattern}</acronym></a> ".format(
