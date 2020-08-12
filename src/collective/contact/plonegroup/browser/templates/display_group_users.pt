@@ -1,4 +1,4 @@
-<div id="content" tal:define="is_manager view/is_manager">
+<div id="content" tal:define="is_manager view/is_manager" i18n:domain="collective.contact.plonegroup">
     <tal:loop repeat="group view/groups">
         <h5><span tal:condition="not:view/short"
                   i18n:domain="plone"
@@ -20,7 +20,6 @@
                   class="users"></span>
             <span class="discreet no_users"
                   tal:condition="not:users"
-                  i18n:domain="collective.contact.plonegroup"
                   i18n:translate="">No user was found in this group.</span>
         </tal:users>
     </tal:loop>

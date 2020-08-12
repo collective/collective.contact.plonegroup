@@ -168,15 +168,24 @@ class DisplayGroupUsersView(BrowserView):
         """ """
         res = []
         patterns = {}
+        # use _ for i18ndude machinery
+        user_tag_title = _('View Plone user')
+        user_tag_title = translate(user_tag_title, context=self.request)
+        group_tag_title = _('View Plone group')
+        group_tag_title = translate(group_tag_title, context=self.request)
         patterns[0] = "<img style='width: 16px; height: 16px;' src='%s/user.png'> " % self.portal_url
         patterns[1] = "<img style='width: 16px; height: 16px;' src='%s/group.png'> " % self.portal_url
         if self.is_manager:
-            patterns[0] = "<a href='{portal_url}/@@user-information?userid={{member_id}}'>" \
-                "<acronym>{pattern}</acronym></a> ".format(
-                **{'portal_url': self.portal_url, 'pattern': patterns[0].strip()})
-            patterns[1] = "<a href='{portal_url}/@@usergroup-groupmembership?groupname={{member_id}}'>" \
-                "<acronym>{pattern}</acronym></a> ".format(
-                **{'portal_url': self.portal_url, 'pattern': patterns[1].strip()})
+            patterns[0] = "<a href='{portal_url}/@@user-information?userid={{member_id}}' " \
+                "title=\"{user_tag_title}\"><acronym>{pattern}</acronym></a> ".format(
+                **{'portal_url': self.portal_url,
+                   'pattern': patterns[0].strip(),
+                   'user_tag_title': user_tag_title})
+            patterns[1] = "<a href='{portal_url}/@@usergroup-groupmembership?groupname={{member_id}}' " \
+                "title=\"{group_tag_title}\"><acronym>{pattern}</acronym></a> ".format(
+                **{'portal_url': self.portal_url,
+                   'pattern': patterns[1].strip(),
+                   'group_tag_title': group_tag_title})
         for member in group.getAllGroupMembers():
             # member may be a user or group
             isGroup = base_hasattr(member, 'isGroup') and member.isGroup() or 0
@@ -185,7 +194,7 @@ class DisplayGroupUsersView(BrowserView):
             if self.is_manager:
                 value = value + " ({0})".format(member.id)
             res.append(value)
-        res.sort()
+        res = sorted(res)
         return "<br />".join(res)
 
     @property

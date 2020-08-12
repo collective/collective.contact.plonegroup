@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-08-11 16:00+0000\n"
+"POT-Creation-Date: 2020-08-12 08:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Domain: collective.contact.plonegroup\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-#: ../browser/tables.py:243
+#: ../browser/tables.py:254
 msgid "Actions"
 msgstr "Actions"
 
@@ -39,7 +39,7 @@ msgstr "Fonction"
 msgid "Function list"
 msgstr "Liste de fonctions"
 
-#: ../browser/tables.py:200
+#: ../browser/tables.py:211
 msgid "Groups and users"
 msgstr "Groupes et utilisateurs"
 
@@ -81,9 +81,9 @@ msgstr "Titre du suffixe"
 
 #: ../browser/settings.py:68
 msgid "Plone group title description"
-msgstr ""
+msgstr "Voir les groupes Plone liés"
 
-#: ../browser/tables.py:221
+#: ../browser/tables.py:232
 msgid "Selected in plonegroup"
 msgstr "Sélectionné dans <a href='${plonegroup_url}'>\"Configuration des groupes plone via contact\"</a>"
 
@@ -106,6 +106,18 @@ msgstr "Ce contact est utilisé dans le contenu suivant: ${items}"
 #: ../browser/settings.py:456
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 msgstr "Cette organisation ou une organisation contenue est utilisée dans la configuration de groupe plone via contact ! Il faut d'abord l'enlever de la configuration !"
+
+#: ../browser/tables.py:174
+msgid "View Plone group"
+msgstr "Voir le groupe Plone"
+
+#: ../browser/tables.py:172
+msgid "View Plone user"
+msgstr "Voir l&apos;utilisateur Plone"
+
+#: ../browser/templates/display_group_users.pt:13
+msgid "View linked Plone groups"
+msgstr "Voir les groupes Plone liés"
 
 #: ../subscribers.py:159
 msgid "You cannot deactivate this item !"

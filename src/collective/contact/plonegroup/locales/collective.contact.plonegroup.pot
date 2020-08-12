@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-08-11 16:00+0000\n"
+"POT-Creation-Date: 2020-08-12 08:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.contact.plonegroup\n"
 
-#: ../browser/tables.py:243
+#: ../browser/tables.py:254
 msgid "Actions"
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Function list"
 msgstr ""
 
-#: ../browser/tables.py:200
+#: ../browser/tables.py:211
 msgid "Groups and users"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Plone group title description"
 msgstr ""
 
-#: ../browser/tables.py:221
+#: ../browser/tables.py:232
 msgid "Selected in plonegroup"
 msgstr ""
 
@@ -107,6 +107,18 @@ msgstr ""
 
 #: ../browser/settings.py:456
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
+msgstr ""
+
+#: ../browser/tables.py:174
+msgid "View Plone group"
+msgstr ""
+
+#: ../browser/tables.py:172
+msgid "View Plone user"
+msgstr ""
+
+#: ../browser/templates/display_group_users.pt:13
+msgid "View linked Plone groups"
 msgstr ""
 
 #: ../subscribers.py:159
