@@ -219,7 +219,17 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
         suffixes = get_all_suffixes(org_uid)
         group_ids = [get_plone_group_id(org_uid, suffix)
                      for suffix in suffixes]
-        res = self.table.portal.restrictedTraverse('@@display-group-users')(group_ids=group_ids, short=True)
+        url_group_ids = '&group_ids='.join(group_ids)
+        # use _ for i18ndude machinery
+        details_msg = _('Details')
+        details_msg = translate(details_msg, context=self.request)
+        res = u"<div id=\"group-users\" class=\"collapsible\" onclick=\"toggleDetails(" \
+            u"'collapsible-group-users_{0}', toggle_parent_active=false, parent_tag=null, " \
+            u"load_view='@@display-group-users?group_ids={1}', base_url='{2}');\"> {3}" \
+            u"<div id=\"collapsible-group-users_{0}\" class=\"collapsible-content\" style=\"display: none;\">" \
+            u"<div class=\"collapsible-inner-content\">" \
+            u"<img src=\"{2}/spinner_small.gif\" /></div></div>".format(
+                org_uid, url_group_ids, self.table.portal_url, details_msg)
         return res
 
 

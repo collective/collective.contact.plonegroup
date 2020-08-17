@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-08-12 08:55+0000\n"
+"POT-Creation-Date: 2020-08-17 10:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,16 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.contact.plonegroup\n"
 
-#: ../browser/tables.py:254
+#: ../browser/tables.py:262
 msgid "Actions"
 msgstr ""
 
 #: ../browser/settings.py:171
 msgid "Choose multiple organization levels for which you want to create a plone group."
+msgstr ""
+
+#: ../browser/tables.py:224
+msgid "Details"
 msgstr ""
 
 #: ../browser/settings.py:178
@@ -41,7 +45,7 @@ msgstr ""
 msgid "Function list"
 msgstr ""
 
-#: ../browser/tables.py:211
+#: ../browser/tables.py:209
 msgid "Groups and users"
 msgstr ""
 
@@ -85,7 +89,7 @@ msgstr ""
 msgid "Plone group title description"
 msgstr ""
 
-#: ../browser/tables.py:232
+#: ../browser/tables.py:240
 msgid "Selected in plonegroup"
 msgstr ""
 

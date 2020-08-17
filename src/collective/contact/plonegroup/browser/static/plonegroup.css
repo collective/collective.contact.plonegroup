@@ -3,15 +3,19 @@
     font-weight: bold;
 }
 
-th.th_header_PloneGroupUsersGroupsColumn {
-    width: 250px;
+th.th_header_SelectedInPlonegroupColumn {
+   width: 200px;
 }
 
-span.no_users {
+th.th_header_PloneGroupUsersGroupsColumn {
+    width: 500px;
+}
+
+span.pg_group_no_users {
     font-style: italic;
 }
-span.no_users,
-span.users {
+span.pg_group_no_users,
+span.pg_group_users {
     display: block;
     margin-bottom: 0.5em;
 }
@@ -20,4 +24,8 @@ span.users {
 div#content span.pg_group_users img {
    width: 16px;
    height: 16px;
+}
+
+div#group-users h5 {
+   line-height: 1em;
 }

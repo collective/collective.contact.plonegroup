@@ -9,6 +9,8 @@ Changelog
   and users, to be called on dashboard displaying organizations.
   The groups and users are rendered by the `@@display-group-users` view
   that may also be used outside.
+  By default, as groups and users may be very long to display, it is hidden
+  in a collapsible `<div>` and displayed asynchronously.
   [gbastien]
 - Added possibility to disable a `function` (`enabled=True` by default),
   this is useful to avoid deleting a `function` and re-adding it after,
