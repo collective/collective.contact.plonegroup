@@ -194,9 +194,12 @@ class DisplayGroupUsersView(BrowserView):
                 member_title = member_title + " ({0})".format(member.id)
             member_title = "<div class='user-or-group'>{0}</div>".format(member_title)
             value = patterns[isGroup].format(**{'member_id': member.id}) + member_title
-            res.append(value)
+            # append member_title to sort on it
+            res.append((member_title, value))
+        # sort on member_title
         res = sorted(res)
-        return "".join(res)
+        # just keep values
+        return "".join([v[1] for v in res])
 
     @property
     def _is_manager(self):
