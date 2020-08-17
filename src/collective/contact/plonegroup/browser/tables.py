@@ -190,12 +190,13 @@ class DisplayGroupUsersView(BrowserView):
             # member may be a user or group
             isGroup = base_hasattr(member, 'isGroup') and member.isGroup() or 0
             member_title = member.getProperty('fullname') or member.getProperty('title') or member.getId()
-            value = patterns[isGroup].format(**{'member_id': member.id}) + member_title
             if self.is_manager:
-                value = value + " ({0})".format(member.id)
+                member_title = member_title + " ({0})".format(member.id)
+            member_title = "<div class='user-or-group'>{0}</div>".format(member_title)
+            value = patterns[isGroup].format(**{'member_id': member.id}) + member_title
             res.append(value)
         res = sorted(res)
-        return "<br />".join(res)
+        return "".join(res)
 
     @property
     def _is_manager(self):
@@ -225,7 +226,7 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
         details_msg = translate(details_msg, context=self.request)
         res = u"<div id=\"group-users\" class=\"collapsible\" onclick=\"toggleDetails(" \
             u"'collapsible-group-users_{0}', toggle_parent_active=false, parent_tag=null, " \
-            u"load_view='@@display-group-users?group_ids={1}', base_url='{2}');\"> {3}" \
+            u"load_view='@@display-group-users?group_ids={1}', base_url='{2}');\"> {3}</div>" \
             u"<div id=\"collapsible-group-users_{0}\" class=\"collapsible-content\" style=\"display: none;\">" \
             u"<div class=\"collapsible-inner-content\">" \
             u"<img src=\"{2}/spinner_small.gif\" /></div></div>".format(

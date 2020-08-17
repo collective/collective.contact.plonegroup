@@ -20,12 +20,25 @@ span.pg_group_users {
     margin-bottom: 0.5em;
 }
 
+/* make icon and text display nicely when text on 2 lines */
+span.pg_group_users a {
+   float: left;
+   height: 20px;
+}
+div.user-or-group {
+   padding-top: 2px;
+   padding-left: 20px;
+   height: auto;
+   min-height: 20px;
+   color: #4A494F;
+}
+
 /* define width/height for img so it behaves correctly with collective.js.tooltipster */
 div#content span.pg_group_users img {
    width: 16px;
    height: 16px;
 }
 
-div#group-users h5 {
+td.td_cell_PloneGroupUsersGroupsColumn h5 {
    line-height: 1em;
 }
