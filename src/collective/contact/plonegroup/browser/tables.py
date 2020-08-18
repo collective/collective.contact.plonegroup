@@ -187,15 +187,18 @@ class DisplayGroupUsersView(BrowserView):
                    'pattern': patterns[1].strip(),
                    'group_tag_title': group_tag_title})
         for member in group.getAllGroupMembers():
+            # res is a list of list of 2 elements to sort it (first element is member title)
+            subres = []
             # member may be a user or group
             isGroup = base_hasattr(member, 'isGroup') and member.isGroup() or 0
             member_title = member.getProperty('fullname') or member.getProperty('title') or member.getId()
+            subres.append(member_title)
             if self.is_manager:
                 member_title = member_title + " ({0})".format(member.id)
             member_title = "<div class='user-or-group'>{0}</div>".format(member_title)
             value = patterns[isGroup].format(**{'member_id': member.id}) + member_title
-            # append member_title to sort on it
-            res.append((member_title, value))
+            subres.append(value)
+            res.append(subres)
         # sort on member_title
         res = sorted(res)
         # just keep values
