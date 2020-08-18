@@ -1,6 +1,9 @@
 .. image:: https://secure.travis-ci.org/collective/collective.contact.plonegroup.png
     :target: http://travis-ci.org/collective/collective.contact.plonegroup
 
+.. image:: https://coveralls.io/repos/github/collective/collective.contact.plonegroup/badge.svg?branch=master
+    :target: https://coveralls.io/github/collective/collective.contact.plonegroup?branch=master
+
 =============================
 collective.contact.plonegroup
 =============================
