@@ -14,8 +14,8 @@ Introduction
 A Plone add-on that manage organizations and functions, leading to corresponding plone groups creation.
 This product makes the link between:
 
-* collective.contact.core : organization definition containing your organization services (multiple levels)
-* dexterity.localrolesfield : field presenting a list of services for which a local role can be given
+* `collective.contact.core`_ : organization definition containing your organization services (multiple levels)
+* `dexterity.localrolesfield`_ : field presenting a list of services for which a local role can be given
 
 How-to
 ======
@@ -47,3 +47,5 @@ Credits
 Have an idea? Found a bug? Let us know by `opening a ticket`_.
 
 .. _`opening a ticket`: https://github.com/collective/collective.contact.plonegroup/issues
+.. _`collective.contact.core`: https://github.com/collective/collective.contact.core
+.. _`dexterity.localrolesfield`: https://github.com/collective/dexterity.localrolesfield
