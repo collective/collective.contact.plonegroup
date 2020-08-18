@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.29 (unreleased)
+1.29 (2020-08-18)
 -----------------
 
 - Added `PloneGroupUsersGroupsColumn`, a column that displays suffixed groups
