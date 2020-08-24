@@ -5,8 +5,9 @@ Changelog
 1.30 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fix CSS for `@@display-group-users` view when current user not a Manager
+  and so does not have link on prefixed icon (user/group).
+  [gbastien]
 
 1.29 (2020-08-18)
 -----------------

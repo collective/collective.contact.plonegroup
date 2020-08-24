@@ -20,10 +20,12 @@ span.pg_group_users {
     margin-bottom: 0.5em;
 }
 
-/* make icon and text display nicely when text on 2 lines */
-span.pg_group_users a {
+/* make icon and text display nicely when text on 2 lines,
+   several rules necessary so it works when both Manager and non Manager */
+span.pg_group_users a,
+span.pg_group_users acronym,
+span.pg_group_users img {
    float: left;
-   height: 20px;
 }
 div.user-or-group {
    padding-top: 2px;
