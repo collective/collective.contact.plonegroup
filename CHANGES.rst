@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.29.1 (unreleased)
+1.29.1 (2020-08-26)
 -------------------
 
 - Fix CSS for `@@display-group-users` view when current user not a Manager
