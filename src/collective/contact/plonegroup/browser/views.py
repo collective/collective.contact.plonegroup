@@ -127,7 +127,7 @@ class ManageOwnGroupUsers(EditForm):
     """
         Manage own groups users
     """
-    label = _(u'Own groups management')
+    label = _(u'Own groups management view')
     description = _(u'Own groups management description')
     successMessage = _(u'Own groups users succesfully updated.')
     noChangesMessage = _(u'No changes were made.')

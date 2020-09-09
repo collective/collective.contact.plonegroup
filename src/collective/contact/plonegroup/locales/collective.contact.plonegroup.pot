@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-09-09 07:26+0000\n"
+"POT-Creation-Date: 2020-09-09 08:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,12 +81,16 @@ msgstr ""
 msgid "Organization title"
 msgstr ""
 
-#: ../browser/views.py:130
+#: ../profiles/default/actions.xml
 msgid "Own groups management"
 msgstr ""
 
 #: ../browser/views.py:131
 msgid "Own groups management description"
+msgstr ""
+
+#: ../browser/views.py:130
+msgid "Own groups management view"
 msgstr ""
 
 #: ../browser/views.py:132

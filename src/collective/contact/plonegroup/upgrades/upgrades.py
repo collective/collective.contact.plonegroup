@@ -97,10 +97,8 @@ def v7(context):
     for function in functions:
         if 'fct_management' not in function:
             function['fct_management'] = False
-            res.append(function)
-        else:
-            # already migrated
-            return
+        res.append(function)
     api.portal.set_registry_record(FUNCTIONS_REGISTRY, res)
     setup = api.portal.get_tool('portal_setup')
     setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'plone.app.registry')
+    setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'actions')
