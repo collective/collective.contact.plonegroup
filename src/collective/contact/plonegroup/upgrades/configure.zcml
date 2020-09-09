@@ -45,4 +45,12 @@
       handler=".upgrades.v6"
       profile="collective.contact.plonegroup:default" />
 
+  <genericsetup:upgradeStep
+      title="Migration profile for collective.contact.plonegroup to 7"
+      description="Upgrade from 6 to 7"
+      source="6"
+      destination="7"
+      handler=".upgrades.v7"
+      profile="collective.contact.plonegroup:default" />
+
 </configure>

@@ -35,6 +35,7 @@ class TestSubscribers(IntegrationTestCase):
         set_registry_functions([{'fct_title': u'Director',
                                  'fct_id': u'director',
                                  'fct_orgs': [],
+                                 'fct_management': False,
                                  'enabled': True}])
 
         self.portal.invokeFactory('acontent',

@@ -46,10 +46,12 @@ class TestSettings(IntegrationTestCase):
         set_registry_functions([{'fct_title': u'Director',
                                  'fct_id': u'director',
                                  'fct_orgs': [],
+                                 'fct_management': False,
                                  'enabled': True},
                                 {'fct_title': u'Worker',
                                  'fct_id': u'worker',
                                  'fct_orgs': [],
+                                 'fct_management': False,
                                  'enabled': True}])
 
     def test_OwnOrganizationServicesVocabulary(self):
@@ -96,10 +98,12 @@ class TestSettings(IntegrationTestCase):
         set_registry_functions([{'fct_title': u'Directors',
                                  'fct_id': u'director',
                                  'fct_orgs': [],
+                                 'fct_management': False,
                                  'enabled': True},
                                 {'fct_title': u'Worker',
                                  'fct_id': u'worker',
                                  'fct_orgs': [],
+                                 'fct_management': False,
                                  'enabled': True}])
         d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
         self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Directors)')
@@ -119,6 +123,7 @@ class TestSettings(IntegrationTestCase):
         newValue = get_registry_functions() + [{'fct_title': u'Chief',
                                                 'fct_id': u'chief',
                                                 'fct_orgs': [],
+                                                'fct_management': False,
                                                 'enabled': True}]
         set_registry_functions(newValue)
         group_ids = [group.id for group in api.group.get_groups() if '_' in group.id]
@@ -330,6 +335,7 @@ class TestSettings(IntegrationTestCase):
         new_function = {'fct_id': u'new',
                         'fct_title': u'New',
                         'fct_orgs': [dep1_uid],
+                        'fct_management': False,
                         'enabled': True}
         functions.append(new_function)
         set_registry_functions(functions)

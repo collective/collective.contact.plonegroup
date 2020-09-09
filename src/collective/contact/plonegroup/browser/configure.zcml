@@ -17,6 +17,13 @@
         permission="plone.app.controlpanel.Site"
         class=".settings.SettingsView" />
 
+    <browser:page
+        for="OFS.interfaces.IItem"
+        name="manage-own-groups-users"
+        class=".views.ManageOwnGroupUsers"
+        permission="zope2.View"
+        />
+
     <utility
         name="collective.contact.plonegroup.organization_services"
         factory=".settings.OwnOrganizationServicesVocabulary" />
@@ -92,5 +99,20 @@
              .tables.SubOrganizationsTable"
         provides="z3c.table.interfaces.IColumn"
         factory=".tables.PlonegroupActionsColumn" />
+
+    <adapter
+        for="collective.contact.plonegroup.interfaces.IDGFListField
+             z3c.form.interfaces.IFormLayer"
+        provides="z3c.form.interfaces.IFieldWidget"
+        factory=".views.dgf_list_widget" />
+
+    <!--adapter
+        for="zope.interface.Interface
+             zope.interface.Interface
+             zope.interface.Interface
+             collective.contact.plonegroup.interfaces.IGroupField
+             zope.interface.Interface"
+        provides="z3c.form.interfaces.IValidator"
+        factory=".views.FieldValidator" /-->
 
 </configure>

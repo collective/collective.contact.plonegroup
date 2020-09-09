@@ -28,6 +28,7 @@ from plone.registry.interfaces import IRecordModifiedEvent
 from plone.z3cform import layout
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import form
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zExceptions import Redirect
 from zope import schema
 from zope.component import getMultiAdapter
@@ -61,11 +62,11 @@ class IFunctionSchema(Interface):
     """
     fct_id = schema.TextLine(
         title=_("Plone group suffix id"),
-        description=_("Plone group suffix description"),
+        # description=_("Plone group suffix description"),
         required=True)
     fct_title = schema.TextLine(
         title=_("Plone group suffix title"),
-        description=_("Plone group title description"),
+        # description=_("Plone group title description"),
         required=True)
     fct_orgs = schema.List(
         title=_("Plone group suffix organizations"),
@@ -74,6 +75,11 @@ class IFunctionSchema(Interface):
             vocabulary='collective.contact.plonegroup.browser.settings.'
                        'SortedSelectedOrganizationsElephantVocabulary'),
         required=True)
+    fct_management = schema.Bool(
+        title=_("Manageable function groups?"),
+        required=False,
+        default=False,
+    )
     enabled = schema.Bool(
         title=_(u'Enabled?'),
         default=True,
@@ -181,6 +187,13 @@ class IContactPlonegroupConfig(Interface):
                            schema=IFunctionSchema)
     )
     widget('functions', DataGridFieldFactory, auto_append=False)
+
+    groups_management = schema.List(
+        title=_(u'Selected global groups can be managed by a contained user'),
+        required=False,
+        value_type=schema.Choice(vocabulary=u'collective.contact.plonegroup.global_groups'),
+    )
+    widget('groups_management', CheckBoxFieldWidget, multiple='multiple', size=15)
 
     @invariant
     def validateSettings(data):
@@ -416,6 +429,7 @@ class SettingsEditForm(RegistryEditForm):
     """
     form.extends(RegistryEditForm)
     schema = IContactPlonegroupConfig
+
 
 SettingsView = layout.wrap_form(SettingsEditForm, ControlPanelFormWrapper)
 

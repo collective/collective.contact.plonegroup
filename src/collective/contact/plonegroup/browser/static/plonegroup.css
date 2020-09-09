@@ -2,7 +2,6 @@
     color: red;
     font-weight: bold;
 }
-
 th.th_header_SelectedInPlonegroupColumn {
    width: 200px;
 }
@@ -43,4 +42,61 @@ div#content span.pg_group_users img {
 
 td.td_cell_PloneGroupUsersGroupsColumn h5 {
    line-height: 1em;
+}
+
+.template-contact-plonegroup-settings #form-widgets-functions label[for*='fct_management'],
+.template-contact-plonegroup-settings #form-widgets-functions label[for*='enabled'] {
+    display: none;
+}
+
+/* avoid too long groups_management list of checkboxes in configuration */
+.template-contact-plonegroup-settings span#form-widgets-groups_management {
+    max-height: 500px;
+    display: block;
+    overflow-x: auto;
+    max-width: 500px;
+}
+
+/* manage-own-groups-users view related */
+
+.template-manage-own-groups-users table.datagridwidget-table-view :not(.auto-append):not(.new-row).datagridwidget-row select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 0px;
+}
+
+.template-manage-own-groups-users span.cross_icon {
+    color: indianred;
+}
+
+.template-manage-own-groups-users table.datagridwidget-table-view .new-row.datagridwidget-row {
+    background-color: burlywood;
+}
+
+.template-manage-own-groups-users span.new_line {
+    color: burlywood;
+}
+
+.template-manage-own-groups-users table.datagridwidget-table-view .auto-append.datagridwidget-row {
+    background-color: cadetblue;
+}
+
+.template-manage-own-groups-users span.auto_append {
+    color: cadetblue;
+}
+
+.template-manage-own-groups-users table.datagridwidget-table-view {
+    width: min-content;
+}
+
+.template-manage-own-groups-users #edit-bar {
+    display: none;
+}
+
+.template-manage-own-groups-users .field {
+    margin-top: 2em;
+}
+
+.template-manage-own-groups-users .datagridwidget-cell {
+    padding: 1px 5px 1px 10px;
 }

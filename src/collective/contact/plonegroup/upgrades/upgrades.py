@@ -86,3 +86,19 @@ def v6(context):
             # already migrated
             return
     api.portal.set_registry_record(FUNCTIONS_REGISTRY, res)
+
+
+def v7(context):
+    logger.info("Migrate to v7")
+    functions = api.portal.get_registry_record(name=FUNCTIONS_REGISTRY)
+    res = []
+    # XXX we intentionally directly edit the existing "function"
+    # so it does not break in the detectContactPlonegroupChange method
+    for function in functions:
+        if 'fct_management' not in function:
+            function['fct_management'] = False
+        res.append(function)
+    api.portal.set_registry_record(FUNCTIONS_REGISTRY, res)
+    setup = api.portal.get_tool('portal_setup')
+    setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'plone.app.registry')
+    setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'actions')

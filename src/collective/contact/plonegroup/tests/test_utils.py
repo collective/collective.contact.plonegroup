@@ -46,10 +46,12 @@ class TestUtils(IntegrationTestCase):
         set_registry_functions([{'fct_title': u'Observers',
                                  'fct_id': u'observer',
                                  'fct_orgs': [],
+                                 'fct_management': False,
                                  'enabled': True},
                                 {'fct_title': u'Director',
                                  'fct_id': u'director',
                                  'fct_orgs': [],
+                                 'fct_management': False,
                                  'enabled': True}, ])
         api.group.add_user(groupname='%s_director' % self.uid, username=TEST_USER_ID)
 
@@ -198,10 +200,12 @@ class TestUtils(IntegrationTestCase):
                          [{'fct_title': u'Observers',
                            'fct_orgs': [],
                            'fct_id': u'observer',
+                           'fct_management': False,
                            'enabled': True},
                           {'fct_title': u'Director',
                            'fct_orgs': [],
                            'fct_id': u'director',
+                           'fct_management': False,
                            'enabled': True}])
         select_org_for_function(self.uid, 'director')
         self.assertTrue(self.uid in get_registry_functions()[1]['fct_orgs'])
