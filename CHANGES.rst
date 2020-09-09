@@ -1,12 +1,33 @@
 Changelog
 =========
 
+1.30 (unreleased)
+-----------------
 
-1.29 (unreleased)
+- Added manage-own-groups-users view and functions/groups selection configuration.
+  A user can manage the user assignments of his groups.
+  [sgeulette]
+- Avoid getting groups (only users) in `get_selected_org_suffix_users` function.
+  [sgeulette]
+- Avoid GroupNotFoundError in `get_selected_org_suffix_users` if suffix is limited to some organizations.
+  [sgeulette]
+
+1.29.1 (2020-08-26)
+-------------------
+
+- Fix CSS for `@@display-group-users` view when current user not a Manager
+  and so does not have link on prefixed icon (user/group).
+  [gbastien]
+
+1.29 (2020-08-18)
 -----------------
 
 - Added `PloneGroupUsersGroupsColumn`, a column that displays suffixed groups
   and users, to be called on dashboard displaying organizations.
+  The groups and users are rendered by the `@@display-group-users` view
+  that may also be used outside.
+  By default, as groups and users may be very long to display, it is hidden
+  in a collapsible `<div>` and displayed asynchronously.
   [gbastien]
 - Added possibility to disable a `function` (`enabled=True` by default),
   this is useful to avoid deleting a `function` and re-adding it after,
@@ -15,13 +36,9 @@ Changelog
   Added upgrade step to version `6` to manage new value `enabled=True`
   in `functions` stored in the `regsitry`.
   [gbastien]
-- Added manage-own-groups-users view and functions/groups selection configuration.
-  A user can manage the user assignments of his groups.
-  [sgeulette]
-- Avoid getting groups (only users) in `get_selected_org_suffix_users` function.
-  [sgeulette]
-- Avoid GroupNotFoundError in `get_selected_org_suffix_users` if suffix is limited to some organizations.
-  [sgeulette]
+- Remove item `UID` from link in `OrgaPrettyLinkWithAdditionalInfosColumn`
+  as it is now displayed as additional information by default.
+  [gbastien]
 
 1.28 (2020-05-26)
 -----------------

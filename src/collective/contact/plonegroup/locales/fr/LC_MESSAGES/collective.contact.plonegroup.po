@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-07-28 10:27+0000\n"
+"POT-Creation-Date: 2020-09-09 07:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Domain: collective.contact.plonegroup\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-#: ../browser/tables.py:193
+#: ../browser/tables.py:269
 msgid "Actions"
 msgstr "Actions"
 
@@ -26,6 +26,10 @@ msgstr "Groupes liés à la fonction '${function}'"
 #: ../browser/settings.py:177
 msgid "Choose multiple organization levels for which you want to create a plone group."
 msgstr "Choisir des niveaux d'organisation pour lesquels un groupe plone sera créé."
+
+#: ../browser/tables.py:231
+msgid "Details"
+msgstr "Détails"
 
 #: ../browser/settings.py:184
 msgid "Each defined function will suffix each organization plone group."
@@ -47,7 +51,7 @@ msgstr "Liste de fonctions"
 msgid "Global groups assignments."
 msgstr "Groupes globaux"
 
-#: ../browser/tables.py:123
+#: ../browser/tables.py:216
 msgid "Groups and users"
 msgstr "Groupes et utilisateurs"
 
@@ -63,7 +67,7 @@ msgstr "Groupes gérables par l'utilisateur?"
 msgid "No changes were made."
 msgstr "Aucun changement n'a été effectué."
 
-#: ../browser/tables.py:150
+#: ../browser/templates/display_group_users.pt:21
 msgid "No user was found in this group."
 msgstr "Ce groupe ne contient aucun utilisateur."
 
@@ -107,7 +111,7 @@ msgstr "Titre du suffixe"
 msgid "Selected global groups can be managed by a contained user"
 msgstr "Groupes globaux gérables par l'utilisateur"
 
-#: ../browser/tables.py:171
+#: ../browser/tables.py:247
 msgid "Selected in plonegroup"
 msgstr "Sélectionné dans <a href='${plonegroup_url}'>\"Configuration des groupes plone via contact\"</a>"
 
@@ -134,6 +138,18 @@ msgstr "Ce contact est utilisé dans le contenu suivant: ${items}"
 #: ../browser/settings.py:470
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 msgstr "Cette organisation ou une organisation contenue est utilisée dans la configuration de groupe plone via contact ! Il faut d'abord l'enlever de la configuration !"
+
+#: ../browser/tables.py:174
+msgid "View Plone group"
+msgstr "Voir le groupe Plone"
+
+#: ../browser/tables.py:172
+msgid "View Plone user"
+msgstr "Voir l&apos;utilisateur Plone"
+
+#: ../browser/templates/display_group_users.pt:13
+msgid "View linked Plone groups"
+msgstr "Voir les groupes Plone liés"
 
 #: ../browser/views.py:192
 msgid "You can <span class=\"cross_icon\">remove</span> an assignment with the <span class=\"cross_icon\">cross icon</span>. You can <span class=\"auto_append\">add</span> a new assignment with the <span class=\"auto_append\">blue line</span>. You can <span class=\"new_line\">complete</span> it on the <span class=\"new_line\">brown line</span>."

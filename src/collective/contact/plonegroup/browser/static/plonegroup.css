@@ -2,8 +2,46 @@
     color: red;
     font-weight: bold;
 }
+th.th_header_SelectedInPlonegroupColumn {
+   width: 200px;
+}
+
 th.th_header_PloneGroupUsersGroupsColumn {
-    width: 250px;
+    width: 500px;
+}
+
+span.pg_group_no_users {
+    font-style: italic;
+}
+span.pg_group_no_users,
+span.pg_group_users {
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+/* make icon and text display nicely when text on 2 lines,
+   several rules necessary so it works when both Manager and non Manager */
+span.pg_group_users a,
+span.pg_group_users acronym,
+span.pg_group_users img {
+   float: left;
+}
+div.user-or-group {
+   padding-top: 2px;
+   padding-left: 20px;
+   height: auto;
+   min-height: 20px;
+   color: #4A494F;
+}
+
+/* define width/height for img so it behaves correctly with collective.js.tooltipster */
+div#content span.pg_group_users img {
+   width: 16px;
+   height: 16px;
+}
+
+td.td_cell_PloneGroupUsersGroupsColumn h5 {
+   line-height: 1em;
 }
 
 .template-contact-plonegroup-settings #form-widgets-functions label[for*='fct_management'],
@@ -18,6 +56,8 @@ th.th_header_PloneGroupUsersGroupsColumn {
     overflow-x: auto;
     max-width: 500px;
 }
+
+/* manage-own-groups-users view related */
 
 .template-manage-own-groups-users table.datagridwidget-table-view :not(.auto-append):not(.new-row).datagridwidget-row select {
     -webkit-appearance: none;

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-07-28 10:27+0000\n"
+"POT-Creation-Date: 2020-09-09 07:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.contact.plonegroup\n"
 
-#: ../browser/tables.py:193
+#: ../browser/tables.py:269
 msgid "Actions"
 msgstr ""
 
@@ -27,6 +27,10 @@ msgstr ""
 
 #: ../browser/settings.py:177
 msgid "Choose multiple organization levels for which you want to create a plone group."
+msgstr ""
+
+#: ../browser/tables.py:231
+msgid "Details"
 msgstr ""
 
 #: ../browser/settings.py:184
@@ -49,7 +53,7 @@ msgstr ""
 msgid "Global groups assignments."
 msgstr ""
 
-#: ../browser/tables.py:123
+#: ../browser/tables.py:216
 msgid "Groups and users"
 msgstr ""
 
@@ -65,7 +69,7 @@ msgstr ""
 msgid "No changes were made."
 msgstr ""
 
-#: ../browser/tables.py:150
+#: ../browser/templates/display_group_users.pt:21
 msgid "No user was found in this group."
 msgstr ""
 
@@ -109,7 +113,7 @@ msgstr ""
 msgid "Selected global groups can be managed by a contained user"
 msgstr ""
 
-#: ../browser/tables.py:171
+#: ../browser/tables.py:247
 msgid "Selected in plonegroup"
 msgstr ""
 
@@ -135,6 +139,18 @@ msgstr ""
 
 #: ../browser/settings.py:470
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
+msgstr ""
+
+#: ../browser/tables.py:174
+msgid "View Plone group"
+msgstr ""
+
+#: ../browser/tables.py:172
+msgid "View Plone user"
+msgstr ""
+
+#: ../browser/templates/display_group_users.pt:13
+msgid "View linked Plone groups"
 msgstr ""
 
 #: ../browser/views.py:192
