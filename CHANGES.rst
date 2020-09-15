@@ -11,6 +11,14 @@ Changelog
   [sgeulette]
 - Avoid GroupNotFoundError in `get_selected_org_suffix_users` if suffix is limited to some organizations.
   [sgeulette]
+- Added `BaseOrganizationServicesVocabulary._term_value` and
+  `BaseOrganizationServicesVocabulary._term_token` to ease override
+  of rendered term value and token.
+  [gbastien]
+- Make `SelectedOrganizationsElephantVocabulary` inherits from
+  `OwnOrganizationServicesVocabulary` so methods `_term_value` and
+  `_term_token` are available.
+  [gbastien]
 
 1.29.1 (2020-08-26)
 -------------------

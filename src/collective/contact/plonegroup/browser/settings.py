@@ -111,8 +111,18 @@ class BaseOrganizationServicesVocabulary(object):
             for brain in brains:
                 orga = brain._unrestrictedGetObject()
                 term_title = self._term_title(orga, parent_label)
-                terms.append(SimpleTerm(orga.UID(), orga.UID(), term_title))
+                term_value = self._term_value(orga)
+                term_token = self._term_token(orga)
+                terms.append(SimpleTerm(term_value, term_token, term_title))
                 self.listSubOrganizations(terms, orga, term_title)
+
+    def _term_value(self, orga):
+        '''Method that render term value, separated to ease override.'''
+        return orga.UID()
+
+    def _term_token(self, orga):
+        '''Method that render term token, separated to ease override.'''
+        return orga.UID()
 
     def _term_title(self, orga, parent_label):
         '''Method that render term title, separated to ease override.'''
@@ -563,14 +573,12 @@ class SearchableSimpleVocabulary(SimpleVocabulary):
         ]
 
 
-class SelectedOrganizationsElephantVocabulary(object):
+class SelectedOrganizationsElephantVocabulary(OwnOrganizationServicesVocabulary):
     """ Vocabulary of selected plonegroup-organizations services. """
-    implements(IVocabularyFactory)
 
     @ram.cache(voc_cache_key)
     def __call__(self, context):
-        factory = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
-        vocab = factory(context)
+        vocab = super(SelectedOrganizationsElephantVocabulary, self).__call__(context)
         terms = vocab.by_value
         ordered_terms = []
         for uid in get_registry_organizations():
@@ -587,7 +595,6 @@ class SelectedOrganizationsElephantVocabulary(object):
 
 class SortedSelectedOrganizationsElephantVocabulary(SelectedOrganizationsElephantVocabulary):
     """ Vocabulary of selected plonegroup-organizations services sorted on title. """
-    implements(IVocabularyFactory)
 
     @ram.cache(voc_cache_key)
     def __call__(self, context):
