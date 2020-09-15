@@ -573,14 +573,12 @@ class SearchableSimpleVocabulary(SimpleVocabulary):
         ]
 
 
-class SelectedOrganizationsElephantVocabulary(object):
+class SelectedOrganizationsElephantVocabulary(OwnOrganizationServicesVocabulary):
     """ Vocabulary of selected plonegroup-organizations services. """
-    implements(IVocabularyFactory)
 
     @ram.cache(voc_cache_key)
     def __call__(self, context):
-        factory = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.organization_services')
-        vocab = factory(context)
+        vocab = super(SelectedOrganizationsElephantVocabulary, self).__call__(context)
         terms = vocab.by_value
         ordered_terms = []
         for uid in get_registry_organizations():
@@ -597,7 +595,6 @@ class SelectedOrganizationsElephantVocabulary(object):
 
 class SortedSelectedOrganizationsElephantVocabulary(SelectedOrganizationsElephantVocabulary):
     """ Vocabulary of selected plonegroup-organizations services sorted on title. """
-    implements(IVocabularyFactory)
 
     @ram.cache(voc_cache_key)
     def __call__(self, context):
