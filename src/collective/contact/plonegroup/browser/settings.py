@@ -111,8 +111,18 @@ class BaseOrganizationServicesVocabulary(object):
             for brain in brains:
                 orga = brain._unrestrictedGetObject()
                 term_title = self._term_title(orga, parent_label)
-                terms.append(SimpleTerm(orga.UID(), orga.UID(), term_title))
+                term_value = self._term_value(orga)
+                term_token = self._term_token(orga)
+                terms.append(SimpleTerm(term_value, term_token, term_title))
                 self.listSubOrganizations(terms, orga, term_title)
+
+    def _term_value(self, orga):
+        '''Method that render term value, separated to ease override.'''
+        return orga.UID()
+
+    def _term_token(self, orga):
+        '''Method that render term token, separated to ease override.'''
+        return orga.UID()
 
     def _term_title(self, orga, parent_label):
         '''Method that render term title, separated to ease override.'''

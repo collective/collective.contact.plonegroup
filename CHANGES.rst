@@ -11,6 +11,10 @@ Changelog
   [sgeulette]
 - Avoid GroupNotFoundError in `get_selected_org_suffix_users` if suffix is limited to some organizations.
   [sgeulette]
+- Added `BaseOrganizationServicesVocabulary._term_value` and
+  `BaseOrganizationServicesVocabulary._term_token` to ease override
+  of rendered term value and token.
+  [gbastien]
 
 1.29.1 (2020-08-26)
 -------------------
