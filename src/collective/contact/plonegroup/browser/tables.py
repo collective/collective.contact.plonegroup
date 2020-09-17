@@ -164,6 +164,22 @@ class DisplayGroupUsersView(BrowserView):
             group_title = group_title.split('(')[-1][:-1]
         return group_title
 
+    def _get_groups_and_members(self, group, index=0, keep_subgroups=False):
+        """ """
+        members = []
+        if keep_subgroups and index != 0:
+            members.append((index, group))
+            index += 1
+        for principal in group.getAllGroupMembers():
+            isGroup = base_hasattr(principal, 'isGroup') and principal.isGroup() or 0
+            if isGroup:
+                members += self._get_groups_and_members(principal, index + 1, keep_subgroups)
+            else:
+                # avoid 2 times same member whith sub groups and keep_subgroups=False
+                if keep_subgroups or (principal not in [p for i, p in members]):
+                    members.append((index, principal))
+        return members
+
     def group_users(self, group):
         """ """
         res = []
@@ -176,33 +192,34 @@ class DisplayGroupUsersView(BrowserView):
         patterns[0] = "<img src='%s/user.png'> " % self.portal_url
         patterns[1] = "<img src='%s/group.png'> " % self.portal_url
         if self.is_manager:
-            patterns[0] = "<a href='{portal_url}/@@user-information?userid={{member_id}}' " \
+            patterns[0] = "<a class='user-or-group-level-{{index}}' href='{portal_url}/" \
+                "@@user-information?userid={{member_id}}' " \
                 "title=\"{user_tag_title}\"><acronym>{pattern}</acronym></a> ".format(
                 **{'portal_url': self.portal_url,
                    'pattern': patterns[0].strip(),
                    'user_tag_title': user_tag_title})
-            patterns[1] = "<a href='{portal_url}/@@usergroup-groupmembership?groupname={{member_id}}' " \
+            patterns[1] = "<a class='user-or-group-level-{{index}}' href='{portal_url}/" \
+                "@@usergroup-groupmembership?groupname={{member_id}}' " \
                 "title=\"{group_tag_title}\"><acronym>{pattern}</acronym></a> ".format(
                 **{'portal_url': self.portal_url,
                    'pattern': patterns[1].strip(),
                    'group_tag_title': group_tag_title})
-        for member in group.getAllGroupMembers():
-            # res is a list of list of 2 elements to sort it (first element is member title)
-            subres = []
+        for index, principal in self._get_groups_and_members(group, keep_subgroups=self.is_manager):
             # member may be a user or group
-            isGroup = base_hasattr(member, 'isGroup') and member.isGroup() or 0
-            member_title = member.getProperty('fullname') or member.getProperty('title') or member.getId()
-            subres.append(member_title)
+            isGroup = base_hasattr(principal, 'isGroup') and principal.isGroup() or 0
+            principal_title = principal.getProperty('fullname') or \
+                principal.getProperty('title') or principal.getId()
             if self.is_manager:
-                member_title = member_title + " ({0})".format(member.id)
-            member_title = "<div class='user-or-group'>{0}</div>".format(member_title)
-            value = patterns[isGroup].format(**{'member_id': member.id}) + member_title
-            subres.append(value)
-            res.append(subres)
+                principal_title = principal_title + " ({0})".format(principal.id)
+            principal_title = "<div class='user-or-group user-or-group-level-{0}'>{1}</div>".format(
+                index, principal_title)
+            value = patterns[isGroup].format(**{'member_id': principal.id,
+                                                'index': index}) + principal_title
+            res.append((index, principal_title, value))
         # sort on member_title
         res = sorted(res)
         # just keep values
-        return "".join([v[1] for v in res])
+        return "".join([v[2] for v in res])
 
     @property
     def _is_manager(self):

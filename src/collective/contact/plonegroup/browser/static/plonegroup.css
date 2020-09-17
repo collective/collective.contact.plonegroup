@@ -34,6 +34,27 @@ div.user-or-group {
    color: #4A494F;
 }
 
+.user-or-group-level-2,
+.user-or-group-level-3 {
+   margin-left: 1em;
+}
+.user-or-group-level-4,
+.user-or-group-level-5 {
+   margin-left: 2em;
+}
+.user-or-group-level-6,
+.user-or-group-level-7 {
+   margin-left: 3em;
+}
+.user-or-group-level-8,
+.user-or-group-level-9 {
+   margin-left: 4em;
+}
+.user-or-group-level-10,
+.user-or-group-level-11 {
+   margin-left: 5em;
+}
+
 /* define width/height for img so it behaves correctly with collective.js.tooltipster */
 div#content span.pg_group_users img {
    width: 16px;
