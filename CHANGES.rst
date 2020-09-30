@@ -23,6 +23,9 @@ Changelog
   contained members, display members of contained groups for normal users,
   display contained groups and contained members to Managers.
   [gbastien]
+- Fixed `ConnectionStateError` while setting `registry[FUNCTIONS_REGISTRY]`
+  in tests and profile is applied several times.
+  [gbastien]
 
 1.29.1 (2020-08-26)
 -------------------

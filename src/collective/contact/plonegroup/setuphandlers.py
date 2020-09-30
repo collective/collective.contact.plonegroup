@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from collective.contact.plonegroup import logger
 from config import FUNCTIONS_REGISTRY
 from config import ORGANIZATIONS_REGISTRY
 from plone.registry.interfaces import IRegistry
+from ZODB.POSException import ConnectionStateError
 from zope.component import getUtility
 
 
@@ -14,4 +16,9 @@ def postInstall(context):
     if registry[ORGANIZATIONS_REGISTRY] is None:
         registry[ORGANIZATIONS_REGISTRY] = []
     if registry[FUNCTIONS_REGISTRY] is None:
-        registry[FUNCTIONS_REGISTRY] = []
+        # may fail in tests because a datagridfield is stored, just pass in this case
+        try:
+            registry[FUNCTIONS_REGISTRY] = []
+        except ConnectionStateError:
+            logger('!!!Failed to set registry functions to []!!!')
+            registry.records[FUNCTIONS_REGISTRY].field.value_type = None
