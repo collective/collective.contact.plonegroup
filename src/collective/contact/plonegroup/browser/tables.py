@@ -26,7 +26,7 @@ class SubOrganizationsTable(ExtendedCSSTable):
 
     cssClassEven = u'even'
     cssClassOdd = u'odd'
-    cssClasses = {'table': 'listing nosort templates-listing icons-on'}
+    cssClasses = {'table': 'listing nosort suborganizations-listing icons-on'}
 
     batchSize = 999
     startBatchingAt = 999
