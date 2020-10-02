@@ -4,8 +4,8 @@ Changelog
 1.31 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Corrected table class name.
+  [sgeulette]
 
 1.30 (2020-10-02)
 -----------------
