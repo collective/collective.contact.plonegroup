@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.30 (unreleased)
+1.30 (2020-10-02)
 -----------------
 
 - Added manage-own-groups-users view and functions/groups selection configuration.
