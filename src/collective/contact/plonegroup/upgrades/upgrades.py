@@ -73,28 +73,19 @@ def v5(context):
 
 def v6(context):
     logger.info("Migrate to v6")
-    functions = api.portal.get_registry_record(name=FUNCTIONS_REGISTRY)
-    res = []
-    # XXX we intentionally directly edit the existing "function"
-    # so it does not break in the detectContactPlonegroupChange method while looking
-    # for 'enabled' in old_functions
-    for function in functions:
-        if 'enabled' not in function:
-            function['enabled'] = True
-            res.append(function)
-        else:
-            # already migrated
-            return
-    api.portal.set_registry_record(FUNCTIONS_REGISTRY, res)
+    # Cannot run v6 anymore without v7 code
 
 
 def v7(context):
+    """ Combined v6 code when coming from v5 """
     logger.info("Migrate to v7")
     functions = api.portal.get_registry_record(name=FUNCTIONS_REGISTRY)
     res = []
     # XXX we intentionally directly edit the existing "function"
     # so it does not break in the detectContactPlonegroupChange method
     for function in functions:
+        if 'enabled' not in function:
+            function['enabled'] = True
         if 'fct_management' not in function:
             function['fct_management'] = False
         res.append(function)

@@ -4,6 +4,8 @@ Changelog
 1.31 (unreleased)
 -----------------
 
+- Combined v6 and v7 upgrade because it fails coming from v5
+  [sgeulette]
 - Corrected table class name.
   [sgeulette]
 
