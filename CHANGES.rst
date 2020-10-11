@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.31 (unreleased)
+1.31 (2020-10-11)
 -----------------
 
 - Combined v6 and v7 upgrade because it fails coming from v5
