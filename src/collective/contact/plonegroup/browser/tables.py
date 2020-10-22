@@ -235,6 +235,7 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
 
     header = _("Groups and users")
     weight = 5
+    short = True
 
     def renderCell(self, item):
         """ """
@@ -252,11 +253,11 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
         details_msg = translate(details_msg, context=self.request)
         res = u"<div id=\"group-users\" class=\"collapsible\" onclick=\"toggleDetails(" \
             u"'collapsible-group-users_{0}', toggle_parent_active=false, parent_tag=null, " \
-            u"load_view='@@display-group-users?group_ids={1}', base_url='{2}');\"> {3}</div>" \
+            u"load_view='@@display-group-users?group_ids={1}&short:boolean={2}', base_url='{3}');\"> {4}</div>" \
             u"<div id=\"collapsible-group-users_{0}\" class=\"collapsible-content\" style=\"display: none;\">" \
             u"<div class=\"collapsible-inner-content\">" \
-            u"<img src=\"{2}/spinner_small.gif\" /></div></div>".format(
-                org_uid, url_group_ids, self.table.portal_url, details_msg)
+            u"<img src=\"{3}/spinner_small.gif\" /></div></div>".format(
+                org_uid, url_group_ids, self.short, self.table.portal_url, details_msg)
         return res
 
 

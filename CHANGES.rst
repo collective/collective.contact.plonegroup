@@ -8,6 +8,9 @@ Changelog
   to only apply if we have a format like `My config (My suffix)` or it removed
   last letter.
   [gbastien]
+- Added parameter `PloneGroupUsersGroupsColumn.short=True` so
+  `@@display-group-users` is rendered short by default.
+  [gbastien]
 
 1.31 (2020-10-11)
 -----------------
