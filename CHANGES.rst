@@ -4,8 +4,10 @@ Changelog
 1.32 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed `DisplayGroupUsersView.group_title` when `DisplayGroupUsersView.short=True`
+  to only apply if we have a format like `My config (My suffix)` or it removed
+  last letter.
+  [gbastien]
 
 1.31 (2020-10-11)
 -----------------
