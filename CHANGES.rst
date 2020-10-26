@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.32 (unreleased)
+1.32 (2020-10-26)
 -----------------
 
 - Fixed `DisplayGroupUsersView.group_title` when `DisplayGroupUsersView.short=True`
