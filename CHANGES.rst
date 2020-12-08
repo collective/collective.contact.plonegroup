@@ -4,8 +4,11 @@ Changelog
 1.33 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Do not grok the package anymore.
+  [gbastien]
+- Override vocabulary `PositionTypes` from `collective.contact.core`, when
+  `context` out of a directory, get `position_types` from `DEFAULT_DIRECTORY_ID`.
+  [gbastien]
 
 1.32 (2020-10-26)
 -----------------

@@ -18,7 +18,7 @@
 
     <include file="subscribers.zcml" />
 
-    <grok:grok package="." />
+    <includeOverrides file="overrides.zcml" />
 
     <genericsetup:registerProfile
         name="default"
