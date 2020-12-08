@@ -4,6 +4,7 @@
     i18n_domain="collective.contact.plonegroup">
 
   <include file="configure.zcml" />
+  <includeOverrides file="overrides.zcml" />
 
   <include package="ecreall.helpers.testing" />
 

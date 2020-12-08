@@ -18,8 +18,6 @@
 
     <include file="subscribers.zcml" />
 
-    <includeOverrides file="overrides.zcml" />
-
     <genericsetup:registerProfile
         name="default"
         title="collective.contact.plonegroup"
