@@ -18,8 +18,6 @@
 
     <include file="subscribers.zcml" />
 
-    <grok:grok package="." />
-
     <genericsetup:registerProfile
         name="default"
         title="collective.contact.plonegroup"
