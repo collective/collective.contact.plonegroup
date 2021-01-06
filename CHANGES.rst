@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.33 (unreleased)
+1.33 (2021-01-06)
 -----------------
 
 - Do not grok the package anymore.
