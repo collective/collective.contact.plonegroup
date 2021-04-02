@@ -4,8 +4,9 @@ Changelog
 1.34 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed `settings.detectContactPlonegroupChange` where sometimes `event.oldValue`
+  is None when value is set several times from different testing layers.
+  [gbastien]
 
 1.33 (2021-01-06)
 -----------------

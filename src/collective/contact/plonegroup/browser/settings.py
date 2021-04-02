@@ -344,9 +344,13 @@ def detectContactPlonegroupChange(event):
             registry_orgs = get_registry_organizations()
         except InvalidParameterError:
             registry_orgs = []
+        # sometimes in tests when value is applied by different testing layers,
+        # event.oldValue can be None...
+        new_value = event.newValue or []
+        old_value = event.oldValue or []
         if event.record.fieldName == 'organizations' and registry_orgs:
-            old_set = set(event.oldValue)
-            new_set = set(event.newValue)
+            old_set = set(old_value)
+            new_set = set(new_value)
             # we detect a new organization
             add_set = new_set.difference(old_set)
             for orga_uid in add_set:
@@ -367,12 +371,13 @@ def detectContactPlonegroupChange(event):
             old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'],
                                              'fct_orgs': dic['fct_orgs'],
                                              'enabled': dic['enabled']}
-                             for dic in event.oldValue}
+
+                             for dic in old_value}
             old_set = set(old_functions.keys())
             new_functions = {dic['fct_id']: {'fct_title': dic['fct_title'],
                                              'fct_orgs': dic['fct_orgs'],
                                              'enabled': dic['enabled']}
-                             for dic in event.newValue}
+                             for dic in new_value}
             new_set = set(new_functions.keys())
             # we detect a new function
             add_set = new_set.difference(old_set)
