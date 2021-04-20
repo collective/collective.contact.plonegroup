@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.34 (unreleased)
+1.34 (2021-04-20)
 -----------------
 
 - Fixed `settings.detectContactPlonegroupChange` where sometimes `event.oldValue`
