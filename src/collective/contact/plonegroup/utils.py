@@ -199,8 +199,11 @@ def get_selected_org_suffix_users(org_uid, suffixes):
 
 
 def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None):
-    """
-        Return users vocabulary that belongs to suffixed groups related to selected organization.
+    """Return users vocabulary that belongs to suffixed groups related to selected organization.
+    :param org_uid: organization uid
+    :param suffixes: suffixes to be considered
+    :param first_member: username to be put first in vocabulary
+    :return: users vocabulary
     """
     if not org_uid or org_uid == u'--NOVALUE--':
         return SimpleVocabulary([])
