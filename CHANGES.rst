@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.35 (unreleased)
+1.35 (2021-05-05)
 -----------------
 
 - Fixed `addOrModifyOrganizationGroups` called when an organization is modified,
