@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.interfaces import INotPloneGroupContact
 from collective.contact.plonegroup.interfaces import IPloneGroupContact
+from collective.contact.plonegroup.utils import get_all_suffixes
+from collective.contact.plonegroup.utils import get_organizations
+from collective.contact.plonegroup.utils import get_plone_group_id
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from zope.interface import alsoProvides
@@ -93,3 +97,25 @@ def v7(context):
     setup = api.portal.get_tool('portal_setup')
     setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'plone.app.registry')
     setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'actions')
+
+
+def v8(context):
+    logger.info("Migrate to v8")
+    # there was a bug in addOrModifyOrganizationGroups that was
+    # creating Plone groups for every suffixes, not respecting
+    # "enabled" and "fct_orgs"
+    all_suffixes = get_all_suffixes()
+    for org in get_organizations():
+        # get diff between all suffixes and suffixes really used by org
+        org_uid = org.UID()
+        org_suffixes = get_all_suffixes(org_uid)
+        not_kept_suffixes = set(all_suffixes).difference(org_suffixes)
+        for suffix in not_kept_suffixes:
+            plone_group_id = get_plone_group_id(org_uid, suffix)
+            plone_group = api.group.get(plone_group_id)
+            if plone_group:
+                if plone_group.getMemberIds():
+                    raise Exception(
+                        'Tried to remove Plone group "%s" but it contains users!'
+                        % plone_group_id)
+                api.group.delete(plone_group_id)

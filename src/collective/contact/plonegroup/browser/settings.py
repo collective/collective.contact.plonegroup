@@ -454,8 +454,12 @@ def addOrModifyOrganizationGroups(organization, uid):
         Modify groups linked to an organization
     """
     changes = False
-    for dic in get_registry_functions():
-        if addOrModifyGroup(organization, dic['fct_id'], dic['fct_title']):
+    # filter only relevant suffixes
+    suffixes = get_all_suffixes(uid)
+    functions = [f for f in get_registry_functions()
+                 if f['fct_id'] in suffixes]
+    for fct in functions:
+        if addOrModifyGroup(organization, fct['fct_id'], fct['fct_title']):
             changes = True
     return changes
 

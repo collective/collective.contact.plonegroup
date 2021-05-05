@@ -3,9 +3,9 @@
 
 from collective.contact.plonegroup.browser import settings
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
-from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.config import get_registry_organizations
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
 from collective.contact.plonegroup.config import set_registry_organizations
 from collective.contact.plonegroup.testing import IntegrationTestCase
@@ -323,25 +323,50 @@ class TestSettings(IntegrationTestCase):
         own_orga['department2'].manage_delObjects(ids=['service3'])
         self.assertFalse('service3' in own_orga['department2'])
 
-    def test_onlyRelevantPloneGroupsCreatedWhenFunctionRestrictedToSelectedOrgs(self):
-        """Test using 'fct_orgs' when defining functions."""
-        # create a new suffix and restrict it to department1
+    def _setupRestrictedFunctions(self):
+        """Create 2 organizations and 2 new restricted functions."""
         own_orga = get_own_organization()
         dep1 = own_orga['department1']
         dep1_uid = dep1.UID()
         dep2 = own_orga['department2']
         dep2_uid = dep2.UID()
         functions = get_registry_functions()
-        new_function = {'fct_id': u'new',
-                        'fct_title': u'New',
-                        'fct_orgs': [dep1_uid],
-                        'fct_management': False,
-                        'enabled': True}
-        functions.append(new_function)
+        new_functions = [{'fct_id': u'new',
+                          'fct_title': u'New',
+                          'fct_orgs': [dep1_uid],
+                          'fct_management': False,
+                          'enabled': True},
+                         {'fct_id': u'new2',
+                          'fct_title': u'New2',
+                          'fct_orgs': [],
+                          'fct_management': False,
+                          'enabled': False}, ]
+        functions += new_functions
         set_registry_functions(functions)
+        return dep1, dep1_uid, dep2, dep2_uid
+
+    def test_adaptPloneGroupDefinitionRespectsRestrictedSuffixes(self):
+        """ When an organization is modified, make sure added/updated Plone groups
+            are respecting "fct_orgs" and "enabled"."""
+        dep1, dep1_uid, dep2, dep2_uid = self._setupRestrictedFunctions()
+        event.notify(ObjectModifiedEvent(dep1))
+        event.notify(ObjectModifiedEvent(dep2))
         # 'new' suffixed Plone group was created only for dep1
         self.assertTrue(api.group.get(get_plone_group_id(dep1_uid, u'new')))
-        self.assertFalse(api.group.get(get_plone_group_id(dep2_uid, u'new')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, u'new')))
+        # 'new2' is not enabled and was not created for any organization
+        self.assertIsNone(api.group.get(get_plone_group_id(dep1_uid, u'new2')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, u'new2')))
+
+    def test_onlyRelevantPloneGroupsCreatedWhenFunctionRestrictedToSelectedOrgs(self):
+        """Test using 'fct_orgs' when defining functions."""
+        dep1, dep1_uid, dep2, dep2_uid = self._setupRestrictedFunctions()
+        # 'new' suffixed Plone group was created only for dep1
+        self.assertTrue(api.group.get(get_plone_group_id(dep1_uid, u'new')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, u'new')))
+        # 'new2' is not enabled and was not created for any organization
+        self.assertIsNone(api.group.get(get_plone_group_id(dep1_uid, u'new2')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, u'new2')))
 
     def test_selectedOrganizationsPloneGroupsVocabulary(self):
         """ Test plone groups vocabulary """
