@@ -4,8 +4,11 @@ Changelog
 1.35 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed `addOrModifyOrganizationGroups` called when an organization is modified,
+  that was creating Plone groups for every suffixes without considering
+  `enabled` or `fct_orgs`. Added upgrade step to `v8` that will delete Plone
+  groups that were wrongly created.
+  [gbastien]
 
 1.34 (2021-04-20)
 -----------------
