@@ -4,8 +4,9 @@ Changelog
 1.36 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added logging using `collective.fingerpointing` in the
+  `@@manage-own-groups-users` view when a user was added or removed.
+  [gbastien]
 
 1.35 (2021-05-05)
 -----------------

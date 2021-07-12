@@ -12,6 +12,7 @@ from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.z3cform.datagridfield import DataGridField
 from collective.z3cform.datagridfield import DictRow
+from imio.helpers.security import fplog
 from operator import methodcaller
 from plone import api
 from Products.CMFPlone import PloneMessageFactory as PMF
@@ -280,9 +281,13 @@ class ManageOwnGroupUsers(EditForm):
                         users[group_id] = [u.id for u in api.user.get_users(groupname=group_id)]
                     if action == 'removed' and user_id in users[group_id]:
                         api.group.remove_user(groupname=group_id, username=user_id)
+                        extras = 'group_id={0} user_id={1}'.format(group_id, user_id)
+                        fplog('manage_own_groups_removed_user', extras=extras)
                         changes = True
                     elif action == 'added' and user_id not in users[group_id]:
                         api.group.add_user(groupname=group_id, username=user_id)
+                        extras = 'group_id={0} user_id={1}'.format(group_id, user_id)
+                        fplog('manage_own_groups_added_user', extras=extras)
                         changes = True
         if changes:
             api.portal.show_message(message=self.successMessage, request=self.request)
