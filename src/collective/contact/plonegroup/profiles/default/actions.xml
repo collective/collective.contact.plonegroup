@@ -5,8 +5,8 @@
  <object name="user" meta_type="CMF Action Category">
   <object name="own-groups" meta_type="CMF Action" i18n:domain="collective.contact.plonegroup" insert-before="preferences">
    <property name="title" i18n:translate="">Own groups management</property>
-   <property name="url_expr">string:${portal_url}/manage-own-groups-users</property>
-   <property name="available_expr"></property>
+   <property name="url_expr">string:${portal_url}/@@manage-own-groups-users</property>
+   <property name="available_expr">portal/@@manage-own-groups-users/available</property>
    <property name="permissions">
     <element value="List portal members"/>
    </property>

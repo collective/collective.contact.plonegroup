@@ -67,7 +67,7 @@ class IGroupsUsers(Interface):
 
     user = DGFVocabularyField(
         title=PMF('text_user'),
-        vocabulary='plone.app.vocabularies.Users',
+        vocabulary='imio.helpers.SortedUsers',
         required=False)
 
 
@@ -79,7 +79,7 @@ class IOrganisationsUsers(Interface):
 
     user = DGFVocabularyField(
         title=PMF('text_user'),
-        vocabulary='plone.app.vocabularies.Users',
+        vocabulary='imio.helpers.SortedUsers',
         required=False)
 
 
@@ -147,6 +147,10 @@ class ManageOwnGroupUsers(EditForm):
 #        self.current_user = api.user.get(userid='chef')
         self.current_user_id = self.current_user.getId()
         self.current_user_groups = [g for g in api.group.get_groups(user=self.current_user) if g]
+
+    def available(self):
+        """ will the action be available? """
+        return get_registry_groups_mgt() or self.get_manageable_functions()
 
     def get_manageable_functions(self):
         """ get all manageable functions """

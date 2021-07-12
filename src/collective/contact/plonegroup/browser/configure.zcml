@@ -22,6 +22,7 @@
         name="manage-own-groups-users"
         class=".views.ManageOwnGroupUsers"
         permission="zope2.View"
+        attribute="available"
         />
 
     <utility

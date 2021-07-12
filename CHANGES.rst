@@ -7,6 +7,13 @@ Changelog
 - Added logging using `collective.fingerpointing` in the
   `@@manage-own-groups-users` view when a user was added or removed.
   [gbastien]
+- Added `available_expr` to the action displaying the `Manage own groups`,
+  action will be displayed if at least one value is selected in the
+  `groups_management` field in the configuration.
+  [gbastien]
+- Use `imio.helpers.SortedUsers` vocabulary in the
+  `@@manage-own-groups-users` view.
+  [gbastien]
 
 1.35 (2021-05-05)
 -----------------
