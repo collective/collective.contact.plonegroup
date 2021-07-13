@@ -148,9 +148,14 @@ class ManageOwnGroupUsers(EditForm):
         self.current_user_id = self.current_user.getId()
         self.current_user_groups = [g for g in api.group.get_groups(user=self.current_user) if g]
 
+    def _available_additional_condition(self):
+        """ additional condition for action availability, made to be overrided """
+        return True
+
     def available(self):
         """ will the action be available? """
-        return get_registry_groups_mgt() or self.get_manageable_functions()
+        return (get_registry_groups_mgt() or self.get_manageable_functions()) \
+            and self._available_additional_condition()
 
     def get_manageable_functions(self):
         """ get all manageable functions """
