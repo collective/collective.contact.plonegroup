@@ -18,11 +18,11 @@
         class=".settings.SettingsView" />
 
     <browser:page
-        for="OFS.interfaces.IItem"
+        for="*"
         name="manage-own-groups-users"
         class=".views.ManageOwnGroupUsers"
         permission="zope2.View"
-        />
+        attribute="available" />
 
     <utility
         name="collective.contact.plonegroup.organization_services"

@@ -12,6 +12,7 @@ from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.z3cform.datagridfield import DataGridField
 from collective.z3cform.datagridfield import DictRow
+from imio.helpers.security import fplog
 from operator import methodcaller
 from plone import api
 from Products.CMFPlone import PloneMessageFactory as PMF
@@ -24,9 +25,11 @@ from z3c.form.validator import SimpleFieldValidator
 from z3c.form.widget import FieldWidget
 from zExceptions import Redirect
 from zope import schema
+from zope.component import getUtility
 from zope.interface import implements
 from zope.interface import Interface
 from zope.schema._bootstrapinterfaces import RequiredMissing
+from zope.schema.interfaces import IVocabularyFactory
 
 
 class DGFListField(schema.List):
@@ -66,7 +69,7 @@ class IGroupsUsers(Interface):
 
     user = DGFVocabularyField(
         title=PMF('text_user'),
-        vocabulary='plone.app.vocabularies.Users',
+        vocabulary='imio.helpers.SortedUsers',
         required=False)
 
 
@@ -78,7 +81,7 @@ class IOrganisationsUsers(Interface):
 
     user = DGFVocabularyField(
         title=PMF('text_user'),
-        vocabulary='plone.app.vocabularies.Users',
+        vocabulary='imio.helpers.SortedUsers',
         required=False)
 
 
@@ -146,6 +149,15 @@ class ManageOwnGroupUsers(EditForm):
 #        self.current_user = api.user.get(userid='chef')
         self.current_user_id = self.current_user.getId()
         self.current_user_groups = [g for g in api.group.get_groups(user=self.current_user) if g]
+
+    def _available_additional_condition(self):
+        """ additional condition for action availability, made to be overrided """
+        return True
+
+    def available(self):
+        """ will the action be available? """
+        return (get_registry_groups_mgt() or self.get_manageable_functions()) \
+            and self._available_additional_condition()
 
     def get_manageable_functions(self):
         """ get all manageable functions """
@@ -253,6 +265,8 @@ class ManageOwnGroupUsers(EditForm):
         changes = False
         users = {}
         old_values = eval(data.pop('_old_values_'))
+        factory = getUtility(IVocabularyFactory, 'plone.app.vocabularies.Groups')
+        groups_voc = factory(self.context)
         for name in old_values:
             try:
                 new_value = data[name]  # If the field is not in the data, then go on to the next one
@@ -280,9 +294,15 @@ class ManageOwnGroupUsers(EditForm):
                         users[group_id] = [u.id for u in api.user.get_users(groupname=group_id)]
                     if action == 'removed' and user_id in users[group_id]:
                         api.group.remove_user(groupname=group_id, username=user_id)
+                        extras = 'group_id={0} group_title={2} user_id={1}'.format(group_id, user_id,
+                                                                                   groups_voc.getTerm(group_id).title)
+                        fplog('manage_own_groups_removed_user', extras=extras)
                         changes = True
                     elif action == 'added' and user_id not in users[group_id]:
                         api.group.add_user(groupname=group_id, username=user_id)
+                        extras = 'group_id={0} group_title={2} user_id={1}'.format(group_id, user_id,
+                                                                                   groups_voc.getTerm(group_id).title)
+                        fplog('manage_own_groups_added_user', extras=extras)
                         changes = True
         if changes:
             api.portal.show_message(message=self.successMessage, request=self.request)
