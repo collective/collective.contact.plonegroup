@@ -25,9 +25,11 @@ from z3c.form.validator import SimpleFieldValidator
 from z3c.form.widget import FieldWidget
 from zExceptions import Redirect
 from zope import schema
+from zope.component import getUtility
 from zope.interface import implements
 from zope.interface import Interface
 from zope.schema._bootstrapinterfaces import RequiredMissing
+from zope.schema.interfaces import IVocabularyFactory
 
 
 class DGFListField(schema.List):
@@ -263,6 +265,8 @@ class ManageOwnGroupUsers(EditForm):
         changes = False
         users = {}
         old_values = eval(data.pop('_old_values_'))
+        factory = getUtility(IVocabularyFactory, 'plone.app.vocabularies.Groups')
+        groups_voc = factory(self.context)
         for name in old_values:
             try:
                 new_value = data[name]  # If the field is not in the data, then go on to the next one
@@ -290,12 +294,14 @@ class ManageOwnGroupUsers(EditForm):
                         users[group_id] = [u.id for u in api.user.get_users(groupname=group_id)]
                     if action == 'removed' and user_id in users[group_id]:
                         api.group.remove_user(groupname=group_id, username=user_id)
-                        extras = 'group_id={0} user_id={1}'.format(group_id, user_id)
+                        extras = 'group_id={0} group_title={2} user_id={1}'.format(group_id, user_id,
+                                                                                   groups_voc.getTerm(group_id).title)
                         fplog('manage_own_groups_removed_user', extras=extras)
                         changes = True
                     elif action == 'added' and user_id not in users[group_id]:
                         api.group.add_user(groupname=group_id, username=user_id)
-                        extras = 'group_id={0} user_id={1}'.format(group_id, user_id)
+                        extras = 'group_id={0} group_title={2} user_id={1}'.format(group_id, user_id,
+                                                                                   groups_voc.getTerm(group_id).title)
                         fplog('manage_own_groups_added_user', extras=extras)
                         changes = True
         if changes:
