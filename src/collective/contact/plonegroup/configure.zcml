@@ -14,6 +14,7 @@
     <include package=".upgrades" />
     <include package="plone.api" />
     <include package="collective.contact.core" />
+    <include package="imio.helpers" />
 
     <include file="subscribers.zcml" />
 
