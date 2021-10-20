@@ -4,8 +4,9 @@ Changelog
 1.37 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Corrected cache invalidation bug, that wasn't done when a previously deactivated
+  organisation is reactivated. Invalidate now wider.
+  [sgeulette]
 
 1.36 (2021-08-27)
 -----------------

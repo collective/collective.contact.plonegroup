@@ -349,6 +349,7 @@ def detectContactPlonegroupChange(event):
         new_value = event.newValue or []
         old_value = event.oldValue or []
         if event.record.fieldName == 'organizations' and registry_orgs:
+            changes = True
             old_set = set(old_value)
             new_set = set(new_value)
             # we detect a new organization
@@ -362,12 +363,9 @@ def detectContactPlonegroupChange(event):
                     fct_orgs = fct_dic['fct_orgs']
                     if fct_orgs and orga_uid not in fct_orgs:
                         continue
-                    if addOrModifyGroup(orga, fct_dic['fct_id'], fct_dic['fct_title']):
-                        changes = True
-            # we detect a removed organization. We dont do anything on exsiting groups
-            if old_set.difference(new_set):
-                changes = True
+                    addOrModifyGroup(orga, fct_dic['fct_id'], fct_dic['fct_title'])
         elif event.record.fieldName == 'functions' and registry_orgs:
+            changes = True
             old_functions = {dic['fct_id']: {'fct_title': dic['fct_title'],
                                              'fct_orgs': dic['fct_orgs'],
                                              'enabled': dic['enabled']}
@@ -391,8 +389,7 @@ def detectContactPlonegroupChange(event):
                     if enabled is False:
                         continue
                     orga = uuidToObject(orga_uid)
-                    if addOrModifyGroup(orga, new_id, new_title):
-                        changes = True
+                    addOrModifyGroup(orga, new_id, new_title)
             # we detect a removed function
             # We may remove Plone groups as we checked before that every are empty
             removed_set = old_set.difference(new_set)
@@ -402,7 +399,6 @@ def detectContactPlonegroupChange(event):
                     plone_group = api.group.get(plone_group_id)
                     if plone_group:
                         api.group.delete(plone_group_id)
-                        changes = True
             # we detect existing functions for which 'fct_orgs' changed
             for new_id, new_function_infos in new_functions.items():
                 new_title = new_function_infos['fct_title']
@@ -412,8 +408,7 @@ def detectContactPlonegroupChange(event):
                     # we have to make sure Plone groups are created for every selected organizations
                     for orga_uid in registry_orgs:
                         orga = uuidToObject(orga_uid)
-                        if addOrModifyGroup(orga, new_id, new_title):
-                            changes = True
+                        addOrModifyGroup(orga, new_id, new_title)
                 else:
                     # fct_orgs changed, we remove every linked Plone groups
                     # except ones defined in new_orgs
@@ -421,15 +416,13 @@ def detectContactPlonegroupChange(event):
                         if enabled is True and orga_uid in new_orgs:
                             # make sure Plone group is created or updated if suffix title changed
                             orga = uuidToObject(orga_uid)
-                            if addOrModifyGroup(orga, new_id, new_title):
-                                changes = True
+                            addOrModifyGroup(orga, new_id, new_title)
                         else:
                             # make sure Plone group is deleted
                             plone_group_id = get_plone_group_id(orga_uid, new_id)
                             plone_group = api.group.get(plone_group_id)
                             if plone_group:
                                 api.group.delete(plone_group_id)
-                                changes = True
 
         if changes:
             invalidate_sopgv_cache()
