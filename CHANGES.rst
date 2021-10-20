@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.37 (unreleased)
+1.37 (2021-10-20)
 -----------------
 
 - Corrected cache invalidation bug, that wasn't done when a previously deactivated
