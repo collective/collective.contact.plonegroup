@@ -4,7 +4,8 @@ Changelog
 1.38 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fixed py3 errors
+  [fngaha]
 
 
 1.37 (2021-10-20)

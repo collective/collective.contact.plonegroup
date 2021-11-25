@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+import re
+from operator import attrgetter
+
+from Products.statusmessages.interfaces import IStatusMessage
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
+from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.config import get_registry_organizations
-from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.events import PlonegroupGroupCreatedEvent
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organizations
@@ -15,7 +19,6 @@ from collective.z3cform.datagridfield.registry import DictRow
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
 from imio.helpers.content import safe_encode
-from operator import attrgetter
 from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
@@ -26,7 +29,6 @@ from plone.memoize import ram
 from plone.memoize.interfaces import ICacheChooser
 from plone.registry.interfaces import IRecordModifiedEvent
 from plone.z3cform import layout
-from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zExceptions import Redirect
@@ -37,15 +39,13 @@ from zope.component.hooks import getSite
 from zope.container.interfaces import IContainerModifiedEvent
 from zope.container.interfaces import IObjectRemovedEvent
 from zope.event import notify
-from zope.interface import implements
 from zope.interface import Interface
 from zope.interface import Invalid
+from zope.interface import implementer
 from zope.interface import invariant
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-
-import re
 
 
 class IOrganizationSchema(Interface):
@@ -90,11 +90,11 @@ def voc_cache_key(method, self, context):
     return get_cachekey_volatile("%s.%s" % (self.__class__.__module__, self.__class__.__name__))
 
 
+@implementer(IVocabularyFactory)
 class BaseOrganizationServicesVocabulary(object):
     """
         Base vocabulary returning organizations from a particular root level.
     """
-    implements(IVocabularyFactory)
     valid_states = ('active',)
 
     def listSubOrganizations(self, terms, folder, parent_label=''):

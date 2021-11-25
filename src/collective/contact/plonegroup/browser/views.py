@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from operator import methodcaller
+
+from Products.CMFPlone import PloneMessageFactory as PMF
 from collective.contact.core import _ as _ccc
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_functions
@@ -13,9 +16,7 @@ from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.z3cform.datagridfield import DataGridField
 from collective.z3cform.datagridfield import DictRow
 from imio.helpers.security import fplog
-from operator import methodcaller
 from plone import api
-from Products.CMFPlone import PloneMessageFactory as PMF
 from z3c.form import button
 from z3c.form import field
 from z3c.form.form import EditForm
@@ -26,38 +27,40 @@ from z3c.form.widget import FieldWidget
 from zExceptions import Redirect
 from zope import schema
 from zope.component import getUtility
-from zope.interface import implements
 from zope.interface import Interface
+from zope.interface import implementer
 from zope.schema._bootstrapinterfaces import RequiredMissing
 from zope.schema.interfaces import IVocabularyFactory
 
 
+@implementer(IDGFListField)
 class DGFListField(schema.List):
-    implements(IDGFListField)
+    """"""
 
 
 def dgf_list_widget(field, request):
     return FieldWidget(field, DataGridField(request))
 
 
+@implementer(IGroupField)
 class GroupField(schema.Choice):
-    implements(IGroupField)
 
     def __init__(self, *args, **kwargs):
         kwargs['vocabulary'] = u''
         super(GroupField, self).__init__(*args, **kwargs)
 
 
+@implementer(IOrganizationField)
 class OrganizationField(schema.Choice):
-    implements(IOrganizationField)
 
     def __init__(self, *args, **kwargs):
         kwargs['vocabulary'] = u''
         super(OrganizationField, self).__init__(*args, **kwargs)
 
 
+@implementer(IDGFVocabularyField)
 class DGFVocabularyField(schema.Choice):
-    implements(IDGFVocabularyField)
+    """"""
 
 
 class IGroupsUsers(Interface):
