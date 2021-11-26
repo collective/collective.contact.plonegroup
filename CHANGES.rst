@@ -4,6 +4,9 @@ Changelog
 1.38 (unreleased)
 -----------------
 
+- Fixed errors dues to `plone.app.linkintegrity` upgrade since version 3.0.
+  No longer intercepts the request on manage_deleteObjects.
+  [fngaha]
 - Fixed py3 errors
   [fngaha]
 

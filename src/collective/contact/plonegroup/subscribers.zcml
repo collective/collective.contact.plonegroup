@@ -21,24 +21,6 @@
         />
 
     <subscriber
-        for=".interfaces.IPloneGroupContact
-             Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
-        handler=".subscribers.plonegroup_contact_transition"
-        />
-
-    <subscriber
-        for=".interfaces.IPloneGroupContact
-             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-        handler=".subscribers.referencedObjectRemoved"
-        />
-
-    <subscriber
-        for=".interfaces.IPloneGroupContact
-             OFS.interfaces.IObjectWillBeRemovedEvent"
-        handler=".subscribers.plonegroupOrganizationRemoved"
-        />
-
-    <subscriber
         for="Products.PluggableAuthService.interfaces.events.IGroupDeletedEvent"
         handler=".subscribers.group_deleted"
         />
