@@ -4,8 +4,8 @@ Changelog
 1.38 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- In `utils.get_organization` and `utils.get_organizations`, query catalog unrestricted.
+  [gbastien]
 
 1.37 (2021-10-20)
 -----------------
