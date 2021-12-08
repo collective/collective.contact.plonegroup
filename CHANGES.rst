@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.38 (unreleased)
+1.39 (unreleased)
 -----------------
 
 - Fixed errors dues to `plone.app.linkintegrity` upgrade since version 3.0.
@@ -10,6 +10,12 @@ Changelog
 - Fixed py3 errors
   [fngaha]
 
+
+1.38 (2021-11-26)
+-----------------
+
+- In `utils.get_organization` and `utils.get_organizations`, query catalog unrestricted.
+  [gbastien]
 
 1.37 (2021-10-20)
 -----------------

@@ -7,11 +7,11 @@ from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
 from collective.contact.plonegroup.config import set_registry_organizations
 from imio.helpers.content import uuidsToObjects
+from imio.helpers.content import uuidToObject
 from operator import attrgetter
 from operator import methodcaller
 from plone import api
 from plone.api.exc import GroupNotFoundError
-from plone.app.uuid.utils import uuidToObject
 from Products.CMFPlone.utils import base_hasattr
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
@@ -93,7 +93,7 @@ def get_organization(plone_group_id_or_org_uid, caching=True):
             caching = False
 
     if not org:
-        org = uuidToObject(organization_uid)
+        org = uuidToObject(organization_uid, unrestricted=True)
         if caching:
             cache[key] = org
 
@@ -157,7 +157,7 @@ def get_organizations(only_selected=True,
 
         # return org uids or org objects
         if the_objects:
-            orgs = uuidsToObjects(org_uids, ordered=True)
+            orgs = uuidsToObjects(org_uids, ordered=True, unrestricted=True)
         else:
             orgs = org_uids
 

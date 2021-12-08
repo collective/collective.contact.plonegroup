@@ -18,6 +18,7 @@ from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
+from imio.helpers.content import uuidToObject
 from imio.helpers.content import safe_encode
 from plone import api
 from plone.api.exc import InvalidParameterError
@@ -529,15 +530,6 @@ def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     return SimpleVocabulary(terms)
 
 
-def unrestrictedUuidToObject(uid):
-    portal = getSite()
-    pc = portal.portal_catalog
-    res = pc.unrestrictedSearchResults(UID=uid)
-    if res:
-        return res[0].getObject()
-    return None
-
-
 def getSelectedOrganizations(separator=' - ', first_index=1):
     """ Return a list of tuples (uid, title) """
     ret = []
@@ -546,7 +538,8 @@ def getSelectedOrganizations(separator=' - ', first_index=1):
     if api.user.is_anonymous():
         with api.env.adopt_roles(['Manager']):
             for orga_uid in registry_orgs:
-                title = unrestrictedUuidToObject(orga_uid).get_full_title(separator=separator, first_index=first_index)
+                title = uuidToObject(orga_uid, unrestricted=True).get_full_title(
+                    separator=separator, first_index=first_index)
                 ret.append((orga_uid, title))
     else:
         for orga_uid in registry_orgs:
