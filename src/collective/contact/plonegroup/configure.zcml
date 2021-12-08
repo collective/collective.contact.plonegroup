@@ -2,19 +2,21 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="collective.contact.plonegroup">
 
-    <i18n:registerTranslations directory="locales" />
+  <include package="collective.contact.core"/>
+
+  <i18n:registerTranslations directory="locales"/>
 
     <five:registerPackage package="." initialize=".initialize" />
 
-    <include package=".browser" />
-    <include package=".content" />
-    <include package=".upgrades" />
-    <include package="plone.api" />
-    <include package="collective.contact.core" />
-    <include package="imio.helpers" />
+  <include package=".browser"/>
+  <include package=".content"/>
+  <include package=".upgrades"/>
+  <include package="plone.api"/>
+  <include package="imio.helpers" />
 
     <include file="subscribers.zcml" />
 

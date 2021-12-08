@@ -10,7 +10,7 @@
 
     <subscriber
         for=".interfaces.IPloneGroupContact
-             zope.app.container.interfaces.IObjectMovedEvent"
+             zope.lifecycleevent.interfaces.IObjectMovedEvent"
         handler=".browser.settings.adaptPloneGroupDefinition"
         />
 

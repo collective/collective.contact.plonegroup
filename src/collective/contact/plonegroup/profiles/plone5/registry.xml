@@ -1,0 +1,9 @@
+<registry>
+  <records prefix="plone.resources/collective.contact.plonegroup"
+           interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+    <value key="js">++resource++collective.contact.plonegroup/plonegroup.js</value>
+    <value key="css">
+      <element>++resource++collective.contact.plonegroup/plonegroup.css</element>
+    </value>
+  </records>
+</registry>

@@ -81,6 +81,10 @@ Changelog
   [sgeulette]
 - Corrected table class name.
   [sgeulette]
+- Plone 5 compatible.
+  [thomasdesvenain]
+
+- Removed grok dependency.
 
 1.30 (2020-10-02)
 -----------------
@@ -290,6 +294,9 @@ Changelog
   default ids for `root directory` and `own organization` are used instead
   using a catalog query, it should be faster.
   [gbastien]
+- Plone 5 compatible.
+  [thomasdesvenain]
+- Removed grok dependency.
 
 1.13 (2019-01-11)
 -----------------
