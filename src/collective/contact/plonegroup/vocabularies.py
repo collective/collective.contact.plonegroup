@@ -2,8 +2,8 @@
 
 from operator import methodcaller
 
-from collective.contact.core.vocabulary import PositionTypes
-from collective.contact.core.vocabulary import get_vocabulary
+from collective.contact.core.vocabularies import PositionTypes
+from collective.contact.core.vocabularies import get_vocabulary
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.utils import get_all_suffixes

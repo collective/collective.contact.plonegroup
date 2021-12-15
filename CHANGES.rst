@@ -4,6 +4,9 @@ Changelog
 1.39 (unreleased)
 -----------------
 
+- Fix ModuleNotFoundError by using `collective.contact.core.vocabularies`
+  instead of `collective.contact.core.vocabulary`
+  [fngaha]
 - Fixed errors dues to `plone.app.linkintegrity` upgrade since version 3.0.
   No longer intercepts the request on manage_deleteObjects.
   [fngaha]
