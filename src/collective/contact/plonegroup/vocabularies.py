@@ -2,7 +2,6 @@
 
 from operator import methodcaller
 
-from collective.contact.core.vocabularies import PositionTypes
 from collective.contact.core.vocabularies import get_vocabulary
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
@@ -10,22 +9,22 @@ from collective.contact.plonegroup.utils import get_all_suffixes
 from plone import api
 from z3c.form.term import ChoiceTermsVocabulary
 from zope.component import getUtility
-from zope.interface import implementer
+from zope.interface import implementer, provider
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
-class PositionTypesVocabulary(PositionTypes):
-
-    def __call__(self, context):
-        res = super(PositionTypesVocabulary, self).__call__(context)
-        if not res:
-            portal = api.portal.get()
-            directory = portal.get(DEFAULT_DIRECTORY_ID)
-            if directory:
-                res = get_vocabulary(directory.position_types)
-        return res
+@provider(IVocabularyFactory)
+def PositionTypesVocabulary(context):
+    # res = PositionTypes(context)
+    res = context
+    if not res:
+        portal = api.portal.get()
+        directory = portal.get(DEFAULT_DIRECTORY_ID)
+        if directory:
+            res = get_vocabulary(directory.position_types)
+    return res
 
 
 @implementer(IVocabularyFactory)

@@ -5,7 +5,8 @@
 
     <!-- override PositionTypes from collective.contact.core -->
     <utility
+        component=".vocabularies.PositionTypesVocabulary"
         name="PositionTypes"
-        factory=".vocabularies.PositionTypesVocabulary" />
+    />
 
 </configure>

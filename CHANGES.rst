@@ -4,6 +4,8 @@ Changelog
 1.39 (unreleased)
 -----------------
 
+-  Fix `TypeError: Missing 'provides' attribute` by providing function utility instead of class
+  [fngaha]
 - Fix ModuleNotFoundError by using `collective.contact.core.vocabularies`
   instead of `collective.contact.core.vocabulary`
   [fngaha]
