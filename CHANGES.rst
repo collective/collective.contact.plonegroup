@@ -4,8 +4,8 @@ Changelog
 1.39 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Distinguished cached calls in vocabularies.
+  [sgeulette]
 
 1.38 (2021-11-26)
 -----------------

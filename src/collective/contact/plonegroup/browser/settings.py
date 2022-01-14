@@ -572,7 +572,7 @@ class SelectedOrganizationsElephantVocabulary(OwnOrganizationServicesVocabulary)
     """ Vocabulary of selected plonegroup-organizations services. """
 
     @ram.cache(voc_cache_key)
-    def __call__(self, context):
+    def SelectedOrganizationsElephantVocabulary__call__(self, context):
         vocab = super(SelectedOrganizationsElephantVocabulary, self).__call__(context)
         terms = vocab.by_value
         ordered_terms = []
@@ -587,14 +587,18 @@ class SelectedOrganizationsElephantVocabulary(OwnOrganizationServicesVocabulary)
         wrapped_vocab = wrap_vocabulary(ordered_vocab, hidden_terms=extra_uids)(context)
         return wrapped_vocab
 
+    __call__ = SelectedOrganizationsElephantVocabulary__call__
+
 
 class SortedSelectedOrganizationsElephantVocabulary(SelectedOrganizationsElephantVocabulary):
     """ Vocabulary of selected plonegroup-organizations services sorted on title. """
 
     @ram.cache(voc_cache_key)
-    def __call__(self, context):
+    def SortedSelectedOrganizationsElephantVocabulary__call__(self, context):
         wrapped_vocab = super(SortedSelectedOrganizationsElephantVocabulary, self).__call__(context)
         # sort by title
         sorted_vocab = sorted(wrapped_vocab.vocab, key=attrgetter('title'))
         wrapped_vocab.vocab = SimpleVocabulary(sorted_vocab)
         return wrapped_vocab
+
+    __call__ = SortedSelectedOrganizationsElephantVocabulary__call__
