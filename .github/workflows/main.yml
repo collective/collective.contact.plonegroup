@@ -1,0 +1,78 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python 2.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 2.7
+      - name: Setup Env
+        run: |
+          pip install -r requirements.txt coverage==5.3.1
+      - name: Cache eggs
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-eggs
+        with:
+          path: ~/buildout-cache/eggs
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: ${{ runner.os }}-test-${{ env.cache-name }}
+      - name: buildout
+        run: |
+          buildout -c ci.cfg annotate
+          buildout -c ci.cfg
+      - name: test
+        run: |
+          bin/test -t !robot
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python 2.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 2.7
+      - name: Setup Env
+        run: |
+          pip install -r requirements.txt coverage==5.3.1
+      - name: Cache eggs
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-eggs
+        with:
+          path: ~/buildout-cache/eggs
+          key: ${{ runner.os }}-coverage-${{ env.cache-name }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
+      - name: buildout
+        run: |
+          buildout -c ci.cfg
+      - name: code-analysis
+        run: |
+          bin/code-analysis
+      - name: test coverage
+        run: |
+          bin/coverage run bin/test -t !robot
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Coveralls
+        run: |
+          pip3 install -U pip setuptools --no-cache-dir
+          pip3 install -U "coveralls>=3.0.0" coverage==5.3.1 --no-cache-dir
+      - name: Publish to Coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          coveralls --service=github
