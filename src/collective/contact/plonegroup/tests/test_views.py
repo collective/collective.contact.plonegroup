@@ -99,10 +99,12 @@ class TestViews(IntegrationTestCase):
         self.assertListEqual(get_user_groups('dexter'), ['{}_observer'.format(self.uid)])
         self.assertListEqual(get_user_groups('debra'), [u'investigators'])
         # we add/remove users
-        data = {'_groups_': [dic for dic in content._groups_ if dic['user'] != 'debra'] +
-                            [{'group': u'investigators', 'user': 'dexter'}],
-                'observer': [dic for dic in content.observer if dic['user'] != 'dexter'] +
-                            [{'group': self.uid, 'user': 'debra'}],
+        data = {'_groups_': [dic for dic
+                             in content._groups_
+                             if dic['user'] != 'debra'] + [{'group': u'investigators', 'user': 'dexter'}],
+                'observer': [dic for dic
+                             in content.observer
+                             if dic['user'] != 'dexter'] + [{'group': self.uid, 'user': 'debra'}],
                 '_old_values_': content._old_values_}
         view.widgets.extract = lambda *a, **kw: (data, [])
         view.handleApply(view, 'apply')
