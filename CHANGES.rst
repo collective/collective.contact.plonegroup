@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.39 (unreleased)
+1.39 (2022-02-03)
 -----------------
 
 - Distinguished cached calls in vocabularies.
