@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.40 (unreleased)
+1.40 (2022-04-22)
 -----------------
 
 - Adapted the `PloneGroupUsersGroupsColumn` to display linked group also when
