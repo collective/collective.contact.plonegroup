@@ -239,11 +239,7 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
 
     def renderCell(self, item):
         """ """
-        plonegroup_organizations = get_registry_organizations()
         org_uid = item.UID
-        if org_uid not in plonegroup_organizations:
-            return "-"
-
         suffixes = get_all_suffixes(org_uid)
         group_ids = [get_plone_group_id(org_uid, suffix)
                      for suffix in suffixes]

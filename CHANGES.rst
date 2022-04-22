@@ -4,8 +4,10 @@ Changelog
 1.40 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Adapted the `PloneGroupUsersGroupsColumn` to display linked group also when
+  organization is not selected in plonegroup, this lets display linked Plone groups
+  of an organization that was selected then unselected.
+  [gbastien]
 
 1.39 (2022-02-03)
 -----------------
