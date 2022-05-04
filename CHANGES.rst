@@ -4,8 +4,8 @@ Changelog
 1.41 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added adapter with methods to check PloneGroupContact delete and transition.
+  [sgeulette]
 
 1.40 (2022-04-22)
 -----------------

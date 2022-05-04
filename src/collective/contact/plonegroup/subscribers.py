@@ -3,6 +3,7 @@
 from Acquisition import aq_get
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_organizations
+from collective.contact.plonegroup.interfaces import IPloneGroupContactChecks
 from collective.contact.plonegroup.utils import get_all_suffixes
 from config import PLONEGROUP_ORG
 from interfaces import INotPloneGroupContact
@@ -17,9 +18,11 @@ from Products.CMFPlone.utils import base_hasattr
 from Products.CMFPlone.utils import safe_unicode
 from Products.statusmessages.interfaces import IStatusMessage
 from zExceptions import Redirect
+from zope.component import adapts
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import alsoProvides
+from zope.interface import implements
 from zope.interface import Interface
 from zope.interface import noLongerProvides
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
@@ -36,15 +39,28 @@ except ImportError:
         pass
 
 
+class PloneGroupContactChecksAdapter(object):
+    implements(IPloneGroupContactChecks)
+    adapts(IPloneGroupContact)
+
+    def __init__(self, context):
+        self.context = context
+
+    def check_items_on_delete(self):
+        search_value_in_objects(self.context, self.context.UID(), p_types=[], type_fields={})
+
+    def check_items_on_transition(self):
+        search_value_in_objects(self.context, self.context.UID(), p_types=[], type_fields={})
+
+
 def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
-    """
-        Searching a value (reference to an object like id or uid) in fields of objects.
-        Parameters:
-            * s_obj : the object that is maybe referenced in another objects fields
-            * ref : the value to search in field
-            * p_types : portal_types that will be only searched
-            * type_fields : dict containing as key portal_type and as value a list of fields that must be searched.
-                            If a portal_type is not given, all fields will be searched
+    """Searching a value (reference to an object like id or uid) in fields of objects. Add breachs if found...
+
+    :param s_obj: the object that is maybe referenced in another objects fields
+    :param ref: the value to search in field
+    :param p_types: portal_types that will be only searched
+    :param type_fields: dict containing as key portal_type and as value a list of fields that must be searched.
+                        If a portal_type is not given, all fields will be searched
     """
     # we check all dexterity objects fields to see if ref is used in
     # we can't check only fields using plonegroup vocabulary because maybe another vocabulary name is used
@@ -68,7 +84,7 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
             fti = getUtility(IDexterityFTI, name=ptype)
             for name, fld in getFieldsInOrder(fti.lookupSchema()):
                 for iface in filter_interfaces:
-                    if iface.providedBy(fld):
+                    if iface.providedBy(fld) and name not in type_fields[ptype]:
                         type_fields[ptype].append(name)
                         break
             # also lookup behaviors
@@ -76,7 +92,7 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
                 behavior = getUtility(IBehavior, behavior_id).interface
                 for name, fld in getFieldsInOrder(behavior):
                     for iface in filter_interfaces:
-                        if iface.providedBy(fld):
+                        if iface.providedBy(fld) and name not in type_fields[ptype]:
                             type_fields[ptype].append(name)
                             break
         return type_fields[ptype]
@@ -103,7 +119,7 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
             return res
         return []
 
-    for brain in catalog.unrestrictedSearchResults(portal_types=p_types,
+    for brain in catalog.unrestrictedSearchResults(portal_type=p_types,
                                                    object_provides=IDexterityContent.__identifier__):
         obj = brain._unrestrictedGetObject()
         ptype = obj.portal_type
@@ -127,7 +143,8 @@ def plonegroupOrganizationRemoved(del_obj, event):
         # When deleting site, the portal is no more found...
         return
     if pp.site_properties.enable_link_integrity_checks:
-        search_value_in_objects(del_obj, del_obj.UID(), p_types=[], type_fields={})
+        adapted = IPloneGroupContactChecks(del_obj)
+        adapted.check_items_on_delete()
 
 
 def referencedObjectRemoved(obj, event):
@@ -146,7 +163,8 @@ def plonegroup_contact_transition(contact, event):
         if contact.UID() in get_registry_organizations():
             errors.append(_('This contact is selected in configuration'))
         elif pp.site_properties.enable_link_integrity_checks:
-            search_value_in_objects(contact, contact.UID(), p_types=[], type_fields={})
+            adapted = IPloneGroupContactChecks(contact)
+            adapted.check_items_on_transition()
             storage = ILinkIntegrityInfo(contact.REQUEST)
             breaches = storage.getIntegrityBreaches()
             if contact in breaches:
