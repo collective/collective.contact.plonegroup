@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.41 (unreleased)
+1.41 (2022-05-06)
 -----------------
 
 - Added adapter with methods to check PloneGroupContact delete and transition.
