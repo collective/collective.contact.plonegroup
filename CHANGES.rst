@@ -5,6 +5,7 @@ Changelog
 -----------------
 
 - Escape user and group title in `DisplayGroupUsersView`.
+  Moreover fixed column to be not sortable.
   [gbastien]
 
 1.41 (2022-05-06)

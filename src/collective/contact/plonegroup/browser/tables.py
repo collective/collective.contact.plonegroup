@@ -240,6 +240,8 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
     header = _("Groups and users")
     weight = 5
     short = True
+    sort_index = -1
+    escape = False
 
     def renderCell(self, item):
         """ """
