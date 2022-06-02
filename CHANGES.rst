@@ -7,6 +7,8 @@ Changelog
 - Escape user and group title in `DisplayGroupUsersView`.
   Moreover fixed column to be not sortable.
   [gbastien]
+- Added `safe_utils.py` that will only include safe utils.
+  [gbastien]
 
 1.41 (2022-05-06)
 -----------------
