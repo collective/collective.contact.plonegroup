@@ -4,8 +4,8 @@ Changelog
 1.42 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Escape user and group title in `DisplayGroupUsersView`.
+  [gbastien]
 
 1.41 (2022-05-06)
 -----------------
