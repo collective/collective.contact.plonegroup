@@ -6,6 +6,9 @@ Changelog
 
 - In `utils.get_organization` and `utils.get_organizations`, query catalog unrestricted.
   [gbastien]
+- Removed `uuidToObject` imported from `plone.app.uuid` in `settings.py`,
+  we use `uuidToObject` from `imio.helpers`.
+  [gbastien]
 
 1.37 (2021-10-20)
 -----------------

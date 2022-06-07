@@ -21,7 +21,6 @@ from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
-from plone.app.uuid.utils import uuidToObject
 from plone.autoform.directives import widget
 from plone.memoize import ram
 from plone.memoize.interfaces import ICacheChooser
