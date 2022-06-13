@@ -1,7 +1,36 @@
 Changelog
 =========
 
-1.38 (unreleased)
+1.42 (unreleased)
+-----------------
+
+- Escape user and group title in `DisplayGroupUsersView`.
+  Moreover fixed column to be not sortable.
+  [gbastien]
+- Added `safe_utils.py` that will only include safe utils.
+  [gbastien]
+
+1.41 (2022-05-06)
+-----------------
+
+- Added adapter with methods to check PloneGroupContact delete and transition.
+  [sgeulette]
+
+1.40 (2022-04-22)
+-----------------
+
+- Adapted the `PloneGroupUsersGroupsColumn` to display linked group also when
+  organization is not selected in plonegroup, this lets display linked Plone groups
+  of an organization that was selected then unselected.
+  [gbastien]
+
+1.39 (2022-02-03)
+-----------------
+
+- Distinguished cached calls in vocabularies.
+  [sgeulette]
+
+1.38 (2021-11-26)
 -----------------
 
 - In `utils.get_organization` and `utils.get_organizations`, query catalog unrestricted.

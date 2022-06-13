@@ -63,4 +63,6 @@
         factory=".vocabularies.DGFVocabularyTerms"
         />
 
+    <adapter factory=".subscribers.PloneGroupContactChecksAdapter" />
+
 </configure>

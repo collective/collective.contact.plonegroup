@@ -20,6 +20,8 @@ from Products.Five import BrowserView
 from zope.cachedescriptors.property import CachedProperty
 from zope.i18n import translate
 
+import html
+
 
 class SubOrganizationsTable(ExtendedCSSTable):
     """Table that displays templates info."""
@@ -165,7 +167,7 @@ class DisplayGroupUsersView(BrowserView):
             splitted = group_title.split('(')
             if len(splitted) > 1:
                 group_title = group_title.split('(')[-1][:-1]
-        return group_title
+        return html.escape(group_title)
 
     def _get_groups_and_members(self, group, index=0, keep_subgroups=False):
         """ """
@@ -210,8 +212,10 @@ class DisplayGroupUsersView(BrowserView):
         for index, principal in self._get_groups_and_members(group, keep_subgroups=self.is_manager):
             # member may be a user or group
             isGroup = base_hasattr(principal, 'isGroup') and principal.isGroup() or 0
-            principal_title = principal.getProperty('fullname') or \
-                principal.getProperty('title') or principal.getId()
+            principal_title = html.escape(
+                principal.getProperty('fullname') or
+                principal.getProperty('title') or
+                principal.getId())
             if self.is_manager:
                 principal_title = principal_title + " ({0})".format(principal.id)
             principal_title = "<div class='user-or-group user-or-group-level-{0}'>{1}</div>".format(
@@ -236,14 +240,12 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
     header = _("Groups and users")
     weight = 5
     short = True
+    sort_index = -1
+    escape = False
 
     def renderCell(self, item):
         """ """
-        plonegroup_organizations = get_registry_organizations()
         org_uid = item.UID
-        if org_uid not in plonegroup_organizations:
-            return "-"
-
         suffixes = get_all_suffixes(org_uid)
         group_ids = [get_plone_group_id(org_uid, suffix)
                      for suffix in suffixes]
