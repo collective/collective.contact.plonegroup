@@ -11,6 +11,8 @@ Changelog
   [gbastien]
 - Corrected error in search: do not pass empty portal_type criteria.
   [sgeulette]
+- Added parameter escaped=True in `voc_selected_org_suffix_users` function
+  [sgeulette]
 
 1.41 (2022-05-06)
 -----------------
