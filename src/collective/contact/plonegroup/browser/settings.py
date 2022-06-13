@@ -14,8 +14,8 @@ from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
-from imio.helpers.content import uuidToObject
 from imio.helpers.content import safe_encode
+from imio.helpers.content import uuidToObject
 from operator import attrgetter
 from plone import api
 from plone.api.exc import InvalidParameterError
