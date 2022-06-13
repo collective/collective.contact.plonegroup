@@ -2,5 +2,6 @@
 include =
     src/collective/contact/plonegroup/*
 omit =
+    */upgrade*
     */test*
     */__init__.py
