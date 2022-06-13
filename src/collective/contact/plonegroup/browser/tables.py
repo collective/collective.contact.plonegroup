@@ -212,10 +212,7 @@ class DisplayGroupUsersView(BrowserView):
         for index, principal in self._get_groups_and_members(group, keep_subgroups=self.is_manager):
             # member may be a user or group
             isGroup = base_hasattr(principal, 'isGroup') and principal.isGroup() or 0
-            principal_title = html.escape(
-                principal.getProperty('fullname') or
-                principal.getProperty('title') or
-                principal.getId())
+            principal_title = html.escape(principal.getProperty('fullname') or principal.getProperty('title') or principal.getId())
             if self.is_manager:
                 principal_title = principal_title + " ({0})".format(principal.id)
             principal_title = "<div class='user-or-group user-or-group-level-{0}'>{1}</div>".format(

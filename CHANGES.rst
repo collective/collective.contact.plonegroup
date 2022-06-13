@@ -9,6 +9,8 @@ Changelog
   [gbastien]
 - Added `safe_utils.py` that will only include safe utils.
   [gbastien]
+- Corrected error in search: do not pass empty portal_type criteria.
+  [sgeulette]
 
 1.41 (2022-05-06)
 -----------------
