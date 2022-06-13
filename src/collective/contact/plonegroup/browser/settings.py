@@ -15,12 +15,12 @@ from collective.z3cform.datagridfield.registry import DictRow
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
 from imio.helpers.content import safe_encode
+from imio.helpers.content import uuidToObject
 from operator import attrgetter
 from plone import api
 from plone.api.exc import InvalidParameterError
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
-from plone.app.uuid.utils import uuidToObject
 from plone.autoform.directives import widget
 from plone.memoize import ram
 from plone.memoize.interfaces import ICacheChooser

@@ -177,8 +177,8 @@ def get_all_suffixes(org_uid=None, only_enabled=True):
     return [function['fct_id']
             for function
             in functions
-            if (not only_enabled or function['enabled']) and (
-                    not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs'])]
+            if (not only_enabled or function['enabled']) and
+               (not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs'])]
 
 
 def get_selected_org_suffix_users(org_uid, suffixes):
