@@ -119,8 +119,10 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
             return res
         return []
 
-    for brain in catalog.unrestrictedSearchResults(portal_type=p_types,
-                                                   object_provides=IDexterityContent.__identifier__):
+    criterias = {'object_provides': IDexterityContent.__identifier__}
+    if p_types:
+        criterias['portal_type'] = p_types
+    for brain in catalog.unrestrictedSearchResults(**criterias):
         obj = brain._unrestrictedGetObject()
         ptype = obj.portal_type
         for attr in list_fields(ptype):
