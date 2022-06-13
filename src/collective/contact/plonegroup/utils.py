@@ -6,6 +6,7 @@ from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
 from collective.contact.plonegroup.config import set_registry_organizations
+from html import escape
 from imio.helpers.content import uuidsToObjects
 from imio.helpers.content import uuidToObject
 from operator import attrgetter
@@ -200,7 +201,7 @@ def get_selected_org_suffix_users(org_uid, suffixes):
     return org_members
 
 
-def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None):
+def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None, escaped=True):
     """Return users vocabulary that belongs to suffixed groups related to selected organization.
     :param org_uid: organization uid
     :param suffixes: suffixes to be considered
@@ -212,16 +213,19 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None):
     terms = []
     # only add to vocabulary users with these functions in the organization
     for member in sorted(get_selected_org_suffix_users(org_uid, suffixes), key=methodcaller('getUserName')):
+        fullname = member.getUser().getProperty('fullname')
+        if escaped:
+            fullname = escape(fullname)
         if member == first_member:
             terms.insert(0, SimpleTerm(
                 value=member.getUserName(),  # login
                 token=member.getId(),  # id
-                title=member.getUser().getProperty('fullname') or member.getUserName()))
+                title=fullname or member.getUserName()))
         else:
             terms.append(SimpleTerm(
                 value=member.getUserName(),  # login
                 token=member.getId(),  # id
-                title=member.getUser().getProperty('fullname') or member.getUserName()))  # title
+                title=fullname or member.getUserName()))  # title
     if first_member is None:
         terms.sort(key=attrgetter('title'))
     else:
