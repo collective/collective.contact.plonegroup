@@ -1,8 +1,8 @@
-.. image:: https://secure.travis-ci.org/collective/collective.contact.plonegroup.png
-    :target: http://travis-ci.org/collective/collective.contact.plonegroup
+.. image:: https://github.com/collective/collective.contact.plonegroup/actions/workflows/main.yml/badge.svg
+   :target: https://github.com/collective/collective.contact.plonegroup/actions/workflows/main.yml
 
-.. image:: https://coveralls.io/repos/github/collective/collective.contact.plonegroup/badge.svg?branch=master
-    :target: https://coveralls.io/github/collective/collective.contact.plonegroup?branch=master
+.. image:: https://coveralls.io/repos/collective/collective.contact.plonegroup/badge.png?branch=master
+   :target: https://coveralls.io/r/collective/collective.contact.plonegroup?branch=master
 
 =============================
 collective.contact.plonegroup
