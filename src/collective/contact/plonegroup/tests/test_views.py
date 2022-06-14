@@ -127,13 +127,17 @@ class TestViews(IntegrationTestCase):
         self.assertRaises(Redirect, view.handleApply, view, 'apply')
 
     def test_display_group_users(self):
-        view = self.portal.restrictedTraverse('display-group-users')
+        # add user "dexter" to dep1 observer Plone group
         observer = get_plone_group_id(self.dep1.UID(), 'observer')
+        api.group.add_user(groupname=observer, username="dexter")
+        view = self.portal.restrictedTraverse('display-group-users')
         self.assertTrue("group.png" in view(group_ids=[observer]))
         # when using "*", every groups are displayed
         every_groups = view(group_ids=self.uid + "*")
         self.assertTrue("Department 1 (Observers)" in every_groups)
         self.assertTrue("Department 1 (Director)" in every_groups)
+        # with parameter "short"
+        self.assertTrue(view(group_ids=self.uid + "*", short=True))
         # when called on an organization that is not selected in plonegroup
         not_selected_org = view(group_ids=self.dep2.UID() + "*")
         self.assertTrue("Nothing." in not_selected_org)
