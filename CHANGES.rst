@@ -13,6 +13,11 @@ Changelog
   [sgeulette]
 - Added parameter escaped=True in `voc_selected_org_suffix_users` function
   [sgeulette]
+- Fixed `@@display-group-users` when organization is not selected in plonegroup
+  so there is no linked Plone groups, added tests for it and the
+  `@@suborganizations` view (z3ctable displaying organizations contained in
+  another organization).
+  [gbastien]
 
 1.41 (2022-05-06)
 -----------------

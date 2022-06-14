@@ -28,4 +28,7 @@
                   i18n:translate="">No user was found in this group.</span>
         </tal:users>
     </tal:loop>
+    <p class="discreet" tal:condition="python: not view.groups" i18n:translate="">
+      Nothing.
+    </p>
 </div>

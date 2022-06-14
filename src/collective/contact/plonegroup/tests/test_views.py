@@ -9,6 +9,7 @@ from collective.contact.plonegroup.config import set_registry_groups_mgt
 from collective.contact.plonegroup.config import set_registry_organizations
 from collective.contact.plonegroup.testing import IntegrationTestCase
 from collective.contact.plonegroup.utils import get_own_organization
+from collective.contact.plonegroup.utils import get_plone_group_id
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.registry.interfaces import IRegistry
@@ -22,7 +23,7 @@ class TestViews(IntegrationTestCase):
         """Custom shared utility setup for tests."""
         self.portal = self.layer['portal']
         # Organizations creation
-        self.portal.invokeFactory('directory', DEFAULT_DIRECTORY_ID)
+        self.portal.invokeFactory('directory', DEFAULT_DIRECTORY_ID, organization_levels=[])
         self.portal[DEFAULT_DIRECTORY_ID].invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
         self.own_orga = get_own_organization()
         self.dep1 = api.content.create(
@@ -124,3 +125,26 @@ class TestViews(IntegrationTestCase):
                 '_old_values_': content._old_values_}
         view.widgets.extract = lambda *a, **kw: (data, [])
         self.assertRaises(Redirect, view.handleApply, view, 'apply')
+
+    def test_display_group_users(self):
+        view = self.portal.restrictedTraverse('display-group-users')
+        observer = get_plone_group_id(self.dep1.UID(), 'observer')
+        self.assertTrue("group.png" in view(group_ids=[observer]))
+        # when using "*", every groups are displayed
+        every_groups = view(group_ids=self.uid + "*")
+        self.assertTrue("Department 1 (Observers)" in every_groups)
+        self.assertTrue("Department 1 (Director)" in every_groups)
+        # when called on an organization that is not selected in plonegroup
+        not_selected_org = view(group_ids=self.dep2.UID() + "*")
+        self.assertTrue("Nothing." in not_selected_org)
+
+    def test_suborganizations(self):
+        own_org = get_own_organization()
+        view = own_org.restrictedTraverse('@@suborganizations')
+        rendered = view()
+        self.assertTrue("actionspanel" in rendered)
+        self.assertTrue(self.dep1.absolute_url() in rendered)
+        self.assertTrue(self.dep2.absolute_url() in rendered)
+        # does not fail to render on an organization containing no organization
+        view = self.dep1.restrictedTraverse('@@suborganizations')
+        self.assertTrue('There is no organizations in this organization.' in view())

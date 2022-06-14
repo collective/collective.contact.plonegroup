@@ -156,7 +156,13 @@ class DisplayGroupUsersView(BrowserView):
                              for suffix in suffixes]
             else:
                 group_ids = [group_ids]
-        self.groups = [api.group.get(tmp_group_id) for tmp_group_id in group_ids]
+        # be defensive in case we try to get suffixes for an organization
+        # that is not selected in plonegroup
+        self.groups = []
+        for tmp_group_id in group_ids:
+            group = api.group.get(tmp_group_id)
+            if group:
+                self.groups.append(group)
         return self.index()
 
     def group_title(self, group):

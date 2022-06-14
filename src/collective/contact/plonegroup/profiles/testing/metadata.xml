@@ -3,5 +3,6 @@
   <version>1</version>
   <dependencies>
     <dependency>profile-collective.contact.plonegroup:default</dependency>
+    <dependency>profile-imio.actionspanel:default</dependency>
   </dependencies>
 </metadata>

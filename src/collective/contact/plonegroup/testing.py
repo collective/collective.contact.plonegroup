@@ -11,6 +11,7 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.testing import z2
+from zope.globalrequest import setLocal
 
 import collective.contact.plonegroup
 import unittest
@@ -29,6 +30,10 @@ class CollectiveContactPlonegroupLayer(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         """Set up Plone."""
+        # necessary for collective.fingerpointing used
+        # when installing "collective.documentgenerator:demo"
+        setLocal('request', portal.REQUEST)
+
         # Install into Plone site using portal_setup
         applyProfile(portal, 'collective.contact.plonegroup:testing')
 

@@ -6,6 +6,8 @@
   <include file="configure.zcml" />
   <includeOverrides file="overrides.zcml" />
 
+  <include package="imio.actionspanel" />
+  <include package="imio.prettylink" />
   <include package="ecreall.helpers.testing" />
 
   <genericsetup:registerProfile
