@@ -181,6 +181,24 @@ def get_all_suffixes(org_uid=None, only_enabled=True):
                (not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs'])]
 
 
+def get_suffixed_groups(suffixes, ids_only=False):
+    """Get groups suffixed by one of given suffixes
+
+    :param suffixes: suffixes list
+    :param ids_only: boolean
+    :return: groups or ids
+    """
+    ret = []
+    for group in api.group.get_groups():
+        for suffix in suffixes:
+            if group.id.endswith('_{}'.format(suffix)):
+                if ids_only:
+                    ret.append(group.id)
+                else:
+                    ret.append(group)
+    return ret
+
+
 def get_selected_org_suffix_users(org_uid, suffixes):
     """
         Get users that belongs to suffixed groups related to selected organization.

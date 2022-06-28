@@ -4,8 +4,8 @@ Changelog
 1.43 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `utils.get_suffixed_groups`.
+  [sgeulette]
 
 1.42 (2022-06-14)
 -----------------

@@ -16,6 +16,7 @@ from collective.contact.plonegroup.utils import get_plone_group
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_plone_groups
 from collective.contact.plonegroup.utils import get_selected_org_suffix_users
+from collective.contact.plonegroup.utils import get_suffixed_groups
 from collective.contact.plonegroup.utils import organizations_with_suffixes
 from collective.contact.plonegroup.utils import select_org_for_function
 from collective.contact.plonegroup.utils import select_organization
@@ -193,6 +194,15 @@ class TestUtils(IntegrationTestCase):
         self.assertIsNone(get_own_organization_path(default=True))
         self.assertIsNone(get_own_organization_path(default=False))
         self.assertEqual(get_own_organization_path(not_found_value='unfound'), 'unfound')
+
+    def test_get_suffixed_groups(self):
+        groups = api.group.get_groups()
+        self.assertEqual(len(groups), 6)  # 4 plone groups
+        self.assertEqual(len(get_suffixed_groups(['director'])), 1)
+        self.assertEqual(len(get_suffixed_groups(['observer'])), 1)
+        self.assertEqual(len(get_suffixed_groups(['unknown'])), 0)
+        self.assertNotIsInstance(get_suffixed_groups(['director'])[0], str)
+        self.assertIsInstance(get_suffixed_groups(['director'], ids_only=True)[0], str)
 
     def test_select_org_for_function(self):
         """ """
