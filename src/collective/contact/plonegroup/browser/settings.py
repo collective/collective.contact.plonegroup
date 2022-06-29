@@ -397,7 +397,8 @@ def detectContactPlonegroupChange(event):
                 for orga_uid in get_organizations(only_selected=False, the_objects=False):
                     plone_group_id = get_plone_group_id(orga_uid, removed_id)
                     plone_group = api.group.get(plone_group_id)
-                    if plone_group:
+                    # we check if group is empty because the function removal can be done programmatically
+                    if plone_group and not plone_group.getMemberIds():
                         api.group.delete(plone_group_id)
             # we detect existing functions for which 'fct_orgs' changed
             for new_id, new_function_infos in new_functions.items():

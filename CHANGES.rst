@@ -6,6 +6,8 @@ Changelog
 
 - Added `utils.get_suffixed_groups`.
   [sgeulette]
+- Do not delete a group (after a function removal) if not empty
+  [sgeulette]
 
 1.42 (2022-06-14)
 -----------------
