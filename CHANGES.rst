@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.43 (unreleased)
+1.43 (2022-07-01)
 -----------------
 
 - Added `utils.get_suffixed_groups`.
