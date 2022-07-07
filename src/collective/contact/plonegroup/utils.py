@@ -7,6 +7,7 @@ from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
 from collective.contact.plonegroup.config import set_registry_organizations
 from html import escape
+from imio.helpers.content import get_user_fullname
 from imio.helpers.content import uuidsToObjects
 from imio.helpers.content import uuidToObject
 from operator import attrgetter
@@ -230,7 +231,8 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None, escaped=
     """Return users vocabulary that belongs to suffixed groups related to selected organization.
     :param org_uid: organization uid
     :param suffixes: suffixes to be considered
-    :param first_member: username to be put first in vocabulary
+    :param first_member: user to be put first in vocabulary
+    :param escaped: escape fullname to avoid xss
     :return: users vocabulary
     """
     if not org_uid or org_uid == u'--NOVALUE--':
@@ -252,6 +254,54 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None, escaped=
                 token=member.getId(),  # id
                 title=fullname or member.getUserName()))  # title
     if first_member is None:
+        terms.sort(key=attrgetter('title'))
+    else:
+        terms[1:] = sorted(terms[1:], key=attrgetter('title'))
+    return SimpleVocabulary(terms)
+
+
+def get_selected_org_suffix_principal_ids(org_uid, suffixes):
+    """Get principals ids that belongs to suffixed groups related to selected organization (can be users and/or groups).
+
+    :param org_uid: uid of the organization
+    :param suffixes: list of suffixes
+    :return: list of principal ids
+    """
+    principal_ids = []
+    gpm = api.portal.get_tool('acl_users').source_groups._group_principal_map
+    # only add to vocabulary users with these functions in the organization
+    for function_id in suffixes:
+        groupname = "{}_{}".format(org_uid, function_id)
+        for principal in gpm.get(groupname, []):
+            if principal not in principal_ids:
+                principal_ids.append(principal)
+    return principal_ids
+
+
+def voc_selected_org_suffix_userids(org_uid, suffixes, first_userid=None, escaped=True):
+    """Return users vocabulary that belongs to suffixed groups related to selected organization.
+
+    :param org_uid: organization uid
+    :param suffixes: suffixes to be considered
+    :param first_userid: userid to be put first in vocabulary
+    :param escaped: escape fullname to avoid xss
+    :return: users vocabulary
+    """
+    if not org_uid or org_uid == u'--NOVALUE--':
+        return SimpleVocabulary([])
+    terms = []
+    # only add to vocabulary users with these functions in the organization
+    for pid in get_selected_org_suffix_principal_ids(org_uid, suffixes):
+        fullname = get_user_fullname(pid, none_if_no_user=True)
+        if fullname is None:
+            continue  # group or unfound user
+        if escaped:
+            fullname = escape(fullname)
+        if pid == first_userid:
+            terms.insert(0, SimpleTerm(value=pid, title=fullname))
+        else:
+            terms.append(SimpleTerm(value=pid, title=fullname))
+    if first_userid is None:
         terms.sort(key=attrgetter('title'))
     else:
         terms[1:] = sorted(terms[1:], key=attrgetter('title'))

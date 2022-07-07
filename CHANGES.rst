@@ -8,6 +8,9 @@ Changelog
   `only_in_own_org=True` that will make sure that given `org_uid` is an
   organization inside own organization.
   [gbastien ]
+- Added `get_selected_org_suffix_principal_ids` and `voc_selected_org_suffix_userids`
+  to work only with group and user ids
+  [sgeulette]
 
 1.43 (2022-07-01)
 -----------------

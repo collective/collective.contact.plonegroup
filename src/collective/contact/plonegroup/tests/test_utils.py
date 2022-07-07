@@ -15,11 +15,13 @@ from collective.contact.plonegroup.utils import get_own_organization_path
 from collective.contact.plonegroup.utils import get_plone_group
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_plone_groups
+from collective.contact.plonegroup.utils import get_selected_org_suffix_principal_ids
 from collective.contact.plonegroup.utils import get_selected_org_suffix_users
 from collective.contact.plonegroup.utils import get_suffixed_groups
 from collective.contact.plonegroup.utils import organizations_with_suffixes
 from collective.contact.plonegroup.utils import select_org_for_function
 from collective.contact.plonegroup.utils import select_organization
+from collective.contact.plonegroup.utils import voc_selected_org_suffix_userids
 from collective.contact.plonegroup.utils import voc_selected_org_suffix_users
 from plone import api
 from plone.app.testing import TEST_USER_ID
@@ -103,6 +105,41 @@ class TestUtils(IntegrationTestCase):
         self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, [u'director'],
                              first_member=api.user.get(username='user1'))],
                              ['user1', 'user2', TEST_USER_NAME])
+
+    def test_get_selected_org_suffix_principal_ids(self):
+        self.assertListEqual(get_selected_org_suffix_principal_ids(self.uid, []), [])
+        self.assertListEqual(get_selected_org_suffix_principal_ids(self.uid, ['director']),
+                             [TEST_USER_ID])
+        # Groups are also listed
+        self.portal.portal_groups.addPrincipalToGroup('Reviewers', '%s_director' % self.uid)
+        self.assertListEqual(get_selected_org_suffix_principal_ids(self.uid, ['director']),
+                             ['Reviewers', TEST_USER_ID])
+
+    def test_voc_selected_org_suffix_userids(self):
+        self.assertEqual(voc_selected_org_suffix_userids(None, []).by_token, {})
+        self.assertEqual(voc_selected_org_suffix_userids(u'--NOVALUE--', []).by_token, {})
+        self.assertEqual(voc_selected_org_suffix_userids(self.uid, []).by_token, {})
+        test_user = api.user.get(username=TEST_USER_NAME)
+        test_user.setMemberProperties({'fullname': 'Test User'})
+        self.assertEqual(test_user.getProperty('fullname'), 'Test User')
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, ['director'])],
+                             [TEST_USER_ID])
+        api.user.create(username='user1', email='t@t.be', properties={'fullname': 'User A'})
+        api.user.create(username='user2', email='t@t.be', properties={'fullname': 'User B'})
+        api.group.add_user(groupname='%s_director' % self.uid, username='user1')
+        api.group.add_user(groupname='%s_director' % self.uid, username='user2')
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, [u'director'])],
+                             [TEST_USER_ID, 'user1', 'user2'])
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, [u'director'],
+                             first_userid='user1')],
+                             ['user1', TEST_USER_ID, 'user2'])
+        # well ordered by fullname
+        test_user.setMemberProperties({'fullname': 'User Test'})
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, [u'director'])],
+                             ['user1', 'user2', TEST_USER_ID])
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, [u'director'],
+                             first_userid='user1')],
+                             ['user1', 'user2', TEST_USER_ID])
 
     def test_get_plone_group_id(self):
         self.assertEqual(get_plone_group_id('groupuid', 'suffix'), 'groupuid_suffix')
