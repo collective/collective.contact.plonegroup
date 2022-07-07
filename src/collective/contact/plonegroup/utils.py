@@ -73,30 +73,36 @@ def get_plone_groups(org_uid, ids_only=False, suffixes=[]):
     return plone_groups
 
 
-def get_organization(plone_group_id_or_org_uid, caching=True):
+def get_organization(plone_group_id_or_org_uid, only_in_own_org=True, caching=True):
     """
         Return organization corresponding to given plone_group_id_or_org_uid.
-        We can receive either a plone_grou_id or an org_uid.
+        We can receive either a plone_group_id or an org_uid.
+        If p_only_in_own_org=True then we cross with get_organizations to ensure
+        that given p_plone_group_id_or_org_uid is an org in own_org.
     """
     # there is no '_' in organization UID so when receiving a Plone group id,
     # we are sure that first part is the organization UID
-    organization_uid = plone_group_id_or_org_uid.split('_')[0]
+    org_uid = plone_group_id_or_org_uid.split('_')[0]
 
     org = None
     if caching:
         request = getRequest()
         if request:
             # in some cases like in tests, request can not be retrieved
-            key = "plonegroup-utils-get_organization-{0}".format(organization_uid)
+            key = "plonegroup-utils-get_organization-{0}".format(org_uid)
             cache = IAnnotations(request)
             org = cache.get(key, None)
         else:
             caching = False
 
     if not org:
-        org = uuidToObject(organization_uid, unrestricted=True)
-        if caching:
-            cache[key] = org
+        if (only_in_own_org and
+            org_uid in get_organizations(
+                only_selected=False, the_objects=False, caching=caching)) or \
+           not only_in_own_org:
+            org = uuidToObject(org_uid, unrestricted=True)
+            if caching:
+                cache[key] = org
 
     return org
 

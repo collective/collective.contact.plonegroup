@@ -4,8 +4,10 @@ Changelog
 1.44 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Warning, changed behavior of `utils.get_organization`, added parameter
+  `only_in_own_org=True` that will make sure that given `org_uid` is an
+  organization inside own organization.
+  [gbastien ]
 
 1.43 (2022-07-01)
 -----------------
