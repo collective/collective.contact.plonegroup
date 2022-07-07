@@ -55,6 +55,12 @@ class TestUtils(IntegrationTestCase):
                                  'fct_management': False,
                                  'enabled': True}, ])
         api.group.add_user(groupname='%s_director' % self.uid, username=TEST_USER_ID)
+        # create an organization outside PLONEGROUP_ORG
+        self.outside_org = api.content.create(
+            container=self.portal[DEFAULT_DIRECTORY_ID],
+            type='organization',
+            id='outside_org',
+            title='Outside organization')
 
     def test_organizations_with_suffixes(self):
         class Dum(object):
@@ -120,6 +126,10 @@ class TestUtils(IntegrationTestCase):
         # get_organization may receive a plone_group_id or an organization uid
         self.assertEqual(get_organization(suffixed_org), self.dep1)
         self.assertEqual(get_organization(self.uid), self.dep1)
+        # by default it is not possible to get an organization outside PLONEGROUP_ORG
+        outside_org_uid = self.outside_org.UID()
+        self.assertIsNone(get_organization(outside_org_uid))
+        self.assertEqual(get_organization(outside_org_uid, only_in_own_org=False), self.outside_org)
 
     def test_get_organizations(self):
         # only_selected

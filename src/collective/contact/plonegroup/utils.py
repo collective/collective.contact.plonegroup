@@ -89,7 +89,8 @@ def get_organization(plone_group_id_or_org_uid, only_in_own_org=True, caching=Tr
         request = getRequest()
         if request:
             # in some cases like in tests, request can not be retrieved
-            key = "plonegroup-utils-get_organization-{0}".format(org_uid)
+            key = "plonegroup-utils-get_organization-{0}-{1}".format(
+                org_uid, only_in_own_org)
             cache = IAnnotations(request)
             org = cache.get(key, None)
         else:
