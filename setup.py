@@ -50,7 +50,7 @@ setup(
         'collective.contact.core',
         'collective.eeafaceted.z3ctable',
         'collective.elephantvocabulary',
-        'imio.helpers > 0.62'
+        'imio.helpers > 0.61'
     ],
     extras_require={
         'test': [
