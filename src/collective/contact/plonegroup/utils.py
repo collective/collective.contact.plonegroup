@@ -7,6 +7,7 @@ from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
 from collective.contact.plonegroup.config import set_registry_organizations
 from html import escape
+from imio.helpers.cache import get_users_in_plone_groups
 from imio.helpers.content import get_user_fullname
 from imio.helpers.content import uuidsToObjects
 from imio.helpers.content import uuidToObject
@@ -159,8 +160,7 @@ def get_organizations(only_selected=True,
             filtered_orgs = []
             for org_uid in org_uids:
                 plone_group_id = get_plone_group_id(org_uid, suffix=not_empty_suffix)
-                plone_group = api.group.get(plone_group_id)
-                if plone_group and plone_group.getMemberIds():
+                if get_users_in_plone_groups(group_id=plone_group_id):
                     filtered_orgs.append(org_uid)
             org_uids = filtered_orgs
 

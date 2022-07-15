@@ -11,6 +11,8 @@ Changelog
 - Added `get_selected_org_suffix_principal_ids` and `voc_selected_org_suffix_userids`
   to work only with group and user ids
   [sgeulette]
+- Used cached method `get_users_in_plone_groups` from imio.helpers
+  [sgeulette]
 
 1.43 (2022-07-01)
 -----------------
