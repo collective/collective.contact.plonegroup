@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.44 (unreleased)
+1.44 (2022-08-19)
 -----------------
 
 - Warning, changed behavior of `utils.get_organization`, added parameter
