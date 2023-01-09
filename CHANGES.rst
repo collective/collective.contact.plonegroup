@@ -4,8 +4,9 @@ Changelog
 1.45 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Avoid useless variable initialization in `utils.get_plone_group`,
+  do everything in one line.
+  [gbastien]
 
 1.44 (2022-08-19)
 -----------------

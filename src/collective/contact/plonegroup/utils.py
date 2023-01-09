@@ -53,9 +53,7 @@ def get_plone_group(prefix, suffix):
     """
         Return Plone group corresponding to prefix/suffix.
     """
-    plone_group_id = get_plone_group_id(prefix, suffix)
-    plone_group = api.group.get(plone_group_id)
-    return plone_group
+    return api.group.get(get_plone_group_id(prefix, suffix))
 
 
 def get_plone_groups(org_uid, ids_only=False, suffixes=[]):
