@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.45 (unreleased)
+1.45 (2023-02-27)
 -----------------
 
 - Avoid useless variable initialization in `utils.get_plone_group`,
