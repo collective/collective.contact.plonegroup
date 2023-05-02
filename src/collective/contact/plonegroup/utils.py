@@ -26,7 +26,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 def organizations_with_suffixes(groups, suffixes, group_as_str=False):
     """
-        Return organization uids for given plone groups and without suffixes
+        Return organization uids for given plone groups and suffixes
     """
     orgs = []
     for group in groups:
