@@ -228,6 +228,14 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=True), [u'director'])
         self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=False), [u'observer', u'director'])
 
+    def test_get_all_suffixes_omitted_suffixes(self):
+        dep2_uid = self.dep2.UID()
+        self.assertEqual(get_all_suffixes(dep2_uid), [u'observer', u'director'])
+        self.assertEqual(get_all_suffixes(dep2_uid, omitted_suffixes=[u'unknown']),
+                         [u'observer', u'director'])
+        self.assertEqual(get_all_suffixes(dep2_uid, omitted_suffixes=[u'observer']),
+                         [u'director'])
+
     def test_get_own_organization_path(self):
         """ Test the returned organization path """
         self.assertEqual(get_own_organization(default=True), self.portal[DEFAULT_DIRECTORY_ID][PLONEGROUP_ORG])

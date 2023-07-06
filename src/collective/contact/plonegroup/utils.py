@@ -175,7 +175,7 @@ def get_organizations(only_selected=True,
     return orgs
 
 
-def get_all_suffixes(org_uid=None, only_enabled=True):
+def get_all_suffixes(org_uid=None, only_enabled=True, omitted_suffixes=[]):
     """
         Get every suffixes defined in the configuration.
     """
@@ -184,6 +184,7 @@ def get_all_suffixes(org_uid=None, only_enabled=True):
             for function
             in functions
             if (not only_enabled or function['enabled']) and
+               (not omitted_suffixes or function['fct_id'] not in omitted_suffixes) and
                (not org_uid or not function['fct_orgs'] or org_uid in function['fct_orgs'])]
 
 

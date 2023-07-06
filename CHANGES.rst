@@ -4,8 +4,8 @@ Changelog
 1.46 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter `omitted_suffixes=[]` to `utils.get_all_suffixes`.
+  [gbastien]
 
 1.45 (2023-02-27)
 -----------------
