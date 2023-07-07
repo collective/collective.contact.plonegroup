@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.46 (unreleased)
+1.46 (2023-07-07)
 -----------------
 
 - Added parameter `omitted_suffixes=[]` to `utils.get_all_suffixes`.
