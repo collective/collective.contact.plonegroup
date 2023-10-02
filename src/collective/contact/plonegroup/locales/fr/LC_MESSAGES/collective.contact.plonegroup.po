@@ -73,7 +73,7 @@ msgstr "Ce groupe ne contient aucun utilisateur."
 
 #: ../browser/templates/display_group_users.pt:31
 msgid "Nothing."
-msgstr "Aucun groupes liés."
+msgstr "Aucun groupe lié."
 
 #: ../browser/settings.py:55
 msgid "Organization id"

@@ -4,8 +4,8 @@ Changelog
 1.47 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed typo in french translation.
+  [gbastien]
 
 1.46 (2023-07-07)
 -----------------
