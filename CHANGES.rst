@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.47 (unreleased)
+1.47 (2023-10-19)
 -----------------
 
 - Fixed typo in french translation.
