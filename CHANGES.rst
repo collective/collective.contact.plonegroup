@@ -4,8 +4,8 @@ Changelog
 1.48 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `behaviors.IPlonegroupUserLink` with userid field.
+  [sgeulette]
 
 1.47 (2023-10-19)
 -----------------

@@ -7,6 +7,7 @@ from collective.contact.plonegroup.interfaces import IPloneGroupContact
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organizations
 from collective.contact.plonegroup.utils import get_plone_group_id
+from imio.helpers.catalog import reindexIndexes
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from zope.interface import alsoProvides
@@ -119,3 +120,10 @@ def v8(context):
                         'Tried to remove Plone group "%s" but it contains users!'
                         % plone_group_id)
                 api.group.delete(plone_group_id)
+
+
+def v9(context):
+    logger.info("Migrate to v9")
+    setup = api.portal.get_tool('portal_setup')
+    setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'catalog')
+    reindexIndexes(api.portal.get(), idxs=['userid'])
