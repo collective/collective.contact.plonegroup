@@ -8,8 +8,10 @@
 
     <include package="plone.behavior" file="meta.zcml" />
 
-    <permission id="collective.contact.plonegroup.write_userid_field"
-                title="collective.contact.plonegroup: Write userid field"/>
+    <permission id="collective.contact.plonegroup.read_userlink_fields"
+                title="collective.contact.plonegroup: Read user link fields"/>
+    <permission id="collective.contact.plonegroup.write_userlink_fields"
+                title="collective.contact.plonegroup: Write user link fields"/>
 
     <i18n:registerTranslations directory="locales" />
 
