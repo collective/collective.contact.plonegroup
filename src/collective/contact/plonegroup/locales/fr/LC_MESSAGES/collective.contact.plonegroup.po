@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-06-14 07:51+0000\n"
+"POT-Creation-Date: 2023-11-06 14:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,10 @@ msgstr ""
 #: ../browser/tables.py:295
 msgid "Actions"
 msgstr "Actions"
+
+#: ../configure.zcml:41
+msgid "Adds user related fields"
+msgstr "Ajoute des champs relatifs à l'utilisateur plone"
 
 #: ../browser/views.py:214
 msgid "Assignments for groups related to '${function}' function"
@@ -55,7 +59,7 @@ msgstr "Groupes globaux"
 msgid "Groups and users"
 msgstr "Groupes et utilisateurs"
 
-#: ../configure.zcml:26
+#: ../configure.zcml:34
 msgid "Installs the collective.contact.plonegroup add-on."
 msgstr "Installs the collective.contact.plonegroup add-on."
 
@@ -115,6 +119,18 @@ msgstr "Restreindre ce suffixe aux organisations suivantes"
 msgid "Plone group suffix title"
 msgstr "Titre du suffixe"
 
+#: ../behaviors.py:48
+msgid "Plone user"
+msgstr "Utilisateur Plone"
+
+#: ../configure.zcml:41
+msgid "Plonegroup user link"
+msgstr "Lien utilisateur de Plonegroup"
+
+#: ../behaviors.py:64
+msgid "Primary organization"
+msgstr "Organisation principale"
+
 #: ../browser/settings.py:202
 msgid "Selected global groups can be managed by a contained user"
 msgstr "Groupes globaux gérables par l'utilisateur"
@@ -127,7 +143,7 @@ msgstr "Sélectionné dans <a href='${plonegroup_url}'>\"Configuration des group
 msgid "Selected organizations"
 msgstr "Organisations"
 
-#: ../testing.zcml:17
+#: ../testing.zcml:19
 msgid "Steps to ease tests of collective.contact.plonegroup"
 msgstr "Steps to ease tests of collective.contact.plonegroup"
 
@@ -143,7 +159,7 @@ msgstr "Ce contact est sélectionné dans la configuration"
 msgid "This contact is used in following content: ${items}"
 msgstr "Ce contact est utilisé dans le contenu suivant: ${items}"
 
-#: ../browser/settings.py:482
+#: ../browser/settings.py:483
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 msgstr "Cette organisation ou une organisation contenue est utilisée dans la configuration de groupe plone via contact ! Il faut d'abord l'enlever de la configuration !"
 
@@ -171,7 +187,7 @@ msgstr "Vous ne pouvez pas désactiver cet élément !"
 msgid "You cannot delete the group '${group}', linked to used organization '${orga}'."
 msgstr "Vous ne pouvez pas effacer le groupe '${group}', lié à l'organisation utilisée '${orga}'."
 
-#: ../browser/settings.py:481
+#: ../browser/settings.py:482
 msgid "You cannot delete this item !"
 msgstr "Vous ne pouvez pas effacer cet élément !"
 
@@ -211,11 +227,11 @@ msgstr "Vous ne pouvez pas supprimer la fonction \"${removed_function}\" car cer
 msgid "can_not_select_function_orgs_every_other_plone_groups_not_empty"
 msgstr "Vous ne pouvez pas restreindre le suffix \"${function}\" aux organisations sélectionnées car des groupes Plone utilisant ce suffixe d'organisations non sélectionnées ne sont pas vides (vérifiez par exemple \"${plone_group_id}\") !"
 
-#: ../configure.zcml:26
+#: ../configure.zcml:34
 msgid "collective.contact.plonegroup"
 msgstr "collective.contact.plonegroup"
 
-#: ../testing.zcml:17
+#: ../testing.zcml:19
 msgid "collective.contact.plonegroup tests"
 msgstr "collective.contact.plonegroup tests"
 
