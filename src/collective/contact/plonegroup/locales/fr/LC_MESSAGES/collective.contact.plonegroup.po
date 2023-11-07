@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-11-06 14:21+0000\n"
+"POT-Creation-Date: 2023-11-07 12:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,10 @@ msgstr "Actions"
 #: ../configure.zcml:41
 msgid "Adds user related fields"
 msgstr "Ajoute des champs relatifs à l'utilisateur plone"
+
+#: ../behaviors.py:60
+msgid "Application parameters"
+msgstr "Paramètres applicatifs"
 
 #: ../browser/views.py:214
 msgid "Assignments for groups related to '${function}' function"
@@ -119,7 +123,7 @@ msgstr "Restreindre ce suffixe aux organisations suivantes"
 msgid "Plone group suffix title"
 msgstr "Titre du suffixe"
 
-#: ../behaviors.py:48
+#: ../behaviors.py:36
 msgid "Plone user"
 msgstr "Utilisateur Plone"
 
@@ -127,7 +131,7 @@ msgstr "Utilisateur Plone"
 msgid "Plonegroup user link"
 msgstr "Lien utilisateur de Plonegroup"
 
-#: ../behaviors.py:64
+#: ../behaviors.py:52
 msgid "Primary organization"
 msgstr "Organisation principale"
 

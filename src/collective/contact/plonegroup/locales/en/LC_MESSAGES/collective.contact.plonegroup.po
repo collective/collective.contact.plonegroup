@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-11-06 14:21+0000\n"
+"POT-Creation-Date: 2023-11-07 12:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,6 +21,10 @@ msgstr "Actions"
 
 #: ../configure.zcml:41
 msgid "Adds user related fields"
+msgstr ""
+
+#: ../behaviors.py:60
+msgid "Application parameters"
 msgstr ""
 
 #: ../browser/views.py:214
@@ -119,7 +123,7 @@ msgstr "Plone group suffix organizations"
 msgid "Plone group suffix title"
 msgstr "Plone group suffix title"
 
-#: ../behaviors.py:48
+#: ../behaviors.py:36
 msgid "Plone user"
 msgstr ""
 
@@ -127,7 +131,7 @@ msgstr ""
 msgid "Plonegroup user link"
 msgstr ""
 
-#: ../behaviors.py:64
+#: ../behaviors.py:52
 msgid "Primary organization"
 msgstr ""
 

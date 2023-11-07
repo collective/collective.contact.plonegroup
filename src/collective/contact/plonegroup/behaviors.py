@@ -5,7 +5,6 @@ from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import organizations_with_suffixes
 from imio.helpers import get_cachekey_volatile
 from imio.helpers.cache import get_plone_groups_for_user
-from plone import api
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.formwidget.masterselect import MasterSelectField
@@ -13,7 +12,6 @@ from plone.memoize import ram
 from plone.supermodel import model
 from zope import schema
 from zope.component import getUtility
-from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import provider
 from zope.schema.interfaces import IVocabularyFactory
@@ -57,6 +55,10 @@ class IPlonegroupUserLink(model.Schema):
     )
     directives.read_permission(primary_organization='collective.contact.plonegroup.read_userlink_fields')
     directives.write_permission(primary_organization='collective.contact.plonegroup.write_userlink_fields')
+
+    model.fieldset('app_parameters',
+                   label=_(u"Application parameters"),
+                   fields=['userid', 'primary_organization'])
 
 
 def primary_organizations_vocabulary_cache_key(method, self, context, userid, suffixes, base_voc):
