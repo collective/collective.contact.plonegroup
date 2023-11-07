@@ -41,6 +41,10 @@
         />
 
     <utility
+        name="collective.contact.plonegroup.primary_organizations"
+        factory=".behaviors.PrimaryOrganizationsVocabulary" />
+
+    <utility
         name="collective.contact.plonegroup.functions"
         factory=".vocabularies.FunctionsVocabulary" />
 
