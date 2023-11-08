@@ -8,7 +8,7 @@ from imio.helpers.cache import get_plone_groups_for_user
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.formwidget.masterselect import MasterSelectField
-from plone.memoize import ram
+# from plone.memoize import ram
 from plone.supermodel import model
 from zope import schema
 from zope.component import getUtility

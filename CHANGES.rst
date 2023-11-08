@@ -4,7 +4,7 @@ Changelog
 1.48 (unreleased)
 -----------------
 
-- Added `behaviors.IPlonegroupUserLink` with userid field.
+- Added `behaviors.IPlonegroupUserLink` with userid and primary_organization fields.
   [sgeulette]
 
 1.47 (2023-10-19)
