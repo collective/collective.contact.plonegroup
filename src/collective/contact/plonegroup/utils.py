@@ -25,8 +25,8 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
-def get_person_from_userid(userid, context=None, depth=None, unrestricted=False, objects=True):
-    """Return person from userid.
+def get_persons_from_userid(userid, context=None, depth=None, unrestricted=False, objects=True):
+    """Return persons from userid.
 
     :param userid: mandatory string
     :param context: context to search (default None)
@@ -35,13 +35,29 @@ def get_person_from_userid(userid, context=None, depth=None, unrestricted=False,
     :param objects: return objects list (default True) or brains (False)
     :return: object or brains list
     """
-    brains = find(context=None, depth=None, unrestricted=False, userid=userid)
+    res = find(context=context, depth=depth, unrestricted=unrestricted, userid=userid)
     if objects:
         if unrestricted:
-            return [br._unrestrictedGetObject() for br in brains]
+            res = [br._unrestrictedGetObject() for br in res]
         else:
-            return [br.getObject() for br in brains]
-    return brains
+            res = [br.getObject() for br in res]
+    return res
+
+
+def get_person_from_userid(userid, context=None, depth=None, unrestricted=False, objects=True):
+    """Return one person from userid.
+
+    :param userid: mandatory string
+    :param context: context to search (default None)
+    :param depth: depth to search (default None)
+    :param unrestricted: search unrestrictedly (default False)
+    :param objects: return objects list (default True) or brains (False)
+    :return: object or brain
+    """
+    res = get_persons_from_userid(userid, context=context, depth=depth, unrestricted=unrestricted, objects=objects)
+    if not res:
+        return None
+    return res[0]
 
 
 def organizations_with_suffixes(groups, suffixes, group_as_str=False):

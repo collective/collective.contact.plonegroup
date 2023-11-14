@@ -6,7 +6,7 @@ Changelog
 
 - Added `behaviors.IPlonegroupUserLink` with userid and primary_organization fields.
   [sgeulette]
-- Added `utils.get_person_from_userid`
+- Added `utils.get_person_from_userid` and `utils.get_persons_from_userid`
   [sgeulette]
 
 1.47 (2023-10-19)

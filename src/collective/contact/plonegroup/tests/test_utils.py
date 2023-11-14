@@ -13,6 +13,7 @@ from collective.contact.plonegroup.utils import get_organizations
 from collective.contact.plonegroup.utils import get_own_organization
 from collective.contact.plonegroup.utils import get_own_organization_path
 from collective.contact.plonegroup.utils import get_person_from_userid
+from collective.contact.plonegroup.utils import get_persons_from_userid
 from collective.contact.plonegroup.utils import get_plone_group
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_plone_groups
@@ -66,18 +67,21 @@ class TestUtils(IntegrationTestCase):
             id='outside_org',
             title='Outside organization')
 
-    def test_get_person_from_userid(self):
+    def test_get_persons_from_userid(self):
         self.diry.invokeFactory('person', 'dexter', firstname='Dexter', lastname='Morgan',
                                 email='dexter.morgan@mpd.am', userid=None)
         self.diry.invokeFactory('person', 'debra', firstname='Debra', lastname='Morgan',
                                 email='debra.morgan@mpd.am', userid=None)
-        self.assertListEqual(get_person_from_userid(TEST_USER_ID), [])
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [])
+        self.assertEqual(get_person_from_userid(TEST_USER_ID), None)
         self.diry.dexter.userid = TEST_USER_ID
         self.diry.dexter.reindexObject(['userid'])
-        self.assertListEqual(get_person_from_userid(TEST_USER_ID), [self.diry.dexter])
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter])
+        self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
         self.diry.debra.userid = TEST_USER_ID
         self.diry.debra.reindexObject(['userid'])
-        self.assertListEqual(get_person_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
+        self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
 
     def test_organizations_with_suffixes(self):
         class Dum(object):
