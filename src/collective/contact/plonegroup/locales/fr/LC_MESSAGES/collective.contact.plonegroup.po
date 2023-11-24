@@ -33,7 +33,7 @@ msgstr "Groupes liés à la fonction '${function}'"
 
 #: ../browser/settings.py:187
 msgid "Choose multiple organization levels for which you want to create a plone group."
-msgstr "Choisir des niveaux d'organisation pour lesquels un groupe plone sera créé."
+msgstr "Les niveaux d'organisation sont activés en les passant vers la droite: après sauvegarde des groupes plone seront créés (en combinaison avec les fonctions)."
 
 #: ../browser/tables.py:257
 msgid "Details"
