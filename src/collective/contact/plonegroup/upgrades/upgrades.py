@@ -126,4 +126,4 @@ def v9(context):
     logger.info("Migrate to v9")
     setup = api.portal.get_tool('portal_setup')
     setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'catalog')
-    reindexIndexes(api.portal.get(), idxs=['userid'])
+    # reindexIndexes(api.portal.get(), idxs=['userid'])
