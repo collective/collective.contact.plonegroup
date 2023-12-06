@@ -7,7 +7,6 @@ from collective.contact.plonegroup.interfaces import IPloneGroupContact
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organizations
 from collective.contact.plonegroup.utils import get_plone_group_id
-from imio.helpers.catalog import reindexIndexes
 from plone import api
 from plone.app.uuid.utils import uuidToObject
 from zope.interface import alsoProvides
