@@ -25,7 +25,12 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
-def get_persons_from_userid(userid, context=None, depth=None, unrestricted=False, objects=True):
+def get_persons_from_userid(userid,
+                            context=None,
+                            depth=None,
+                            unrestricted=False,
+                            objects=True,
+                            only_active=False):
     """Return persons from userid.
 
     :param userid: mandatory string
@@ -33,9 +38,13 @@ def get_persons_from_userid(userid, context=None, depth=None, unrestricted=False
     :param depth: depth to search (default None)
     :param unrestricted: search unrestrictedly (default False)
     :param objects: return objects list (default True) or brains (False)
+    :param only_active: only consider "person" that is "active" (default to False)
     :return: object or brains list
     """
-    res = find(context=context, depth=depth, unrestricted=unrestricted, userid=userid)
+    query = {'userid': userid}
+    if only_active:
+        query['review_state'] = 'active'
+    res = find(context=context, depth=depth, unrestricted=unrestricted, **query)
     if objects:
         if unrestricted:
             res = [br._unrestrictedGetObject() for br in res]
@@ -44,7 +53,12 @@ def get_persons_from_userid(userid, context=None, depth=None, unrestricted=False
     return res
 
 
-def get_person_from_userid(userid, context=None, depth=None, unrestricted=False, objects=True):
+def get_person_from_userid(userid,
+                           context=None,
+                           depth=None,
+                           unrestricted=False,
+                           objects=True,
+                           only_active=False):
     """Return one person from userid.
 
     :param userid: mandatory string
@@ -52,9 +66,16 @@ def get_person_from_userid(userid, context=None, depth=None, unrestricted=False,
     :param depth: depth to search (default None)
     :param unrestricted: search unrestrictedly (default False)
     :param objects: return objects list (default True) or brains (False)
+    :param only_active: only consider "person" that is "active" (default to False)
     :return: object or brain
     """
-    res = get_persons_from_userid(userid, context=context, depth=depth, unrestricted=unrestricted, objects=objects)
+    res = get_persons_from_userid(
+        userid,
+        context=context,
+        depth=depth,
+        unrestricted=unrestricted,
+        objects=objects,
+        only_active=only_active)
     if not res:
         return None
     return res[0]

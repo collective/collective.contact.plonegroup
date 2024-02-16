@@ -82,6 +82,11 @@ class TestUtils(IntegrationTestCase):
         self.diry.debra.reindexObject(['userid'])
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
+        api.content.transition(self.diry.dexter, 'deactivate')
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID, only_active=True), [self.diry.debra])
+        self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
+        self.assertEqual(get_person_from_userid(TEST_USER_ID, only_active=True), self.diry.debra)
 
     def test_organizations_with_suffixes(self):
         class Dum(object):
