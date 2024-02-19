@@ -8,6 +8,7 @@ from collective.contact.plonegroup.config import set_registry_functions
 from collective.contact.plonegroup.config import set_registry_organizations
 from html import escape
 from imio.helpers.cache import get_users_in_plone_groups
+from imio.helpers.content import find
 from imio.helpers.content import get_user_fullname
 from imio.helpers.content import uuidsToObjects
 from imio.helpers.content import uuidToObject
@@ -22,6 +23,62 @@ from zope.globalrequest import getRequest
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+
+
+def get_persons_from_userid(userid,
+                            context=None,
+                            depth=None,
+                            unrestricted=False,
+                            objects=True,
+                            only_active=False):
+    """Return persons from userid.
+
+    :param userid: mandatory string
+    :param context: context to search (default None)
+    :param depth: depth to search (default None)
+    :param unrestricted: search unrestrictedly (default False)
+    :param objects: return objects list (default True) or brains (False)
+    :param only_active: only consider "person" that is "active" (default to False)
+    :return: object or brains list
+    """
+    query = {'userid': userid}
+    if only_active:
+        query['review_state'] = 'active'
+    res = find(context=context, depth=depth, unrestricted=unrestricted, **query)
+    if objects:
+        if unrestricted:
+            res = [br._unrestrictedGetObject() for br in res]
+        else:
+            res = [br.getObject() for br in res]
+    return res
+
+
+def get_person_from_userid(userid,
+                           context=None,
+                           depth=None,
+                           unrestricted=False,
+                           objects=True,
+                           only_active=False):
+    """Return one person from userid.
+
+    :param userid: mandatory string
+    :param context: context to search (default None)
+    :param depth: depth to search (default None)
+    :param unrestricted: search unrestrictedly (default False)
+    :param objects: return objects list (default True) or brains (False)
+    :param only_active: only consider "person" that is "active" (default to False)
+    :return: object or brain
+    """
+    res = get_persons_from_userid(
+        userid,
+        context=context,
+        depth=depth,
+        unrestricted=unrestricted,
+        objects=objects,
+        only_active=only_active)
+    if not res:
+        return None
+    return res[0]
 
 
 def organizations_with_suffixes(groups, suffixes, group_as_str=False):

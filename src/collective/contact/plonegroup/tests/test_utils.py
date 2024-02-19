@@ -12,6 +12,8 @@ from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_organizations
 from collective.contact.plonegroup.utils import get_own_organization
 from collective.contact.plonegroup.utils import get_own_organization_path
+from collective.contact.plonegroup.utils import get_person_from_userid
+from collective.contact.plonegroup.utils import get_persons_from_userid
 from collective.contact.plonegroup.utils import get_plone_group
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.contact.plonegroup.utils import get_plone_groups
@@ -37,7 +39,8 @@ class TestUtils(IntegrationTestCase):
         self.portal = self.layer['portal']
         # Organizations creation
         self.portal.invokeFactory('directory', DEFAULT_DIRECTORY_ID)
-        self.portal[DEFAULT_DIRECTORY_ID].invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
+        self.diry = self.portal[DEFAULT_DIRECTORY_ID]
+        self.diry.invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
         self.own_orga = get_own_organization()
         self.dep1 = api.content.create(
             container=self.own_orga, type='organization', id='department1', title='Department 1')
@@ -63,6 +66,27 @@ class TestUtils(IntegrationTestCase):
             type='organization',
             id='outside_org',
             title='Outside organization')
+
+    def test_get_persons_from_userid(self):
+        self.diry.invokeFactory('person', 'dexter', firstname='Dexter', lastname='Morgan',
+                                email='dexter.morgan@mpd.am', userid=None)
+        self.diry.invokeFactory('person', 'debra', firstname='Debra', lastname='Morgan',
+                                email='debra.morgan@mpd.am', userid=None)
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [])
+        self.assertEqual(get_person_from_userid(TEST_USER_ID), None)
+        self.diry.dexter.userid = TEST_USER_ID
+        self.diry.dexter.reindexObject(['userid'])
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter])
+        self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
+        self.diry.debra.userid = TEST_USER_ID
+        self.diry.debra.reindexObject(['userid'])
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
+        self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
+        api.content.transition(self.diry.dexter, 'deactivate')
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
+        self.assertListEqual(get_persons_from_userid(TEST_USER_ID, only_active=True), [self.diry.debra])
+        self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
+        self.assertEqual(get_person_from_userid(TEST_USER_ID, only_active=True), self.diry.debra)
 
     def test_organizations_with_suffixes(self):
         class Dum(object):

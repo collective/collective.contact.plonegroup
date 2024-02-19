@@ -1,9 +1,17 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="collective.contact.plonegroup">
+
+    <include package="plone.behavior" file="meta.zcml" />
+
+    <permission id="collective.contact.plonegroup.read_userlink_fields"
+                title="collective.contact.plonegroup: Read user link fields"/>
+    <permission id="collective.contact.plonegroup.write_userlink_fields"
+                title="collective.contact.plonegroup: Write user link fields"/>
 
     <i18n:registerTranslations directory="locales" />
 
@@ -24,6 +32,17 @@
         directory="profiles/default"
         description="Installs the collective.contact.plonegroup add-on."
         provides="Products.GenericSetup.interfaces.EXTENSION" />
+
+    <plone:behavior
+        title="Plonegroup user link"
+        description="Adds user related fields"
+        provides=".behaviors.IPlonegroupUserLink"
+        for="plone.dexterity.interfaces.IDexterityContent"
+        />
+
+    <utility
+        name="collective.contact.plonegroup.primary_organizations"
+        factory=".behaviors.PrimaryOrganizationsVocabulary" />
 
     <utility
         name="collective.contact.plonegroup.functions"

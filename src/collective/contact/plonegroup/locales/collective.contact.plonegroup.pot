@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-06-14 07:51+0000\n"
+"POT-Creation-Date: 2023-11-07 12:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,14 @@ msgstr ""
 
 #: ../browser/tables.py:295
 msgid "Actions"
+msgstr ""
+
+#: ../configure.zcml:41
+msgid "Adds user related fields"
+msgstr ""
+
+#: ../behaviors.py:60
+msgid "Application parameters"
 msgstr ""
 
 #: ../browser/views.py:214
@@ -57,7 +65,7 @@ msgstr ""
 msgid "Groups and users"
 msgstr ""
 
-#: ../configure.zcml:26
+#: ../configure.zcml:34
 msgid "Installs the collective.contact.plonegroup add-on."
 msgstr ""
 
@@ -117,6 +125,18 @@ msgstr ""
 msgid "Plone group suffix title"
 msgstr ""
 
+#: ../behaviors.py:36
+msgid "Plone user"
+msgstr ""
+
+#: ../configure.zcml:41
+msgid "Plonegroup user link"
+msgstr ""
+
+#: ../behaviors.py:52
+msgid "Primary organization"
+msgstr ""
+
 #: ../browser/settings.py:202
 msgid "Selected global groups can be managed by a contained user"
 msgstr ""
@@ -129,7 +149,7 @@ msgstr ""
 msgid "Selected organizations"
 msgstr ""
 
-#: ../testing.zcml:17
+#: ../testing.zcml:19
 msgid "Steps to ease tests of collective.contact.plonegroup"
 msgstr ""
 
@@ -145,7 +165,7 @@ msgstr ""
 msgid "This contact is used in following content: ${items}"
 msgstr ""
 
-#: ../browser/settings.py:482
+#: ../browser/settings.py:483
 msgid "This organization or a contained organization is used in plonegroup configuration ! Remove it first from the configuration !"
 msgstr ""
 
@@ -173,7 +193,7 @@ msgstr ""
 msgid "You cannot delete the group '${group}', linked to used organization '${orga}'."
 msgstr ""
 
-#: ../browser/settings.py:481
+#: ../browser/settings.py:482
 msgid "You cannot delete this item !"
 msgstr ""
 
@@ -213,11 +233,11 @@ msgstr ""
 msgid "can_not_select_function_orgs_every_other_plone_groups_not_empty"
 msgstr ""
 
-#: ../configure.zcml:26
+#: ../configure.zcml:34
 msgid "collective.contact.plonegroup"
 msgstr ""
 
-#: ../testing.zcml:17
+#: ../testing.zcml:19
 msgid "collective.contact.plonegroup tests"
 msgstr ""
 

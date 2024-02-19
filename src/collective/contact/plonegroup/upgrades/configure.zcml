@@ -61,4 +61,12 @@
       handler=".upgrades.v8"
       profile="collective.contact.plonegroup:default" />
 
+  <genericsetup:upgradeStep
+      title="Migration profile for collective.contact.plonegroup to 9"
+      description="Upgrade from 8 to 9"
+      source="8"
+      destination="9"
+      handler=".upgrades.v9"
+      profile="collective.contact.plonegroup:default" />
+
 </configure>

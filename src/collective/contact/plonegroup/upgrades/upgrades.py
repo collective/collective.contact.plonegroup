@@ -119,3 +119,10 @@ def v8(context):
                         'Tried to remove Plone group "%s" but it contains users!'
                         % plone_group_id)
                 api.group.delete(plone_group_id)
+
+
+def v9(context):
+    logger.info("Migrate to v9")
+    setup = api.portal.get_tool('portal_setup')
+    setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'catalog')
+    # reindexIndexes(api.portal.get(), idxs=['userid'])
