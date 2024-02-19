@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.48 (unreleased)
+1.48 (2024-02-19)
 -----------------
 
 - Added `behaviors.IPlonegroupUserLink` with userid and primary_organization fields.
