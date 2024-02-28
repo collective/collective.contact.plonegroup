@@ -4,8 +4,8 @@ Changelog
 1.49 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Corrected behavior zcml definition to avoid message when Plone starts.
+  [sgeulette]
 
 1.48 (2024-02-19)
 -----------------

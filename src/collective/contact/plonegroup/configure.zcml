@@ -37,7 +37,6 @@
         title="Plonegroup user link"
         description="Adds user related fields"
         provides=".behaviors.IPlonegroupUserLink"
-        for="plone.dexterity.interfaces.IDexterityContent"
         />
 
     <utility
