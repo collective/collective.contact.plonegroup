@@ -6,6 +6,8 @@ Changelog
 
 - Corrected behavior zcml definition to avoid message when Plone starts.
   [sgeulette]
+- Import `safe_encode` from `imio.pyutils` instead `imio.helpers`.
+  [gbastien]
 
 1.48 (2024-02-19)
 -----------------
