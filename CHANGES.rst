@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.49 (unreleased)
+1.49 (2024-04-10)
 -----------------
 
 - Corrected behavior zcml definition to avoid message when Plone starts.
