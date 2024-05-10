@@ -4,8 +4,9 @@ Changelog
 1.50 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed `DisplayGroupUsersView.group_title` when `DisplayGroupUsersView.short=True`
+  and group title contains several parenthesis.
+  [gbastien]
 
 1.49 (2024-04-10)
 -----------------
