@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.50 (unreleased)
+1.50 (2024-05-27)
 -----------------
 
 - Fixed `DisplayGroupUsersView.group_title` when `DisplayGroupUsersView.short=True`
