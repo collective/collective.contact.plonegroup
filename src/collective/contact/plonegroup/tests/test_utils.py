@@ -7,8 +7,8 @@ from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
 from collective.contact.plonegroup.config import set_registry_organizations
 from collective.contact.plonegroup.testing import IntegrationTestCase
-from collective.contact.plonegroup.utils import enable_function
 from collective.contact.plonegroup.utils import disable_function
+from collective.contact.plonegroup.utils import enable_function
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_organizations
