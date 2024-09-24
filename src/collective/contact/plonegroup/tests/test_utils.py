@@ -7,6 +7,8 @@ from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
 from collective.contact.plonegroup.config import set_registry_organizations
 from collective.contact.plonegroup.testing import IntegrationTestCase
+from collective.contact.plonegroup.utils import enable_function
+from collective.contact.plonegroup.utils import disable_function
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_organizations
@@ -300,3 +302,25 @@ class TestUtils(IntegrationTestCase):
         self.assertTrue(self.uid in get_registry_functions()[1]['fct_orgs'])
         select_org_for_function(self.uid, 'director', remove=True)
         self.assertFalse(self.uid in get_registry_functions()[1]['fct_orgs'])
+
+    def test_enable_disable_function(self):
+        """ """
+        self.assertEqual(get_registry_functions(),
+                         [{'fct_title': u'Observers',
+                           'fct_orgs': [],
+                           'fct_id': u'observer',
+                           'fct_management': False,
+                           'enabled': True},
+                          {'fct_title': u'Director',
+                           'fct_orgs': [],
+                           'fct_id': u'director',
+                           'fct_management': False,
+                           'enabled': True}])
+        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'observer')))
+        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'director')))
+        disable_function("observer")
+        self.assertFalse(api.group.get('{0}_{1}'.format(self.uid, 'observer')))
+        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'director')))
+        enable_function("observer")
+        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'observer')))
+        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'director')))

@@ -4,8 +4,9 @@ Changelog
 1.51 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added helpers `utils.enable_function` and `utils.disable_function`
+  to easily enable/disable a function.
+  [gbastien]
 
 1.50 (2024-05-27)
 -----------------

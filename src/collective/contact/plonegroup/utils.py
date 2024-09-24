@@ -409,3 +409,23 @@ def select_org_for_function(org_uid, function_id, remove=False):
             elif org_uid not in function['fct_orgs']:
                 function['fct_orgs'].append(org_uid)
     set_registry_functions(functions)
+
+
+def enable_function(function_id):
+    """Enable a function."""
+    functions = get_registry_functions()
+    for function in functions:
+        if function['fct_id'] == function_id and \
+           function['enabled'] is False:
+            function['enabled'] = True
+            set_registry_functions(functions)
+
+
+def disable_function(function_id):
+    """Disable a function."""
+    functions = get_registry_functions()
+    for function in functions:
+        if function['fct_id'] == function_id and \
+           function['enabled'] is True:
+            function['enabled'] = False
+            set_registry_functions(functions)
