@@ -11,7 +11,7 @@ from collective.contact.plonegroup.utils import get_organizations
 from collective.contact.plonegroup.utils import get_own_organization_path
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.elephantvocabulary import wrap_vocabulary
-from collective.z3cform.datagridfield import DataGridFieldFactory
+from collective.z3cform.datagridfield.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
@@ -38,7 +38,7 @@ from zope.component.hooks import getSite
 from zope.container.interfaces import IContainerModifiedEvent
 from zope.container.interfaces import IObjectRemovedEvent
 from zope.event import notify
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import Interface
 from zope.interface import Invalid
 from zope.interface import invariant
@@ -75,14 +75,14 @@ class IFunctionSchema(Interface):
         value_type=schema.Choice(
             vocabulary='collective.contact.plonegroup.browser.settings.'
                        'SortedSelectedOrganizationsElephantVocabulary'),
-        required=True)
+        required=False)
     fct_management = schema.Bool(
         title=_("Manageable function groups?"),
         required=False,
         default=False,
     )
     enabled = schema.Bool(
-        title=_(u'Enabled?'),
+        title=_('Enabled?'),
         default=True,
         required=False,)
 
@@ -91,11 +91,11 @@ def voc_cache_key(method, self, context):
     return get_cachekey_volatile("%s.%s" % (self.__class__.__module__, self.__class__.__name__))
 
 
+@implementer(IVocabularyFactory)
 class BaseOrganizationServicesVocabulary(object):
     """
         Base vocabulary returning organizations from a particular root level.
     """
-    implements(IVocabularyFactory)
     valid_states = ('active',)
 
     def listSubOrganizations(self, terms, folder, parent_label=''):
@@ -139,13 +139,13 @@ class BaseOrganizationServicesVocabulary(object):
         brains = pcat.unrestrictedSearchResults(portal_type=root_portal_type, id=root_id)
         if not brains:
             terms.append(SimpleTerm(None, token="unfound",
-                                    title=_(u"You must define one '${root_portal_type}' with id '${pgo}' !",
+                                    title=_("You must define one '${root_portal_type}' with id '${pgo}' !",
                                             mapping={'root_portal_type': root_portal_type,
                                                      'pgo': root_id, })))
             return SimpleVocabulary(terms)
         elif len(brains) > 1:
             terms.append(SimpleTerm(None, token="multifound",
-                                    title=_(u"You must have only one '${root_portal_type}' "
+                                    title=_("You must have only one '${root_portal_type}' "
                                             "with id '${pgo}' !",
                                             mapping={'root_portal_type': root_portal_type,
                                                      'pgo': root_id})))
@@ -184,15 +184,15 @@ class IContactPlonegroupConfig(Interface):
 
     # plone.registry cannot store schema.Choice different from named vocabularies !
     organizations = schema.List(
-        title=_(u'Selected organizations'),
-        description=_(u"Choose multiple organization levels for which you want to create a plone group."),
+        title=_('Selected organizations'),
+        description=_("Choose multiple organization levels for which you want to create a plone group."),
         required=True,
-        value_type=schema.Choice(vocabulary=u'collective.contact.plonegroup.organization_services',))
+        value_type=schema.Choice(vocabulary='collective.contact.plonegroup.organization_services',))
     widget('organizations', size=15)
 
     functions = schema.List(
-        title=_(u'Function list'),
-        description=_(u'Each defined function will suffix each organization plone group.'),
+        title=_('Function list'),
+        description=_('Each defined function will suffix each organization plone group.'),
         required=True,
         value_type=DictRow(title=_("Function"),
                            schema=IFunctionSchema)
@@ -200,20 +200,20 @@ class IContactPlonegroupConfig(Interface):
     widget('functions', DataGridFieldFactory, auto_append=False)
 
     groups_management = schema.List(
-        title=_(u'Selected global groups can be managed by a contained user'),
+        title=_('Selected global groups can be managed by a contained user'),
         required=False,
-        value_type=schema.Choice(vocabulary=u'collective.contact.plonegroup.global_groups'),
+        value_type=schema.Choice(vocabulary='collective.contact.plonegroup.global_groups'),
     )
     widget('groups_management', CheckBoxFieldWidget, multiple='multiple', size=15)
 
     @invariant
     def validateSettings(data):
         if not data.organizations:
-            raise Invalid(_(u"You must choose at least one organization !"))
+            raise Invalid(_("You must choose at least one organization !"))
         if len(data.organizations) == 1 and data.organizations[0] is None:
-            raise Invalid(_(u"You must correct the organization error first !"))
+            raise Invalid(_("You must correct the organization error first !"))
         if not data.functions:
-            raise Invalid(_(u"You must define at least one function !"))
+            raise Invalid(_("You must define at least one function !"))
 
         # only able to delete a function (suffix) if every linked Plone groups are empty
         stored_suffixes = get_all_suffixes()
@@ -227,7 +227,7 @@ class IContactPlonegroupConfig(Interface):
                 plone_group = api.group.get(plone_group_id)
                 if plone_group and plone_group.getMemberIds():
                     raise Invalid(
-                        _(u"can_not_remove_function_every_plone_groups_not_empty",
+                        _("can_not_remove_function_every_plone_groups_not_empty",
                           mapping={'removed_function': removed_suffix,
                                    'plone_group_id': plone_group_id}))
 
@@ -242,7 +242,7 @@ class IContactPlonegroupConfig(Interface):
                                          'fct_orgs': dic['fct_orgs'],
                                          'enabled': dic['enabled']}
                          for dic in data.functions}
-        for new_function, new_function_infos in new_functions.items():
+        for new_function, new_function_infos in list(new_functions.items()):
             if new_function_infos['fct_orgs'] and \
                old_functions[new_function]['fct_orgs'] != new_function_infos['fct_orgs']:
                 # check that Plone group is empty for not selected fct_orgs
@@ -254,7 +254,7 @@ class IContactPlonegroupConfig(Interface):
                     # use getGroupMembers to ignore '<not found>' users
                     if plone_group and plone_group.getGroupMembers():
                         raise Invalid(
-                            _(u"can_not_select_function_orgs_every_other_plone_groups_not_empty",
+                            _("can_not_select_function_orgs_every_other_plone_groups_not_empty",
                               mapping={'function': new_function,
                                        'plone_group_id': plone_group_id}))
             elif new_function_infos['enabled'] is False:
@@ -265,7 +265,7 @@ class IContactPlonegroupConfig(Interface):
                     # use getGroupMembers to ignore '<not found>' users
                     if plone_group and plone_group.getGroupMembers():
                         raise Invalid(
-                            _(u"can_not_disable_suffix_plone_groups_not_empty",
+                            _("can_not_disable_suffix_plone_groups_not_empty",
                               mapping={'disabled_function': new_function,
                                        'plone_group_id': plone_group_id}))
 
@@ -402,7 +402,7 @@ def detectContactPlonegroupChange(event):
                     if plone_group and not plone_group.getMemberIds():
                         api.group.delete(plone_group_id)
             # we detect existing functions for which 'fct_orgs' changed
-            for new_id, new_function_infos in new_functions.items():
+            for new_id, new_function_infos in list(new_functions.items()):
                 new_title = new_function_infos['fct_title']
                 new_orgs = new_function_infos['fct_orgs']
                 enabled = new_function_infos['enabled']
@@ -483,7 +483,7 @@ def adaptPloneGroupDefinition(organization, event):
         smi.addStatusMessage(_('You cannot delete this item !'), type='error')
         smi.addStatusMessage(_("This organization or a contained organization is used in plonegroup "
                                "configuration ! Remove it first from the configuration !"), type='error')
-        view_url = getMultiAdapter((organization, organization.REQUEST), name=u'plone_context_state').view_url()
+        view_url = getMultiAdapter((organization, organization.REQUEST), name='plone_context_state').view_url()
         organization.REQUEST['RESPONSE'].redirect(view_url)
         raise Redirect(view_url)
         return
@@ -562,7 +562,7 @@ class SearchableSimpleVocabulary(SimpleVocabulary):
 
     def search(self, query, limit=50):
         # transform query in a regexp
-        regexp = u' '.join([u'{}.*'.format(p) for p in query.split(' ')])
+        regexp = ' '.join(['{}.*'.format(p) for p in query.split(' ')])
         regexp = re.compile(regexp, re.I)
         return [
             term for term in self._terms if re.search(regexp, term.title)
@@ -581,8 +581,8 @@ class SelectedOrganizationsElephantVocabulary(OwnOrganizationServicesVocabulary)
             if uid in terms:
                 ordered_terms.append(terms[uid])
                 del terms[uid]
-        extra_uids = terms.keys()
-        extra_terms = terms.values()
+        extra_uids = list(terms.keys())
+        extra_terms = list(terms.values())
         # ordered_vocab = SearchableSimpleVocabulary(ordered_terms + extra_terms)  # bug in widget, trac #15186
         ordered_vocab = SimpleVocabulary(ordered_terms + extra_terms)
         wrapped_vocab = wrap_vocabulary(ordered_vocab, hidden_terms=extra_uids)(context)

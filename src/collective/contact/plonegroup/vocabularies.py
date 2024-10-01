@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from collective.contact.core.vocabulary import get_vocabulary
-from collective.contact.core.vocabulary import PositionTypes
+from collective.contact.core.vocabularies import get_vocabulary
+from collective.contact.core.vocabularies import PositionTypes
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.utils import get_all_suffixes
@@ -9,7 +9,7 @@ from operator import methodcaller
 from plone import api
 from z3c.form.term import ChoiceTermsVocabulary
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -27,10 +27,9 @@ class PositionTypesVocabulary(PositionTypes):
         return res
 
 
+@implementer(IVocabularyFactory)
 class FunctionsVocabulary(object):
     """Vocabulary of existing functions."""
-
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         functions = get_registry_functions()
@@ -43,10 +42,9 @@ class FunctionsVocabulary(object):
         return SimpleVocabulary(terms)
 
 
+@implementer(IVocabularyFactory)
 class GlobalGroupsVocabulary(object):
     """ Vocabulary of global groups. Return all groups but suffixed groups and special groups """
-
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         all_suffixes = get_all_suffixes()

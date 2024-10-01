@@ -26,8 +26,8 @@ import html
 class SubOrganizationsTable(ExtendedCSSTable):
     """Table that displays templates info."""
 
-    cssClassEven = u'even'
-    cssClassOdd = u'odd'
+    cssClassEven = 'even'
+    cssClassOdd = 'odd'
     cssClasses = {'table': 'listing nosort suborganizations-listing icons-on'}
 
     batchSize = 999
@@ -69,7 +69,7 @@ class SubOrganizationsTableView(BrowserView):
 
     def update(self):
         self.table = self.__table__(self.context, self.request)
-        self.table.__name__ = u'suborganizations'
+        self.table.__name__ = 'suborganizations'
         catalog = api.portal.get_tool('portal_catalog')
         brains = catalog.searchResults(**self.query_dict())
 
@@ -145,7 +145,7 @@ class DisplayGroupUsersView(BrowserView):
            - if a simple str, we turn it into a list."""
         self.short = short
         self.is_manager = self._is_manager
-        if not hasattr(group_ids, '__iter__'):
+        if isinstance(group_ids, str):
             if group_ids.endswith('*'):
                 # remove ending '*'
                 group_id = group_ids[:-1]
@@ -258,12 +258,12 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
         # use _ for i18ndude machinery
         details_msg = _('Details')
         details_msg = translate(details_msg, context=self.request)
-        res = u"<div id=\"group-users\" class=\"collapsible\" onclick=\"toggleDetails(" \
-            u"'collapsible-group-users_{0}', toggle_parent_active=false, parent_tag=null, " \
-            u"load_view='@@display-group-users?group_ids={1}&short:boolean={2}', base_url='{3}');\"> {4}</div>" \
-            u"<div id=\"collapsible-group-users_{0}\" class=\"collapsible-content\" style=\"display: none;\">" \
-            u"<div class=\"collapsible-inner-content\">" \
-            u"<img src=\"{3}/spinner_small.gif\" /></div></div>".format(
+        res = "<div id=\"group-users\" class=\"collapsible\" onclick=\"toggleDetails(" \
+            "'collapsible-group-users_{0}', toggle_parent_active=false, parent_tag=null, " \
+            "load_view='@@display-group-users?group_ids={1}&short:boolean={2}', base_url='{3}');\"> {4}</div>" \
+            "<div id=\"collapsible-group-users_{0}\" class=\"collapsible-content\" style=\"display: none;\">" \
+            "<div class=\"collapsible-inner-content\">" \
+            "<img src=\"{3}/spinner_small.gif\" /></div></div>".format(
                 org_uid, url_group_ids, self.short, self.table.portal_url, details_msg)
         return res
 

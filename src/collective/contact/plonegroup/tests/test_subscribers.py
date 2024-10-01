@@ -11,8 +11,6 @@ from collective.contact.plonegroup.subscribers import group_deleted
 from collective.contact.plonegroup.testing import IntegrationTestCase
 from collective.contact.plonegroup.utils import get_own_organization
 from plone import api
-from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
-from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from Products.statusmessages.interfaces import IStatusMessage
 from zExceptions import Redirect
 
@@ -32,8 +30,8 @@ class TestSubscribers(IntegrationTestCase):
         self.contacts = [own_orga['department1'], own_orga['department2']]
 
         set_registry_organizations([c.UID() for c in self.contacts])
-        set_registry_functions([{'fct_title': u'Director',
-                                 'fct_id': u'director',
+        set_registry_functions([{'fct_title': 'Director',
+                                 'fct_id': 'director',
                                  'fct_orgs': [],
                                  'fct_management': False,
                                  'enabled': True}])
@@ -50,51 +48,53 @@ class TestSubscribers(IntegrationTestCase):
     def test_plonegroupOrganizationRemoved_1(self):
         """ We cannot remove an organization selected in settings and used in an object """
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department1/delete_confirmation'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
-        self.assertRaises(LinkIntegrityNotificationException, view.render)
-        storage = ILinkIntegrityInfo(view.REQUEST)
-        breaches = storage.getIntegrityBreaches()
-        self.assertIn(self.contacts[0], breaches)
-        self.assertSetEqual(breaches[self.contacts[0]], set([self.portal['acontent1']]))
+            '{0}/{1}/department1/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+        breaches = view.get_breaches()
+        self.assertEqual(len(breaches), 1)
+        self.assertIn(breaches[0]["target"]["title"], "Department 1")
+        self.assertEqual(len(breaches[0]["sources"]), 1)
+        self.assertIn(breaches[0]["sources"][0]["title"], "Content 1")
 
     def test_plonegroupOrganizationRemoved_2(self):
         """ We cannot remove an organization no more selected in settings and used in an object """
         set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department2/delete_confirmation'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
-        self.assertRaises(LinkIntegrityNotificationException, view.render)
-        storage = ILinkIntegrityInfo(view.REQUEST)
-        breaches = storage.getIntegrityBreaches()
-        self.assertIn(self.contacts[1], breaches)
-        self.assertSetEqual(breaches[self.contacts[1]], set([self.portal['acontent2']]))
+            '{0}/{1}/department2/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+        breaches = view.get_breaches()
+        self.assertEqual(len(breaches), 1)
+        self.assertIn(breaches[0]["target"]["title"], "Department 2")
+        self.assertEqual(len(breaches[0]["sources"]), 1)
+        self.assertIn(breaches[0]["sources"][0]["title"], "Content 2")
 
     def test_plonegroupOrganizationRemoved_3(self):
         """ We can remove an organization no more selected in settings and no more used in an object """
         set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
         self.portal['acontent2'].pg_organization = None
-        self.portal.restrictedTraverse(
-            '{0}/{1}/department2/delete_confirmation'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+        view = self.portal.restrictedTraverse(
+            '{0}/{1}/department2/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+        breaches = view.get_breaches()
+        self.assertEqual(len(breaches), 0)
 
     def test_plonegroupOrganizationRemoved_4(self):
         """ We cannot remove an organization selected in settings and used in an object as dict or list """
         # set uid in dict
         self.portal['acontent1'].pg_organization = {'uid': self.contacts[0].UID()}
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department1/delete_confirmation'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
-        self.assertRaises(LinkIntegrityNotificationException, view.render)
-        storage = ILinkIntegrityInfo(view.REQUEST)
-        breaches = storage.getIntegrityBreaches()
-        self.assertIn(self.contacts[0], breaches)
-        self.assertSetEqual(breaches[self.contacts[0]], set([self.portal['acontent1']]))
+            '{0}/{1}/department1/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+        breaches = view.get_breaches()
+        self.assertEqual(len(breaches), 1)
+        self.assertIn(breaches[0]["target"]["title"], "Department 1")
+        self.assertEqual(len(breaches[0]["sources"]), 1)
+        self.assertIn(breaches[0]["sources"][0]["title"], "Content 1")
         # set uid in list
         self.portal['acontent2'].pg_organization = [self.contacts[1].UID()]
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department2/delete_confirmation'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
-        self.assertRaises(LinkIntegrityNotificationException, view.render)
-        storage = ILinkIntegrityInfo(view.REQUEST)
-        breaches = storage.getIntegrityBreaches()
-        self.assertIn(self.contacts[1], breaches)
-        self.assertSetEqual(breaches[self.contacts[1]], set([self.portal['acontent2']]))
+            '{0}/{1}/department2/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+        breaches = view.get_breaches()
+        self.assertEqual(len(breaches), 1)
+        self.assertIn(breaches[0]["target"]["title"], "Department 2")
+        self.assertEqual(len(breaches[0]["sources"]), 1)
+        self.assertIn(breaches[0]["sources"][0]["title"], "Content 2")
 
     def test_plonegroup_contact_transition_1(self):
         """ We cannot deactivate an organization selected in settings """
@@ -146,7 +146,7 @@ class TestSubscribers(IntegrationTestCase):
         uid = self.contacts[0].UID()
         self.assertRaises(Redirect, api.group.delete, groupname='%s_director' % uid)
         msgs = smi.show()
-        self.assertEqual(msgs[0].message, u"You cannot delete the group '%s_director', "
+        self.assertEqual(msgs[0].message, "You cannot delete the group '%s_director', "
                          "linked to used organization 'Department 1'." % uid)
         api.group.create(groupname='%s_other' % uid)
         api.group.create(groupname='12345_director')

@@ -10,8 +10,8 @@ from collective.contact.plonegroup.interfaces import IGroupField
 from collective.contact.plonegroup.interfaces import IOrganizationField
 from collective.contact.plonegroup.utils import get_organization
 from collective.contact.plonegroup.utils import get_plone_group_id
-from collective.z3cform.datagridfield import DataGridField
-from collective.z3cform.datagridfield import DictRow
+from collective.z3cform.datagridfield.datagridfield import DataGridFieldWidget
+from collective.z3cform.datagridfield.row import DictRow
 from imio.helpers.security import fplog
 from operator import methodcaller
 from plone import api
@@ -26,49 +26,51 @@ from z3c.form.widget import FieldWidget
 from zExceptions import Redirect
 from zope import schema
 from zope.component import getUtility
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import Interface
 from zope.schema._bootstrapinterfaces import RequiredMissing
 from zope.schema.interfaces import IVocabularyFactory
 
 
+@implementer(IDGFListField)
 class DGFListField(schema.List):
-    implements(IDGFListField)
+    """"""
 
 
 def dgf_list_widget(field, request):
-    return FieldWidget(field, DataGridField(request))
+    return FieldWidget(field, DataGridFieldWidget(request))
 
 
+@implementer(IGroupField)
 class GroupField(schema.Choice):
-    implements(IGroupField)
 
     def __init__(self, *args, **kwargs):
-        kwargs['vocabulary'] = u''
+        kwargs['vocabulary'] = ''
         super(GroupField, self).__init__(*args, **kwargs)
 
 
+@implementer(IOrganizationField)
 class OrganizationField(schema.Choice):
-    implements(IOrganizationField)
 
     def __init__(self, *args, **kwargs):
-        kwargs['vocabulary'] = u''
+        kwargs['vocabulary'] = ''
         super(OrganizationField, self).__init__(*args, **kwargs)
 
 
+@implementer(IDGFVocabularyField)
 class DGFVocabularyField(schema.Choice):
-    implements(IDGFVocabularyField)
+    """"""
 
 
 class IGroupsUsers(Interface):
 
     group = GroupField(
-        title=PMF('text_group'),
+        title=_('Group'),
         vocabulary='plone.app.vocabularies.Groups',
         required=False)
 
     user = DGFVocabularyField(
-        title=PMF('text_user'),
+        title=_('User'),
         vocabulary='imio.helpers.SortedUsers',
         required=False)
 
@@ -76,11 +78,11 @@ class IGroupsUsers(Interface):
 class IOrganisationsUsers(Interface):
 
     group = OrganizationField(
-        title=_ccc(u'Organization'),
+        title=_ccc('Organization'),
         required=False)
 
     user = DGFVocabularyField(
-        title=PMF('text_user'),
+        title=_('User'),
         vocabulary='imio.helpers.SortedUsers',
         required=False)
 
@@ -130,10 +132,10 @@ class ManageOwnGroupUsers(EditForm):
     """
         Manage own groups users
     """
-    label = _(u'Own groups management view')
-    description = _(u'Own groups management description')
-    successMessage = _(u'Own groups users succesfully updated.')
-    noChangesMessage = _(u'No changes were made.')
+    label = _('Own groups management view')
+    description = _('Own groups management description')
+    successMessage = _('Own groups users succesfully updated.')
+    noChangesMessage = _('No changes were made.')
 
     def __init__(self, context, request):
         self.context = context
@@ -164,7 +166,7 @@ class ManageOwnGroupUsers(EditForm):
         for fct in get_registry_functions(as_copy=False):
             if fct['fct_management']:
                 self.functions[fct['fct_id']] = fct['fct_title']
-        return self.functions.keys()
+        return list(self.functions.keys())
 
     def get_user_manageable_functions(self):
         """ get user manageable functions """
@@ -201,21 +203,21 @@ class ManageOwnGroupUsers(EditForm):
     def fields(self):
         self.init()  # second init with user recognized
         fields = []
-        description = _(u'You can <span class="cross_icon">remove</span> an assignment with the '
-                        u'<span class="cross_icon">cross icon</span>. '
-                        u'You can <span class="auto_append">add</span> a new assignment with the '
-                        u'<span class="auto_append">blue line</span>. '
-                        u'You can <span class="new_line">complete</span> it on the '
-                        u'<span class="new_line">brown line</span>.')
+        description = _('You can <span class="trash_icon">remove</span> an assignment with the '
+                        '<span class="trash_icon">trash icon</span>. '
+                        'You can <span class="auto_append">add</span> a new assignment with the '
+                        '<span class="auto_append">blue line</span>. '
+                        'You can <span class="new_line">complete</span> it on the '
+                        '<span class="new_line">brown line</span>.')
         self.get_user_manageable_functions()
         for function in self.functions_orgs:
             fld = DGFListField(
                 __name__=function,
-                title=_(u"Assignments for groups related to '${function}' function",
+                title=_("Assignments for groups related to '${function}' function",
                         mapping={'function': self.functions[function]}),
                 description=description,
                 required=False,
-                value_type=DictRow(title=u"org_users", schema=IOrganisationsUsers, required=False))
+                value_type=DictRow(title="org_users", schema=IOrganisationsUsers, required=False))
             fields.append(fld)
         fields = sorted(fields, key=lambda x: x.title)
 
@@ -226,12 +228,12 @@ class ManageOwnGroupUsers(EditForm):
                 title=_('Global groups assignments.'),
                 description=description,
                 required=False,
-                value_type=DictRow(title=u"users", schema=IGroupsUsers, required=False))
+                value_type=DictRow(title="users", schema=IGroupsUsers, required=False))
             fields.insert(0, fld)
 
         fld = schema.TextLine(
             __name__='_old_values_',
-            title=u'not_showed',
+            title='not_showed',
             required=False,
         )
         fields.append(fld)
@@ -272,20 +274,24 @@ class ManageOwnGroupUsers(EditForm):
                 new_value = data[name]  # If the field is not in the data, then go on to the next one
             except KeyError:
                 continue
-            new_value = set([(dic['group'], dic['user']) for dic in data[name]])
+            new_value = set([
+                (str(dic['group'][0]) if isinstance(dic['group'], tuple) else dic['group'],
+                 str(dic['user'][0]) if isinstance(dic['user'], tuple) else dic['user'])
+                for dic in data[name]
+            ])
             old_value = set([(dic['group'], dic['user']) for dic in old_values[name]])
             if old_value == new_value:
                 continue
             for action, result in (('removed', old_value - new_value), ('added', new_value - old_value)):
                 for (group_id, user_id) in result:
                     if group_id is None or user_id is None:
-                        required_message = _(u"There was a problem in added assignments. "
-                                             u"Don't forget to complete the 2 columns! "
-                                             u"You have to redo all the manipulations.")
+                        required_message = _("There was a problem in added assignments. "
+                                             "Don't forget to complete the 2 columns! "
+                                             "You have to redo all the manipulations.")
                         api.portal.show_message(message=required_message, request=self.request, type='error')
                         raise Redirect(self.request.get('ACTUAL_URL'))
                     if user_id == self.current_user_id:
-                        user_message = _(u"You cannot remove your user from a group!")
+                        user_message = _("You cannot remove your user from a group!")
                         api.portal.show_message(message=user_message, request=self.request, type='error')
                         raise Redirect(self.request.get('ACTUAL_URL'))
                     if name != '_groups_':
@@ -310,6 +316,6 @@ class ManageOwnGroupUsers(EditForm):
             api.portal.show_message(message=self.noChangesMessage, request=self.request, type='warn')
         self.request.response.redirect(self.request.get('ACTUAL_URL'))
 
-    @button.buttonAndHandler(PMF(u'return_to_view'), name='cancel')
+    @button.buttonAndHandler(PMF('return_to_view'), name='cancel')
     def handleCancel(self, action):
         self.request.response.redirect(self.request.get('URL1'))

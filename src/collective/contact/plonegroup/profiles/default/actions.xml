@@ -7,6 +7,7 @@
    <property name="title" i18n:translate="">Own groups management</property>
    <property name="url_expr">string:${portal_url}/@@manage-own-groups-users</property>
    <property name="available_expr">portal/@@manage-own-groups-users/available</property>
+   <property name="icon_expr">string:plone-groups</property>
    <property name="permissions">
     <element value="List portal members"/>
    </property>

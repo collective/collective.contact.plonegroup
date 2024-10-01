@@ -16,9 +16,9 @@ class TestVocabularies(IntegrationTestCase):
         self.portal.invokeFactory('directory', DEFAULT_DIRECTORY_ID)
         self.directory = self.portal.get(DEFAULT_DIRECTORY_ID)
         self.directory.position_types = [
-            {'token': u'default', 'name': u'Default'},
-            {'token': u'position1', 'name': u'Position1'},
-            {'token': u'position2', 'name': u'Position2'}, ]
+            {'token': 'default', 'name': 'Default'},
+            {'token': 'position1', 'name': 'Position1'},
+            {'token': 'position2', 'name': 'Position2'}, ]
         self.directory.invokeFactory(
             'organization', PLONEGROUP_ORG, title='My organization')
         self.own_org = self.directory.get(PLONEGROUP_ORG)

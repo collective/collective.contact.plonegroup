@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Setup/installation tests for this package."""
 
+from collective.contact.plonegroup import _
 from collective.contact.plonegroup.browser import settings
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
@@ -43,45 +44,45 @@ class TestSettings(IntegrationTestCase):
         set_registry_organizations([own_orga['department1'].UID(),
                                    own_orga['department1']['service1'].UID(),
                                    own_orga['department2'].UID()])
-        set_registry_functions([{'fct_title': u'Director',
-                                 'fct_id': u'director',
+        set_registry_functions([{'fct_title': 'Director',
+                                 'fct_id': 'director',
                                  'fct_orgs': [],
                                  'fct_management': False,
                                  'enabled': True},
-                                {'fct_title': u'Worker',
-                                 'fct_id': u'worker',
+                                {'fct_title': 'Worker',
+                                 'fct_id': 'worker',
                                  'fct_orgs': [],
                                  'fct_management': False,
                                  'enabled': True}])
 
     def test_OwnOrganizationServicesVocabulary(self):
         """ Test vocabulary """
-        services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
+        services = getUtility(IVocabularyFactory, name='collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
-        voc_list = [voc_dic[key].title for key in voc_dic.keys()]
+        voc_list = [voc_dic[key].title for key in list(voc_dic.keys())]
         self.assertSetEqual(set(voc_list), set(['Department 1 - Service 1', 'Department 1', 'Department 2']))
         self.assertNotIn('Inactive department', voc_list)
         # When multiple own organizations
         self.portal[DEFAULT_DIRECTORY_ID].invokeFactory('organization', 'temporary', title='Temporary')
         self.portal[DEFAULT_DIRECTORY_ID]['temporary'].invokeFactory(
             'organization', PLONEGROUP_ORG, title='Duplicated organization')
-        services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
+        services = getUtility(IVocabularyFactory, name='collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
-        voc_list = [voc_dic[key].title for key in voc_dic.keys()]
+        voc_list = [voc_dic[key].title for key in list(voc_dic.keys())]
         self.assertEqual(len(voc_list), 1)
         self.assertEqual(
             translate(voc_list[0]),
-            u"You must have only one 'organization' with id 'plonegroup-organization' !")
+            "You must have only one 'organization' with id 'plonegroup-organization' !")
         self.portal[DEFAULT_DIRECTORY_ID].manage_delObjects(ids=['temporary'])
         # When own organization not found
         self.portal[DEFAULT_DIRECTORY_ID].manage_delObjects(ids=[PLONEGROUP_ORG])
-        services = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.organization_services')
+        services = getUtility(IVocabularyFactory, name='collective.contact.plonegroup.organization_services')
         voc_dic = services(self).by_token
-        voc_list = [voc_dic[key].title for key in voc_dic.keys()]
+        voc_list = [voc_dic[key].title for key in list(voc_dic.keys())]
         self.assertEqual(len(voc_list), 1)
         self.assertEqual(
             translate(voc_list[0]),
-            u"You must define one 'organization' with id 'plonegroup-organization' !")
+            "You must define one 'organization' with id 'plonegroup-organization' !")
 
     def test_detectContactPlonegroupChange(self):
         """Test if group creation works correctly"""
@@ -91,24 +92,24 @@ class TestSettings(IntegrationTestCase):
             self.assertIn('%s_director' % uid, group_ids)
             self.assertIn('%s_worker' % uid, group_ids)
         d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
-        self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Director)')
+        self.assertEqual(d1_d_group.getProperty('title'), 'Department 1 (Director)')
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
-        self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Director)')
+        self.assertEqual(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Director)')
         # Changing function title
-        set_registry_functions([{'fct_title': u'Directors',
-                                 'fct_id': u'director',
+        set_registry_functions([{'fct_title': 'Directors',
+                                 'fct_id': 'director',
                                  'fct_orgs': [],
                                  'fct_management': False,
                                  'enabled': True},
-                                {'fct_title': u'Worker',
-                                 'fct_id': u'worker',
+                                {'fct_title': 'Worker',
+                                 'fct_id': 'worker',
                                  'fct_orgs': [],
                                  'fct_management': False,
                                  'enabled': True}])
         d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
-        self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 (Directors)')
+        self.assertEqual(d1_d_group.getProperty('title'), 'Department 1 (Directors)')
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
-        self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Directors)')
+        self.assertEqual(d1s1_d_group.getProperty('title'), 'Department 1 - Service 1 (Directors)')
         # Adding new organization
         own_orga = get_own_organization()
         own_orga['department2'].invokeFactory('organization', 'service2', title='Service 2')
@@ -120,14 +121,14 @@ class TestSettings(IntegrationTestCase):
         self.assertIn('%s_director' % last_uid, group_ids)
         self.assertIn('%s_worker' % last_uid, group_ids)
         # Adding new function
-        newValue = get_registry_functions() + [{'fct_title': u'Chief',
-                                                'fct_id': u'chief',
+        newValue = get_registry_functions() + [{'fct_title': 'Chief',
+                                                'fct_id': 'chief',
                                                 'fct_orgs': [],
                                                 'fct_management': False,
                                                 'enabled': True}]
         set_registry_functions(newValue)
         group_ids = [group.id for group in api.group.get_groups() if '_' in group.id]
-        self.assertEquals(len(group_ids), 12)
+        self.assertEqual(len(group_ids), 12)
         for uid in get_registry_organizations():
             self.assertIn('%s_director' % uid, group_ids)
             self.assertIn('%s_chief' % uid, group_ids)
@@ -200,15 +201,15 @@ class TestSettings(IntegrationTestCase):
         self.assertTrue(api.group.get(dep2_plone_group_id))
         # Changing function title
         dep1_plone_group = api.group.get(dep1_plone_group_id)
-        self.assertEquals(dep1_plone_group.getProperty('title'), 'Department 1 (Director)')
+        self.assertEqual(dep1_plone_group.getProperty('title'), 'Department 1 (Director)')
         dep2_plone_group = api.group.get(dep2_plone_group_id)
-        self.assertEquals(dep2_plone_group.getProperty('title'), 'Department 2 (Director)')
-        functions[0]['fct_title'] = u'New title'
+        self.assertEqual(dep2_plone_group.getProperty('title'), 'Department 2 (Director)')
+        functions[0]['fct_title'] = 'New title'
         set_registry_functions(functions)
         dep1_plone_group = api.group.get(dep1_plone_group_id)
-        self.assertEquals(dep1_plone_group.getProperty('title'), 'Department 1 (New title)')
+        self.assertEqual(dep1_plone_group.getProperty('title'), 'Department 1 (New title)')
         dep2_plone_group = api.group.get(dep2_plone_group_id)
-        self.assertEquals(dep2_plone_group.getProperty('title'), 'Department 2 (New title)')
+        self.assertEqual(dep2_plone_group.getProperty('title'), 'Department 2 (New title)')
 
     def test_validateSettingsRemoveFunction(self):
         """A function may only be removed if every linked Plone groups are empty."""
@@ -228,12 +229,11 @@ class TestSettings(IntegrationTestCase):
         functions.pop(0)
         errors = invariants.validate(data)
         self.assertTrue(isinstance(errors[0], Invalid))
-        error_msg = translate(
-            msgid=u"can_not_remove_function_every_plone_groups_not_empty",
-            domain='collective.contact.plonegroup',
-            mapping={'removed_function': 'director',
-                     'plone_group_id': plone_group_id})
-        self.assertEqual(translate(errors[0].message), error_msg)
+        msgid = _("can_not_remove_function_every_plone_groups_not_empty",
+                  mapping={'removed_function': 'director', 'plone_group_id': plone_group_id})
+        error_msg = api.portal.translate(msgid, lang="fr")
+        self.assertEqual(api.portal.translate(errors[0].args[0], lang="fr"), error_msg)
+
         # remove user from plone group, now it validates
         api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
         self.assertFalse(invariants.validate(data))
@@ -257,12 +257,10 @@ class TestSettings(IntegrationTestCase):
         functions[0]['enabled'] = False
         errors = invariants.validate(data)
         self.assertTrue(isinstance(errors[0], Invalid))
-        error_msg = translate(
-            msgid=u"can_not_disable_suffix_plone_groups_not_empty",
-            domain='collective.contact.plonegroup',
-            mapping={'removed_function': 'director',
-                     'plone_group_id': plone_group_id})
-        self.assertEqual(translate(errors[0].message), error_msg)
+        msgid = _("can_not_disable_suffix_plone_groups_not_empty",
+                  mapping={'disabled_function': 'director', 'plone_group_id': plone_group_id})
+        error_msg = api.portal.translate(msgid, lang="fr")
+        self.assertEqual(api.portal.translate(errors[0].args[0], lang="fr"), error_msg)
         # remove user from plone group, now it validates
         api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
         self.assertFalse(invariants.validate(data))
@@ -287,12 +285,10 @@ class TestSettings(IntegrationTestCase):
         director['fct_orgs'] = [dep2.UID()]
         errors = invariants.validate(data)
         self.assertTrue(isinstance(errors[0], Invalid))
-        error_msg = translate(
-            msgid=u"can_not_select_function_orgs_every_other_plone_groups_not_empty",
-            domain='collective.contact.plonegroup',
-            mapping={'function': 'director',
-                     'plone_group_id': plone_group_id})
-        self.assertEqual(translate(errors[0].message), error_msg)
+        msgid = _("can_not_select_function_orgs_every_other_plone_groups_not_empty",
+                  mapping={'function': 'director', 'plone_group_id': plone_group_id})
+        error_msg = api.portal.translate(msgid, lang="fr")
+        self.assertEqual(api.portal.translate(errors[0].args[0], lang="fr"), error_msg)
         # remove user from plone group, now it validates
         api.group.remove_user(groupname=plone_group_id, username=TEST_USER_ID)
         self.assertFalse(invariants.validate(data))
@@ -305,15 +301,15 @@ class TestSettings(IntegrationTestCase):
         own_orga['department1'].title = 'Department 1 changed'
         event.notify(ObjectModifiedEvent(own_orga['department1']))
         d1_d_group = api.group.get(groupname='%s_director' % organizations[0])
-        self.assertEquals(d1_d_group.getProperty('title'), 'Department 1 changed (Director)')
+        self.assertEqual(d1_d_group.getProperty('title'), 'Department 1 changed (Director)')
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
-        self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 1 changed - Service 1 (Director)')
+        self.assertEqual(d1s1_d_group.getProperty('title'), 'Department 1 changed - Service 1 (Director)')
         # an organization is moved (service1 in department2)
         clipboard = own_orga['department1'].manage_cutObjects(['service1'])
         own_orga['department2'].manage_pasteObjects(clipboard)
         # the event IObjectMovedEvent is triggered
         d1s1_d_group = api.group.get(groupname='%s_director' % organizations[1])
-        self.assertEquals(d1s1_d_group.getProperty('title'), 'Department 2 - Service 1 (Director)')
+        self.assertEqual(d1s1_d_group.getProperty('title'), 'Department 2 - Service 1 (Director)')
         # a configured organization is deleted. Exception raised
         self.assertRaises(Redirect, own_orga['department2'].manage_delObjects, ids=['service1'])
         # THIS IS A KNOWN ERROR: the organization is deleted despite the exception !!!!!!!
@@ -331,13 +327,13 @@ class TestSettings(IntegrationTestCase):
         dep2 = own_orga['department2']
         dep2_uid = dep2.UID()
         functions = get_registry_functions()
-        new_functions = [{'fct_id': u'new',
-                          'fct_title': u'New',
+        new_functions = [{'fct_id': 'new',
+                          'fct_title': 'New',
                           'fct_orgs': [dep1_uid],
                           'fct_management': False,
                           'enabled': True},
-                         {'fct_id': u'new2',
-                          'fct_title': u'New2',
+                         {'fct_id': 'new2',
+                          'fct_title': 'New2',
                           'fct_orgs': [],
                           'fct_management': False,
                           'enabled': False}, ]
@@ -352,34 +348,34 @@ class TestSettings(IntegrationTestCase):
         event.notify(ObjectModifiedEvent(dep1))
         event.notify(ObjectModifiedEvent(dep2))
         # 'new' suffixed Plone group was created only for dep1
-        self.assertTrue(api.group.get(get_plone_group_id(dep1_uid, u'new')))
-        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, u'new')))
+        self.assertTrue(api.group.get(get_plone_group_id(dep1_uid, 'new')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, 'new')))
         # 'new2' is not enabled and was not created for any organization
-        self.assertIsNone(api.group.get(get_plone_group_id(dep1_uid, u'new2')))
-        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, u'new2')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep1_uid, 'new2')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, 'new2')))
 
     def test_onlyRelevantPloneGroupsCreatedWhenFunctionRestrictedToSelectedOrgs(self):
         """Test using 'fct_orgs' when defining functions."""
         dep1, dep1_uid, dep2, dep2_uid = self._setupRestrictedFunctions()
         # 'new' suffixed Plone group was created only for dep1
-        self.assertTrue(api.group.get(get_plone_group_id(dep1_uid, u'new')))
-        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, u'new')))
+        self.assertTrue(api.group.get(get_plone_group_id(dep1_uid, 'new')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, 'new')))
         # 'new2' is not enabled and was not created for any organization
-        self.assertIsNone(api.group.get(get_plone_group_id(dep1_uid, u'new2')))
-        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, u'new2')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep1_uid, 'new2')))
+        self.assertIsNone(api.group.get(get_plone_group_id(dep2_uid, 'new2')))
 
     def test_selectedOrganizationsPloneGroupsVocabulary(self):
         """ Test plone groups vocabulary """
         groups = settings.selectedOrganizationsPloneGroupsVocabulary()
         voc_dic = groups.by_token
-        voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(set(voc_list), set(['Department 1 - Service 1 (Director)', 'Department 2 (Worker)',
-                                              'Department 1 - Service 1 (Worker)', 'Department 1 (Worker)',
-                                              'Department 2 (Director)', 'Department 1 (Director)']))
+        voc_list = [voc_dic[key].title for key in list(voc_dic.keys())]
+        self.assertEqual(set(voc_list), set(['Department 1 - Service 1 (Director)', 'Department 2 (Worker)',
+                                             'Department 1 - Service 1 (Worker)', 'Department 1 (Worker)',
+                                             'Department 2 (Director)', 'Department 1 (Director)']))
         groups = settings.selectedOrganizationsPloneGroupsVocabulary(functions=['worker'], group_title=False)
         voc_dic = groups.by_token
-        voc_list = [voc_dic[key].title for key in voc_dic.keys()]
-        self.assertEquals(set(voc_list), set(['Department 2', 'Department 1', 'Department 1 - Service 1']))
+        voc_list = [voc_dic[key].title for key in list(voc_dic.keys())]
+        self.assertEqual(set(voc_list), set(['Department 2', 'Department 1', 'Department 1 - Service 1']))
 
     def test_selectedOrganizationsVocabulary(self):
         """ Test registry vocabulary """
@@ -416,7 +412,7 @@ class TestSettings(IntegrationTestCase):
         vocab_wrp = factory_wrp(self.portal)
         self.assertListEqual(
             [v.title for v in vocab_wrp],
-            [u'Department 1', u'Department 2', u'Department 1 - Service 1', u'Department 3'])
+            ['Department 1', 'Department 2', 'Department 1 - Service 1', 'Department 3'])
         self.assertListEqual(
             [v.token for v in vocab_wrp],
             get_registry_organizations())
@@ -437,10 +433,10 @@ class TestSettings(IntegrationTestCase):
         vocab_wrp = factory_wrp(self.portal)
         self.assertEqual(len(vocab_wrp), 3)
         # values are shown sorted, no matter how it is selected in plonegroup organizations
-        self.assertListEqual([v.title for v in vocab_wrp], [u'Department 1', u'Department 2'])
+        self.assertListEqual([v.title for v in vocab_wrp], ['Department 1', 'Department 2'])
         self.assertListEqual(sorted([v.token for v in vocab_wrp]),
                              sorted(get_registry_organizations()))
-        self.assertEqual(vocab_wrp.getTerm(vocab_all_values[1]).title, u'Department 1 - Service 1')
+        self.assertEqual(vocab_wrp.getTerm(vocab_all_values[1]).title, 'Department 1 - Service 1')
         # vocabulary use caching, when new values added, the vocabulary is correct
         own_orga = get_own_organization()
         own_orga.invokeFactory('organization', 'department3', title='Department 3')
@@ -451,7 +447,7 @@ class TestSettings(IntegrationTestCase):
         vocab_wrp = factory_wrp(self.portal)
         self.assertListEqual(
             [v.title for v in vocab_wrp],
-            [u'Department 1', u'Department 2', u'Department 3'])
+            ['Department 1', 'Department 2', 'Department 3'])
         self.assertListEqual(
             sorted([v.token for v in vocab_wrp]),
             sorted(get_registry_organizations()))

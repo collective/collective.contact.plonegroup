@@ -50,16 +50,3 @@ class IDGFListField(Interface):
     """
         Interface for the DGFListField
     """
-
-
-class IPloneGroupContactChecks(Interface):
-    """
-        Adapter interface adding methods used in subscribers checks.
-        The adapter is intended to be overrided (to be more precise)
-    """
-
-    def check_items_on_delete(self):
-        """Will be called on delete"""
-
-    def check_items_on_transition(self):
-        """Will be called on transition"""

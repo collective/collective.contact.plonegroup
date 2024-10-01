@@ -101,7 +101,7 @@ def get_plone_group_id(prefix, suffix):
         Return Plone group id corresponding to prefix/suffix.
     """
     # make sure we received an str as org_uid, not an org
-    if not isinstance(prefix, (str, unicode)):
+    if not isinstance(prefix, str):
         raise TypeError('Parameter prefix must be str or unicode instance!')
     return '{0}_{1}'.format(prefix, suffix)
 
@@ -202,7 +202,7 @@ def get_organizations(only_selected=True,
             # is overrided get_organizations is still consistent
             vocab = getUtility(
                 IVocabularyFactory,
-                name=u'collective.contact.plonegroup.organization_services')
+                name='collective.contact.plonegroup.organization_services')
             portal = api.portal.get()
             org_uids = [term.value for term in vocab(portal)._terms]
         # filter out regarding parameter kept_org_uids
@@ -291,7 +291,7 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None, escaped=
     :param escaped: escape fullname to avoid xss
     :return: users vocabulary
     """
-    if not org_uid or org_uid == u'--NOVALUE--':
+    if not org_uid or org_uid == '--NOVALUE--':
         return SimpleVocabulary([])
     terms = []
     # only add to vocabulary users with these functions in the organization
@@ -299,7 +299,7 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None, escaped=
         fullname = member.getUser().getProperty('fullname')
         if escaped:
             fullname = escape(fullname)
-        if member == first_member:
+        if first_member and first_member.getId() == member.getId():
             terms.insert(0, SimpleTerm(
                 value=member.getUserName(),  # login
                 token=member.getId(),  # id
@@ -343,7 +343,7 @@ def voc_selected_org_suffix_userids(org_uid, suffixes, first_userid=None, escape
     :param escaped: escape fullname to avoid xss
     :return: users vocabulary
     """
-    if not org_uid or org_uid == u'--NOVALUE--':
+    if not org_uid or org_uid == '--NOVALUE--':
         return SimpleVocabulary([])
     terms = []
     # only add to vocabulary users with these functions in the organization
@@ -429,3 +429,17 @@ def disable_function(function_id):
            function['enabled'] is True:
             function['enabled'] = False
             set_registry_functions(functions)
+
+
+def get_breaches_for_obj(obj):
+    """Get all linkintegrity breaches for an object."""
+    linkintegrity_view = api.content.get_view(
+        name="delete_confirmation_info",
+        context=obj,
+    )
+    # we get all breaches of all concerned objects
+    breaches = linkintegrity_view.get_breaches()
+    # we keep only breaches for the original object
+    for breach_info in breaches:
+        if breach_info["target"]["uid"] == obj.UID():
+            return breach_info["sources"]

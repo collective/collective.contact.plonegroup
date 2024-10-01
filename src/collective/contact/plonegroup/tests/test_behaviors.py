@@ -29,13 +29,13 @@ class TestBehaviors(IntegrationTestCase):
         self.own_orga.invokeFactory('organization', 'department2', title='Department 2')
         set_registry_organizations([self.own_orga['department1'].UID(),
                                    self.own_orga['department2'].UID()])
-        set_registry_functions([{'fct_title': u'Director',
-                                 'fct_id': u'director',
+        set_registry_functions([{'fct_title': 'Director',
+                                 'fct_id': 'director',
                                  'fct_orgs': [],
                                  'fct_management': False,
                                  'enabled': True},
-                                {'fct_title': u'Worker',
-                                 'fct_id': u'worker',
+                                {'fct_title': 'Worker',
+                                 'fct_id': 'worker',
                                  'fct_orgs': [],
                                  'fct_management': False,
                                  'enabled': True}])
@@ -53,7 +53,7 @@ class TestBehaviors(IntegrationTestCase):
 
     def test_PrimaryOrganizationsVocabulary(self):
         """ Test vocabulary """
-        voc = getUtility(IVocabularyFactory, name=u'collective.contact.plonegroup.primary_organizations')
+        voc = getUtility(IVocabularyFactory, name='collective.contact.plonegroup.primary_organizations')
         # no userid
         self.assertEqual(len(voc(self)._terms), 0)
         self.assertEqual(len(voc(self, userid='unknown')._terms), 0)
@@ -66,18 +66,18 @@ class TestBehaviors(IntegrationTestCase):
         api.group.create(groupname='{}_director'.format(self.directory['department3'].UID()))
         api.group.add_user(groupname='{}_director'.format(self.directory['department3'].UID()), username=TEST_USER_ID)
         voc_dic = voc(self, userid=TEST_USER_ID).by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]), {'Department 1', 'Department 2'})
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]), {'Department 1', 'Department 2'})
         # not all suffixes
         voc_dic = voc(self, userid=TEST_USER_ID, suffixes=['director']).by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]), {'Department 1'})
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]), {'Department 1'})
         voc_dic = voc(self, userid=TEST_USER_ID, suffixes=['worker']).by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]), {'Department 2'})
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]), {'Department 2'})
         # other base vocabulary
         voc_dic = voc(self, userid=TEST_USER_ID, suffixes=['director'],
                       base_voc='collective.contact.plonegroup.every_organizations').by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]),
-                            {'Department 3', u'My organization - Department 1'})
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]),
+                            {'Department 3', 'My organization - Department 1'})
         # other base vocabulary and all suffixes
         voc_dic = voc(self, userid=TEST_USER_ID, base_voc='collective.contact.plonegroup.every_organizations').by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]),
-                            {'Department 3', u'My organization - Department 1', u'My organization - Department 2'})
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]),
+                            {'Department 3', 'My organization - Department 1', 'My organization - Department 2'})

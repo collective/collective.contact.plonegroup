@@ -32,9 +32,9 @@ def filter_user_organizations(userid):
 class IPlonegroupUserLink(model.Schema):
 
     userid = MasterSelectField(
-        title=_(u'Plone user'),
+        title=_('Plone user'),
         required=False,
-        vocabulary=u'imio.helpers.SortedUsers',
+        vocabulary='imio.helpers.SortedUsers',
         slave_fields=(
             {'name': 'IPlonegroupUserLink.primary_organization',
              'action': 'vocabulary',
@@ -48,7 +48,7 @@ class IPlonegroupUserLink(model.Schema):
     directives.write_permission(userid='collective.contact.plonegroup.write_userlink_fields')
 
     primary_organization = schema.Choice(
-        title=_(u'Primary organization'),
+        title=_('Primary organization'),
         required=False,
         vocabulary='collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary',
     )
@@ -56,7 +56,7 @@ class IPlonegroupUserLink(model.Schema):
     directives.write_permission(primary_organization='collective.contact.plonegroup.write_userlink_fields')
 
     model.fieldset('app_parameters',
-                   label=_(u"Application parameters"),
+                   label=_("Application parameters"),
                    fields=['userid', 'primary_organization'])
 
 
