@@ -5,12 +5,12 @@ from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_organizations
 from collective.contact.plonegroup.interfaces import IPloneGroupContactChecks
 from collective.contact.plonegroup.utils import get_all_suffixes
-from config import PLONEGROUP_ORG
-from interfaces import INotPloneGroupContact
-from interfaces import IPloneGroupContact
+from .config import PLONEGROUP_ORG
+from .interfaces import INotPloneGroupContact
+from .interfaces import IPloneGroupContact
 from plone import api
-from plone.app.linkintegrity.handlers import referencedObjectRemoved as baseReferencedObjectRemoved
-from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
+# from plone.app.linkintegrity.handlers import referencedObjectRemoved as baseReferencedObjectRemoved  # MIGRATION-PLONE6
+# from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo  # MIGRATION-PLONE6
 from plone.behavior.interfaces import IBehavior
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
@@ -22,7 +22,7 @@ from zope.component import adapts
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import alsoProvides
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import Interface
 from zope.interface import noLongerProvides
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
@@ -39,8 +39,8 @@ except ImportError:
         pass
 
 
+@implementer(IPloneGroupContactChecks)
 class PloneGroupContactChecksAdapter(object):
-    implements(IPloneGroupContactChecks)
     adapts(IPloneGroupContact)
 
     def __init__(self, context):
@@ -75,7 +75,8 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
         # When deleting site, the portal is no more found...
         return
 
-    storage = ILinkIntegrityInfo(request)
+    # storage = ILinkIntegrityInfo(request)  # MIGRATION-PLONE6
+    storage = None
 
     def list_fields(ptype, filter_interfaces=(IText, ICollection, IChoice)):
         """ return for the portal_type the selected fields """
@@ -98,14 +99,14 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
         return type_fields[ptype]
 
     def check_value(val):
-        if isinstance(val, basestring) and val == ref:
+        if isinstance(val, str) and val == ref:
             return True
         return False
 
     def check_attribute(val):
         """ check the attribute value and walk in it """
         if isinstance(val, dict):
-            for v in val.values():
+            for v in list(val.values()):
                 res = check_attribute(v)
                 if res:
                     return res
@@ -151,7 +152,8 @@ def plonegroupOrganizationRemoved(del_obj, event):
 
 def referencedObjectRemoved(obj, event):
     if not IReferenceable.providedBy(obj):
-        baseReferencedObjectRemoved(obj, event)
+        pass
+        # baseReferencedObjectRemoved(obj, event)  # MIGRATION-PLONE6
 
 
 def plonegroup_contact_transition(contact, event):
@@ -167,7 +169,8 @@ def plonegroup_contact_transition(contact, event):
         elif pp.site_properties.enable_link_integrity_checks:
             adapted = IPloneGroupContactChecks(contact)
             adapted.check_items_on_transition()
-            storage = ILinkIntegrityInfo(contact.REQUEST)
+            # storage = ILinkIntegrityInfo(contact.REQUEST)  # MIGRATION-PLONE6
+            storage = None
             breaches = storage.getIntegrityBreaches()
             if contact in breaches:
                 errors.append(_("This contact is used in following content: ${items}",

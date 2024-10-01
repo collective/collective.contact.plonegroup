@@ -28,7 +28,7 @@ class TestInstall(IntegrationTestCase):
         """Test that ICollectiveContactPlonegroupLayer is registered."""
         from collective.contact.plonegroup.interfaces import ICollectiveContactPlonegroupLayer
         from plone.browserlayer import utils
-        self.failUnless(ICollectiveContactPlonegroupLayer in utils.registered_layers())
+        self.assertTrue(ICollectiveContactPlonegroupLayer in utils.registered_layers())
 
     def test_reinstall(self):
         """ """

@@ -11,7 +11,7 @@ from collective.contact.plonegroup.utils import get_organizations
 from collective.contact.plonegroup.utils import get_own_organization_path
 from collective.contact.plonegroup.utils import get_plone_group_id
 from collective.elephantvocabulary import wrap_vocabulary
-from collective.z3cform.datagridfield import DataGridFieldFactory
+from collective.z3cform.datagridfield.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from imio.helpers.cache import get_cachekey_volatile
 from imio.helpers.cache import invalidate_cachekey_volatile_for
@@ -38,7 +38,7 @@ from zope.component.hooks import getSite
 from zope.container.interfaces import IContainerModifiedEvent
 from zope.container.interfaces import IObjectRemovedEvent
 from zope.event import notify
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import Interface
 from zope.interface import Invalid
 from zope.interface import invariant
@@ -91,11 +91,11 @@ def voc_cache_key(method, self, context):
     return get_cachekey_volatile("%s.%s" % (self.__class__.__module__, self.__class__.__name__))
 
 
+@implementer(IVocabularyFactory)
 class BaseOrganizationServicesVocabulary(object):
     """
         Base vocabulary returning organizations from a particular root level.
     """
-    implements(IVocabularyFactory)
     valid_states = ('active',)
 
     def listSubOrganizations(self, terms, folder, parent_label=''):
@@ -242,7 +242,7 @@ class IContactPlonegroupConfig(Interface):
                                          'fct_orgs': dic['fct_orgs'],
                                          'enabled': dic['enabled']}
                          for dic in data.functions}
-        for new_function, new_function_infos in new_functions.items():
+        for new_function, new_function_infos in list(new_functions.items()):
             if new_function_infos['fct_orgs'] and \
                old_functions[new_function]['fct_orgs'] != new_function_infos['fct_orgs']:
                 # check that Plone group is empty for not selected fct_orgs
@@ -402,7 +402,7 @@ def detectContactPlonegroupChange(event):
                     if plone_group and not plone_group.getMemberIds():
                         api.group.delete(plone_group_id)
             # we detect existing functions for which 'fct_orgs' changed
-            for new_id, new_function_infos in new_functions.items():
+            for new_id, new_function_infos in list(new_functions.items()):
                 new_title = new_function_infos['fct_title']
                 new_orgs = new_function_infos['fct_orgs']
                 enabled = new_function_infos['enabled']
@@ -581,8 +581,8 @@ class SelectedOrganizationsElephantVocabulary(OwnOrganizationServicesVocabulary)
             if uid in terms:
                 ordered_terms.append(terms[uid])
                 del terms[uid]
-        extra_uids = terms.keys()
-        extra_terms = terms.values()
+        extra_uids = list(terms.keys())
+        extra_terms = list(terms.values())
         # ordered_vocab = SearchableSimpleVocabulary(ordered_terms + extra_terms)  # bug in widget, trac #15186
         ordered_vocab = SimpleVocabulary(ordered_terms + extra_terms)
         wrapped_vocab = wrap_vocabulary(ordered_vocab, hidden_terms=extra_uids)(context)

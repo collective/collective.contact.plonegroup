@@ -66,18 +66,18 @@ class TestBehaviors(IntegrationTestCase):
         api.group.create(groupname='{}_director'.format(self.directory['department3'].UID()))
         api.group.add_user(groupname='{}_director'.format(self.directory['department3'].UID()), username=TEST_USER_ID)
         voc_dic = voc(self, userid=TEST_USER_ID).by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]), {'Department 1', 'Department 2'})
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]), {'Department 1', 'Department 2'})
         # not all suffixes
         voc_dic = voc(self, userid=TEST_USER_ID, suffixes=['director']).by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]), {'Department 1'})
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]), {'Department 1'})
         voc_dic = voc(self, userid=TEST_USER_ID, suffixes=['worker']).by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]), {'Department 2'})
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]), {'Department 2'})
         # other base vocabulary
         voc_dic = voc(self, userid=TEST_USER_ID, suffixes=['director'],
                       base_voc='collective.contact.plonegroup.every_organizations').by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]),
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]),
                             {'Department 3', u'My organization - Department 1'})
         # other base vocabulary and all suffixes
         voc_dic = voc(self, userid=TEST_USER_ID, base_voc='collective.contact.plonegroup.every_organizations').by_token
-        self.assertSetEqual(set([voc_dic[key].title for key in voc_dic.keys()]),
+        self.assertSetEqual(set([voc_dic[key].title for key in list(voc_dic.keys())]),
                             {'Department 3', u'My organization - Department 1', u'My organization - Department 2'})

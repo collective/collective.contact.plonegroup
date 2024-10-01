@@ -50,7 +50,7 @@ setup(
         'collective.contact.core',
         'collective.eeafaceted.z3ctable',
         'collective.elephantvocabulary',
-        'plone.formwidget.masterselect ~= 1.7',
+        'plone.formwidget.masterselect',
         'imio.helpers > 0.61'
     ],
     extras_require={
