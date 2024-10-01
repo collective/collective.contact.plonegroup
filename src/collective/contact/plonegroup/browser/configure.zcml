@@ -5,6 +5,7 @@
     i18n_domain="collective.contact.plonegroup">
 
     <include package="Products.CMFCore" />
+    <include package="Products.CMFPlone.controlpanel" file="permissions.zcml" />
 
     <!-- Publish static files -->
     <browser:resourceDirectory
@@ -23,6 +24,14 @@
         class=".views.ManageOwnGroupUsers"
         permission="zope2.View"
         attribute="available" />
+
+    <browser:page
+        for="*"
+        name="delete_confirmation_info"
+        class=".linkintegrity.PlonegroupDeleteConfirmationInfo"
+        permission="zope2.Public"
+        layer="collective.contact.plonegroup.interfaces.ICollectiveContactPlonegroupLayer"
+        />
 
     <utility
         name="collective.contact.plonegroup.organization_services"

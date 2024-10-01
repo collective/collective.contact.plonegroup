@@ -19,7 +19,6 @@
 
     <include package=".browser" />
     <include package=".content" />
-    <include package=".upgrades" />
     <include package="plone.api" />
     <include package="collective.contact.core" />
     <include package="imio.helpers" />
@@ -80,8 +79,6 @@
         provides="z3c.form.interfaces.ITerms"
         factory=".vocabularies.DGFVocabularyTerms"
         />
-
-    <adapter factory=".subscribers.PloneGroupContactChecksAdapter" />
 
     <adapter name="userid" factory=".adapters.heldposition_userid_index" />
 
