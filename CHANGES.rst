@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.51 (unreleased)
+1.51 (2024-10-02)
 -----------------
 
 - Added helpers `utils.enable_function` and `utils.disable_function`
