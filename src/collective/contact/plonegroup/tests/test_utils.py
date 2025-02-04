@@ -179,10 +179,17 @@ class TestUtils(IntegrationTestCase):
     def test_get_plone_groups(self):
         plone_groups = [get_plone_group(self.uid, 'observer'), get_plone_group(self.uid, 'director')]
         self.assertEqual(get_plone_groups(self.uid, ids_only=False), plone_groups)
+        self.assertEqual(get_plone_groups(self.uid, ids_only=False, verify_group_exist=False), plone_groups)
         self.assertEqual(get_plone_groups(self.uid, ids_only=True), [g.id for g in plone_groups])
+        self.assertEqual(get_plone_groups(self.uid, ids_only=True, verify_group_exist=False),
+                         [g.id for g in plone_groups])
         self.assertEqual(get_plone_groups(self.uid, suffixes=['observer']), [plone_groups[0]])
         self.assertEqual(get_plone_groups(self.uid, suffixes=['unknown_suffix']), [])
         self.assertEqual(get_plone_groups(self.uid, ids_only=True, suffixes=['unknown_suffix']), [])
+        # when using verify_group_exist=False we must make sure it exists or it is returned
+        self.assertEqual(get_plone_groups("wrong_uid", ids_only=True, verify_group_exist=False),
+                         ['wrong_uid_observer', 'wrong_uid_director'])
+        self.assertEqual(get_plone_groups("wrong_uid", ids_only=False, verify_group_exist=False), [])
 
     def test_get_organization(self):
         suffixed_org = get_plone_group_id(self.uid, 'suffix')

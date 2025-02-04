@@ -113,20 +113,24 @@ def get_plone_group(prefix, suffix):
     return api.group.get(get_plone_group_id(prefix, suffix))
 
 
-def get_plone_groups(org_uid, ids_only=False, suffixes=[]):
+def get_plone_groups(org_uid, ids_only=False, verify_group_exist=True, suffixes=[]):
     """
         Return Plone groups linked to given org_uid.
         If ids_only is True, only returns Plone groups ids,
         either returns Plone group objects.
         Only returns Plone groups using suffixes if provided.
+        If verify_group_exist=True, real group object is retrieved
+        to check if it exists, even when ids_only=False.
+        For performance, use ids_only=False and verify_group_exist=False.
     """
     suffixes = suffixes or get_all_suffixes(org_uid)
     plone_groups = [get_plone_group_id(org_uid, suffix) for suffix in suffixes]
-    plone_groups = [api.group.get(plone_group) for plone_group in plone_groups]
-    # remove None values
-    plone_groups = [v for v in plone_groups if v]
-    if ids_only:
-        plone_groups = [plone_group.getId() for plone_group in plone_groups]
+    if not ids_only or verify_group_exist:
+        plone_groups = [api.group.get(plone_group) for plone_group in plone_groups]
+        # remove None values
+        plone_groups = [v for v in plone_groups if v]
+        if ids_only:
+            plone_groups = [plone_group.getId() for plone_group in plone_groups]
     return plone_groups
 
 
