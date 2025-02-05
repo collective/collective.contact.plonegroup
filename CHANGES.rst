@@ -4,8 +4,10 @@ Changelog
 1.52 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter `verify_group_exist=True` to `utils.get_plone_groups`.
+  When set to `False`, it will not get the real Plone group object to check
+  if it exist when using `ids_only=True`. In this case it is much faster.
+  [gbastien]
 
 1.51 (2024-10-02)
 -----------------
