@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.52 (unreleased)
+1.52 (2025-02-06)
 -----------------
 
 - Added parameter `verify_group_exist=True` to `utils.get_plone_groups`.
