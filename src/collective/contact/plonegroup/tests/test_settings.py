@@ -210,6 +210,22 @@ class TestSettings(IntegrationTestCase):
         dep2_plone_group = api.group.get(dep2_plone_group_id)
         self.assertEquals(dep2_plone_group.getProperty('title'), 'Department 2 (New title)')
 
+    def test_validateSettingsAddFunction(self):
+        """A function can be added correctly."""
+        invariants = validator.InvariantsValidator(
+            None, None, None, settings.IContactPlonegroupConfig, None)
+        orgs = get_registry_organizations()
+        functions = get_registry_functions()
+        data = {'organizations': orgs, 'functions': functions}
+        functions.append({'fct_id': u'consultant', 'fct_title': u'Consultant', 'fct_management': False,
+                          'enabled': True, 'fct_orgs': [orgs[0]]})
+        self.assertFalse(invariants.validate(data))
+        set_registry_functions(functions)
+        group_id = get_plone_group_id(orgs[0], 'director')
+        self.assertIsNotNone(api.group.get(group_id))
+        functions[-1]["enabled"] = False
+        self.assertFalse(invariants.validate(data))
+
     def test_validateSettingsRemoveFunction(self):
         """A function may only be removed if every linked Plone groups are empty."""
         # add a user to group department1 director

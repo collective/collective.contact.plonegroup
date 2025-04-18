@@ -4,8 +4,8 @@ Changelog
 1.53 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Corrected bugs in `settings.validateSettings`.
+  [sgeulette]
 
 1.52 (2025-02-06)
 -----------------

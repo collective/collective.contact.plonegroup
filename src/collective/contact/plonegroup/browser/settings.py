@@ -243,7 +243,7 @@ class IContactPlonegroupConfig(Interface):
                                          'enabled': dic['enabled']}
                          for dic in data.functions}
         for new_function, new_function_infos in new_functions.items():
-            if new_function_infos['fct_orgs'] and \
+            if new_function_infos['fct_orgs'] and new_function in old_functions and \
                old_functions[new_function]['fct_orgs'] != new_function_infos['fct_orgs']:
                 # check that Plone group is empty for not selected fct_orgs
                 for org_uid in get_organizations(only_selected=False, the_objects=False):
@@ -257,7 +257,7 @@ class IContactPlonegroupConfig(Interface):
                             _(u"can_not_select_function_orgs_every_other_plone_groups_not_empty",
                               mapping={'function': new_function,
                                        'plone_group_id': plone_group_id}))
-            elif new_function_infos['enabled'] is False:
+            if new_function_infos['enabled'] is False:
                 # check that Plone groups are all empty
                 for org_uid in get_organizations(only_selected=False, the_objects=False):
                     plone_group_id = get_plone_group_id(org_uid, new_function)
