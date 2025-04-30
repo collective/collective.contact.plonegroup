@@ -11,6 +11,7 @@ from collective.contact.plonegroup.testing import IntegrationTestCase
 from collective.contact.plonegroup.utils import get_own_organization
 from collective.contact.plonegroup.utils import get_plone_group_id
 from plone import api
+from plone.app.testing import login
 from plone.app.testing import TEST_USER_ID
 from plone.registry.interfaces import IRegistry
 from zExceptions import Redirect
@@ -134,13 +135,24 @@ class TestViews(IntegrationTestCase):
         self.assertTrue("group.png" in view(group_ids=[observer]))
         # when using "*", every groups are displayed
         every_groups = view(group_ids=self.uid + "*")
+        self.assertTrue("group.png" in every_groups)
+        self.assertTrue("user.png" in every_groups)
         self.assertTrue("Department 1 (Observers)" in every_groups)
         self.assertTrue("Department 1 (Director)" in every_groups)
+        # dexter in Department 1 (Observers)
+        self.assertTrue("Dexter Morgan (dexter, dxm@miami.pol)" in every_groups)
+        # nobody in Department 1 (Director)
+        self.assertTrue("No user was found in this group." in every_groups)
         # with parameter "short"
         self.assertTrue(view(group_ids=self.uid + "*", short=True))
         # when called on an organization that is not selected in plonegroup
         not_selected_org = view(group_ids=self.dep2.UID() + "*")
         self.assertTrue("Nothing." in not_selected_org)
+        # as non Manager, we do not see user user_id and email
+        login(self.portal, 'dexter')
+        every_groups = view(group_ids=self.uid + "*")
+        self.assertTrue("Department 1 (Observers)" in every_groups)
+        self.assertTrue("Dexter Morgan</div>" in every_groups)
 
     def test_suborganizations(self):
         own_org = get_own_organization()
