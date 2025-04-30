@@ -6,6 +6,9 @@ Changelog
 
 - Corrected bugs in `settings.validateSettings`.
   [sgeulette]
+- Include user email in addition to id in `@@display-group-users`
+  so we have `Fullname (user_id, user@email)` for `Managers`.
+  [gbastien]
 
 1.52 (2025-02-06)
 -----------------

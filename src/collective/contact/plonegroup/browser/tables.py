@@ -222,7 +222,11 @@ class DisplayGroupUsersView(BrowserView):
                                           principal.getProperty('title') or
                                           principal.getId())
             if self.is_manager:
-                principal_title = principal_title + " ({0})".format(principal.id)
+                details = " ({0})".format(principal.id) if isGroup else \
+                    " ({0}, {1})".format(
+                        principal.id, principal.getProperty('email'))
+                principal_title += details
+
             principal_title = "<div class='user-or-group user-or-group-level-{0}'>{1}</div>".format(
                 index, principal_title)
             value = patterns[isGroup].format(**{'member_id': principal.id,
