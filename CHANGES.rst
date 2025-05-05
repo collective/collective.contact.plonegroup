@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.53 (unreleased)
+1.53 (2025-05-05)
 -----------------
 
 - Corrected bugs in `settings.validateSettings`.
