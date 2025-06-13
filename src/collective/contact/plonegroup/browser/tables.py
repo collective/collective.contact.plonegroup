@@ -260,11 +260,14 @@ class PloneGroupUsersGroupsColumn(BaseColumn):
         details_msg = translate(details_msg, context=self.request)
         res = "<div id=\"group-users\" class=\"collapsible\" onclick=\"toggleDetails(" \
             "'collapsible-group-users_{0}', toggle_parent_active=false, parent_tag=null, " \
-            "load_view='@@display-group-users?group_ids={1}&short:boolean={2}', base_url='{3}');\"> {4}</div>" \
+            "load_view='@@display-group-users?group_ids={1}&short:boolean={2}', base_url='{3}');\"> " \
+            "<a href='javascript:void(0);'>{4}</a></div>" \
             "<div id=\"collapsible-group-users_{0}\" class=\"collapsible-content\" style=\"display: none;\">" \
             "<div class=\"collapsible-inner-content\">" \
             "<img src=\"{3}/spinner_small.gif\" /></div></div>".format(
                 org_uid, url_group_ids, self.short, self.table.portal_url, details_msg)
+        # MIGRATION-PLONE6 : we need to fix spinner_small.gif url after
+        # plonetheme.imioapps migration
         return res
 
 
