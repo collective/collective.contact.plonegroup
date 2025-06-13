@@ -4,8 +4,9 @@ Changelog
 1.54 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Set `toggle_parent_active=true` when calling JS `toggleDetails` for opening
+  an organization linked users and groups so the `[+]` turns to `[-]`.
+  [gbastien]
 
 1.53 (2025-05-05)
 -----------------
