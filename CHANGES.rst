@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.54 (unreleased)
+1.54 (2025-06-25)
 -----------------
 
 - Set `toggle_parent_active=true` when calling JS `toggleDetails` for opening
