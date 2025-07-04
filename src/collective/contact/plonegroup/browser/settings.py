@@ -27,6 +27,7 @@ from plone.memoize import ram
 from plone.memoize.interfaces import ICacheChooser
 from plone.registry.interfaces import IRecordModifiedEvent
 from plone.z3cform import layout
+from Products.CMFPlone import PloneMessageFactory
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
@@ -439,6 +440,7 @@ class SettingsEditForm(RegistryEditForm):
     """
     form.extends(RegistryEditForm)
     schema = IContactPlonegroupConfig
+    label = PloneMessageFactory(u"Contact Plone Group settings")
 
 
 SettingsView = layout.wrap_form(SettingsEditForm, ControlPanelFormWrapper)

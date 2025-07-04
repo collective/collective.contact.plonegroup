@@ -4,8 +4,8 @@ Changelog
 1.55 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Display settings label on settings form.
+  [gbastien]
 
 1.54 (2025-06-25)
 -----------------
