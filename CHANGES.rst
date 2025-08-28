@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.55 (unreleased)
+1.55 (2025-08-28)
 -----------------
 
 - Display settings label on settings form.
