@@ -126,3 +126,12 @@ def v9(context):
     setup = api.portal.get_tool('portal_setup')
     setup.runImportStepFromProfile('profile-collective.contact.plonegroup:default', 'catalog')
     # reindexIndexes(api.portal.get(), idxs=['userid'])
+
+
+def v10(context):
+    logger.info("Migrate to v10")
+    catalog = api.portal.get_tool('portal_catalog')
+    brains = catalog.unrestrictedSearchResults(portal_type='held_position')
+    for brain in brains:
+        obj = brain.getObject()
+        obj.reindexObject(idxs=['userid'])

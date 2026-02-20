@@ -69,4 +69,12 @@
       handler=".upgrades.v9"
       profile="collective.contact.plonegroup:default" />
 
+  <genericsetup:upgradeStep
+      title="Migration profile for collective.contact.plonegroup to 10"
+      description="Upgrade from 9 to 10: reindex userid on held positions"
+      source="9"
+      destination="10"
+      handler=".upgrades.v10"
+      profile="collective.contact.plonegroup:default" />
+
 </configure>

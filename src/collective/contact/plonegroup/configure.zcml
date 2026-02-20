@@ -83,4 +83,6 @@
 
     <adapter factory=".subscribers.PloneGroupContactChecksAdapter" />
 
+    <adapter name="userid" factory=".adapters.heldposition_userid_index" />
+
 </configure>
