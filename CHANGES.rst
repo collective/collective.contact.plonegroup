@@ -4,8 +4,8 @@ Changelog
 1.56 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added heldposition_userid_index to index person userid on heldposition.
+  [sgeulette]
 
 1.55 (2025-08-28)
 -----------------
