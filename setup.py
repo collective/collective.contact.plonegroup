@@ -46,6 +46,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'plone.api',
+        'plone.indexer',
         'setuptools',
         'collective.contact.core',
         'collective.eeafaceted.z3ctable',
