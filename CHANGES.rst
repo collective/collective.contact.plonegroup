@@ -5,7 +5,7 @@ Changelog
 -----------------
 
 - Added heldposition_userid_index to index person userid on heldposition.
-  [sgeulette]
+  [chris-adam, sgeulette]
 
 1.55 (2025-08-28)
 -----------------

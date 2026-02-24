@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Setup/installation tests for this package."""
 
+from collective.contact.plonegroup.behaviors import IPlonegroupUserLink
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
 from collective.contact.plonegroup.config import set_registry_functions
@@ -13,8 +14,14 @@ from collective.contact.plonegroup.utils import get_own_organization
 from plone import api
 from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
+from plone.app.testing import TEST_USER_ID
 from Products.statusmessages.interfaces import IStatusMessage
 from zExceptions import Redirect
+from zope.interface import alsoProvides
+from zope.lifecycleevent import Attributes
+from zope.lifecycleevent import ObjectModifiedEvent
+
+import zope.event
 
 
 class TestSubscribers(IntegrationTestCase):
@@ -95,6 +102,31 @@ class TestSubscribers(IntegrationTestCase):
         breaches = storage.getIntegrityBreaches()
         self.assertIn(self.contacts[1], breaches)
         self.assertSetEqual(breaches[self.contacts[1]], set([self.portal['acontent2']]))
+
+    def test_plonegroup_contact_modified(self):
+        """We test if a held position userid index is well updated after userid is defined on a person."""
+        diry = self.portal[DEFAULT_DIRECTORY_ID]
+        diry.invokeFactory('person', 'john', firstname=u'John', lastname=u'Doe', userid=None)
+        person = diry['john']
+        alsoProvides(person, IPlonegroupUserLink)
+
+        # Create a held_position under the person
+        person.invokeFactory('held_position', 'hp1')
+
+        catalog = self.portal.portal_catalog
+        self.assertEqual(len(catalog(userid=TEST_USER_ID)), 0)
+
+        # event without IPlonegroupUserLink.userid in descriptions ---
+        person.userid = TEST_USER_ID
+        zope.event.notify(ObjectModifiedEvent(person))
+        self.assertEqual(len(catalog(userid=TEST_USER_ID)), 1)
+
+        # event with IPlonegroupUserLink.userid in descriptions ---
+        zope.event.notify(
+            ObjectModifiedEvent(person, Attributes(IPlonegroupUserLink, "IPlonegroupUserLink.userid"))
+        )
+        self.assertEqual(len(catalog(userid=TEST_USER_ID)), 2)
+        self.assertEqual(len(catalog(userid=TEST_USER_ID, portal_type="held_position")), 1)
 
     def test_plonegroup_contact_transition_1(self):
         """ We cannot deactivate an organization selected in settings """

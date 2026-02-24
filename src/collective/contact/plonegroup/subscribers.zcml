@@ -39,6 +39,12 @@
         />
 
     <subscriber
+        for=".behaviors.IPlonegroupUserLink
+             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler=".subscribers.plonegroup_contact_modified"
+        />
+
+    <subscriber
         for="Products.PluggableAuthService.interfaces.events.IGroupDeletedEvent"
         handler=".subscribers.group_deleted"
         />

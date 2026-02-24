@@ -17,6 +17,7 @@ from plone.dexterity.interfaces import IDexterityFTI
 from Products.CMFPlone.utils import base_hasattr
 from Products.CMFPlone.utils import safe_unicode
 from Products.statusmessages.interfaces import IStatusMessage
+from six import string_types
 from zExceptions import Redirect
 from zope.component import adapts
 from zope.component import getMultiAdapter
@@ -98,7 +99,7 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
         return type_fields[ptype]
 
     def check_value(val):
-        if isinstance(val, basestring) and val == ref:
+        if isinstance(val, string_types) and val == ref:
             return True
         return False
 
@@ -152,6 +153,22 @@ def plonegroupOrganizationRemoved(del_obj, event):
 def referencedObjectRemoved(obj, event):
     if not IReferenceable.providedBy(obj):
         baseReferencedObjectRemoved(obj, event)
+
+
+def plonegroup_contact_modified(contact, event):
+    """React when a IPlonegroupUserLink is modified.
+    Handled only person content type for now"""
+    if contact.portal_type != "person":
+        return
+    mod_attr = [
+        name
+        for at in getattr(event, "descriptions", [])
+        if base_hasattr(at, "attributes")
+        for name in at.attributes
+    ]
+    if "IPlonegroupUserLink.userid" in mod_attr:
+        for hp in contact.objectValues():
+            hp.reindexObject(["userid"])
 
 
 def plonegroup_contact_transition(contact, event):
