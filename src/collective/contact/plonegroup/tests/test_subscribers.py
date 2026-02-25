@@ -103,7 +103,7 @@ class TestSubscribers(IntegrationTestCase):
         self.assertIn(self.contacts[1], breaches)
         self.assertSetEqual(breaches[self.contacts[1]], set([self.portal['acontent2']]))
 
-    def test_plonegroup_contact_modified(self):
+    def test_plonegroupuserlink_modified(self):
         """We test if a held position userid index is well updated after userid is defined on a person."""
         diry = self.portal[DEFAULT_DIRECTORY_ID]
         diry.invokeFactory('person', 'john', firstname=u'John', lastname=u'Doe', userid=None)

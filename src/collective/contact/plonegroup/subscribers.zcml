@@ -41,7 +41,7 @@
     <subscriber
         for=".behaviors.IPlonegroupUserLink
              zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-        handler=".subscribers.plonegroup_contact_modified"
+        handler=".subscribers.plonegroupuserlink_modified"
         />
 
     <subscriber

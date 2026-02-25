@@ -155,7 +155,7 @@ def referencedObjectRemoved(obj, event):
         baseReferencedObjectRemoved(obj, event)
 
 
-def plonegroup_contact_modified(contact, event):
+def plonegroupuserlink_modified(contact, event):
     """React when a IPlonegroupUserLink is modified.
     Handled only person content type for now"""
     if contact.portal_type != "person":
