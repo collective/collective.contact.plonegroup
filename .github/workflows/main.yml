@@ -79,7 +79,8 @@ jobs:
 #          bin/code-analysis
       - name: test coverage
         run: |
-          bin/coverage run bin/test -t !robot
+          coverage run bin/test -t !robot
+          coverage report
       - name: Set up Python 3.13.1
         uses: actions/setup-python@v5
         with:
