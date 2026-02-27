@@ -50,9 +50,9 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up pyenv and Python
-        uses: "gabrielfalcao/pyenv-action@v14"
+        uses: "gabrielfalcao/pyenv-action@v18"
         with:
           default: 2.7.18
           versions: 3.8.16
@@ -80,15 +80,16 @@ jobs:
         run: |
           bin/coverage run bin/test -t !robot
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
       - name: Install Coveralls
         run: |
           pip3 install -U pip setuptools --no-cache-dir
-          pip3 install -U "coveralls>=3.0.0" coverage==5.3.1 --no-cache-dir
+          pip3 install -U "coveralls<4.i0.0" coverage==5.3.1 --no-cache-dir
       - name: Publish to Coveralls
         env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          coveralls --service=github
+          coveralls --service=github-actions
