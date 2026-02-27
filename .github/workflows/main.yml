@@ -55,7 +55,7 @@ jobs:
         uses: "gabrielfalcao/pyenv-action@v18"
         with:
           default: 2.7.18
-          versions: 3.8.16
+          versions: 3.13.1
           command: pyenv -v
       - name: Setup Env
         run: |
@@ -79,10 +79,10 @@ jobs:
       - name: test coverage
         run: |
           bin/coverage run bin/test -t !robot
-      - name: Set up Python 3.8
+      - name: Set up Python 3.13.1
         uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: 3.13.1
       - name: Install Coveralls
         run: |
           pip3 install -U pip setuptools --no-cache-dir
