@@ -30,6 +30,7 @@ from collective.contact.plonegroup.utils import voc_selected_org_suffix_users
 from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.dexterity.utils import createContentInContainer
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
@@ -70,18 +71,25 @@ class TestUtils(IntegrationTestCase):
             title='Outside organization')
 
     def test_get_persons_from_userid(self):
-        self.diry.invokeFactory('person', 'dexter', firstname='Dexter', lastname='Morgan',
-                                email='dexter.morgan@mpd.am', userid=None)
-        self.diry.invokeFactory('person', 'debra', firstname='Debra', lastname='Morgan',
-                                email='debra.morgan@mpd.am', userid=None)
+        person1 = createContentInContainer(
+            self.diry, 'person', id='dexter', firstname='Dexter', lastname='Morgan',
+            email='dexter.morgan@mpd.am', userid=None)
+        # make sure a person is returned as userid is also indexed on contained held_positions
+        createContentInContainer(person1, 'held_position', id='hp1')
+        person2 = createContentInContainer(
+            self.diry, 'person', id='debra', firstname='Debra', lastname='Morgan',
+            email='debra.morgan@mpd.am', userid=None)
+        createContentInContainer(person2, 'held_position', id='hp2')
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), None)
         self.diry.dexter.userid = TEST_USER_ID
         self.diry.dexter.reindexObject(['userid'])
+        self.diry.dexter.hp1.reindexObject(['userid'])
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
         self.diry.debra.userid = TEST_USER_ID
         self.diry.debra.reindexObject(['userid'])
+        self.diry.debra.hp2.reindexObject(['userid'])
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
         api.content.transition(self.diry.dexter, 'deactivate')

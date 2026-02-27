@@ -6,6 +6,10 @@ Changelog
 
 - Added heldposition_userid_index to index person userid on heldposition.
   [chris-adam, sgeulette]
+- Adapted `utils.get_persons_from_userid` (and so `utils.get_person_from_userid`
+  that relies on it) to make sure we get a `person` object and not a
+  `held_position` as the `userid` is now indexed on contained held_positions.
+  [gbastien]
 
 1.55 (2025-08-28)
 -----------------

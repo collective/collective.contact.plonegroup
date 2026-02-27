@@ -41,7 +41,7 @@ def get_persons_from_userid(userid,
     :param only_active: only consider "person" that is "active" (default to False)
     :return: object or brains list
     """
-    query = {'userid': userid}
+    query = {'userid': userid, 'portal_type': 'person'}
     if only_active:
         query['review_state'] = 'active'
     res = find(context=context, depth=depth, unrestricted=unrestricted, **query)
