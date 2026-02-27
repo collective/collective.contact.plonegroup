@@ -84,10 +84,12 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(get_person_from_userid(TEST_USER_ID), None)
         self.diry.dexter.userid = TEST_USER_ID
         self.diry.dexter.reindexObject(['userid'])
+        self.diry.dexter.hp1.reindexObject(['userid'])
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
         self.diry.debra.userid = TEST_USER_ID
         self.diry.debra.reindexObject(['userid'])
+        self.diry.debra.hp2.reindexObject(['userid'])
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
         api.content.transition(self.diry.dexter, 'deactivate')
