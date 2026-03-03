@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.56 (unreleased)
+1.56 (2026-03-03)
 -----------------
 
 - Added heldposition_userid_index to index person userid on heldposition.
