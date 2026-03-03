@@ -26,3 +26,6 @@ output.xml
 /.idea
 pip-selfcheck.json
 pyvenv.cfg
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
