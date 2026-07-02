@@ -32,6 +32,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zExceptions import Redirect
+from ZODB.POSException import ConnectionStateError
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -441,6 +442,15 @@ class SettingsEditForm(RegistryEditForm):
     form.extends(RegistryEditForm)
     schema = IContactPlonegroupConfig
     label = PloneMessageFactory(u"Contact Plone Group settings")
+
+    def update(self):
+        field = self.schema.get('functions')
+        if field is not None and getattr(field, 'value_type', None) is not None:
+            try:
+                field.value_type.schema
+            except ConnectionStateError:
+                field.value_type = DictRow(title=field.title, schema=IFunctionSchema)
+        super(SettingsEditForm, self).update()
 
 
 SettingsView = layout.wrap_form(SettingsEditForm, ControlPanelFormWrapper)

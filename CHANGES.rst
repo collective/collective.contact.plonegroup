@@ -4,7 +4,9 @@ Changelog
 1.57 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fixed ``ConnectionStateError`` crash when rendering datagrid fields
+  in settings through robotframework tests.
+  [chris-adam]
 
 
 1.56 (2026-03-03)
