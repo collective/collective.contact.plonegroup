@@ -9,6 +9,7 @@ from collective.contact.plonegroup.config import set_registry_groups_mgt
 from collective.contact.plonegroup.config import set_registry_organizations
 from collective.contact.plonegroup.testing import IntegrationTestCase
 from collective.contact.plonegroup.utils import get_own_organization
+from collective.contact.plonegroup.utils import get_plone_group
 from collective.contact.plonegroup.utils import get_plone_group_id
 from plone import api
 from plone.app.testing import login
@@ -16,6 +17,8 @@ from plone.app.testing import TEST_USER_ID
 from plone.registry.interfaces import IRegistry
 from zExceptions import Redirect
 from zope.component import getUtility
+from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
 
 
 class TestViews(IntegrationTestCase):
@@ -131,7 +134,7 @@ class TestViews(IntegrationTestCase):
         # add user "dexter" to dep1 observer Plone group
         observer = get_plone_group_id(self.dep1.UID(), 'observer')
         api.group.add_user(groupname=observer, username="dexter")
-        view = self.portal.restrictedTraverse('display-group-users')
+        view = self.portal.restrictedTraverse('@@display-group-users')
         self.assertTrue("group.png" in view(group_ids=[observer]))
         # when using "*", every groups are displayed
         every_groups = view(group_ids=self.uid + "*")
@@ -153,6 +156,30 @@ class TestViews(IntegrationTestCase):
         every_groups = view(group_ids=self.uid + "*")
         self.assertTrue("Department 1 (Observers)" in every_groups)
         self.assertTrue("Dexter Morgan</div>" in every_groups)
+
+    def test_display_group_users_group_title(self):
+        view = self.portal.restrictedTraverse('@@display-group-users')
+        observer = get_plone_group(self.dep1.UID(), 'observer')
+        view.short = False
+        self.assertEqual(view.group_title(observer), 'Department 1 (Observers)')
+        view.short = True
+        self.assertEqual(view.group_title(observer), 'Observers')
+        # when org title contains parentheses
+        self.dep1.setTitle('Department 1 (Sample)')
+        notify(ObjectModifiedEvent(self.dep1))
+        observer = get_plone_group(self.dep1.UID(), 'observer')
+        view.short = False
+        self.assertEqual(view.group_title(observer), 'Department 1 (Sample) (Observers)')
+        view.short = True
+        self.assertEqual(view.group_title(observer), 'Observers')
+        # when org title contains several parentheses
+        self.dep1.setTitle('Department 1 (Sample) (Additional)')
+        notify(ObjectModifiedEvent(self.dep1))
+        observer = get_plone_group(self.dep1.UID(), 'observer')
+        view.short = False
+        self.assertEqual(view.group_title(observer), 'Department 1 (Sample) (Additional) (Observers)')
+        view.short = True
+        self.assertEqual(view.group_title(observer), 'Observers')
 
     def test_suborganizations(self):
         own_org = get_own_organization()

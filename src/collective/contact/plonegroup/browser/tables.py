@@ -170,9 +170,12 @@ class DisplayGroupUsersView(BrowserView):
            If self.short, turn "My config (My suffix)" into "My suffix"."""
         group_title = group.getProperty('title')
         if self.short:
-            splitted = group_title.split('(')
-            if len(splitted) > 1:
-                group_title = group_title.split('(', 1)[-1][:-1]
+            # just remove the last part between ()
+            # we could have a group named "Group (first part) (second part) (suffix)"
+            # or named "Group"
+            last_opening_parentheses_index = group_title.rfind('(')
+            if last_opening_parentheses_index != -1:
+                group_title = group_title[last_opening_parentheses_index+1:-1]
         return html.escape(group_title)
 
     def _get_groups_and_members(self, group, index=0, keep_subgroups=False):

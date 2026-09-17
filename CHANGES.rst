@@ -4,8 +4,9 @@ Changelog
 1.57 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed `@@display-group-users.group_title(short=True)` when organization title
+  contains text between parentheses.
+  [gbastien]
 
 1.56 (2026-03-03)
 -----------------
