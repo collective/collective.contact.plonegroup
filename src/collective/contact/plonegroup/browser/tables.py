@@ -175,7 +175,7 @@ class DisplayGroupUsersView(BrowserView):
             # or named "Group"
             last_opening_parentheses_index = group_title.rfind('(')
             if last_opening_parentheses_index != -1:
-                group_title = group_title[last_opening_parentheses_index+1:-1]
+                group_title = group_title[last_opening_parentheses_index + 1:-1]
         return html.escape(group_title)
 
     def _get_groups_and_members(self, group, index=0, keep_subgroups=False):

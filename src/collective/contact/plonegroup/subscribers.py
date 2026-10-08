@@ -17,7 +17,6 @@ from plone.dexterity.interfaces import IDexterityFTI
 from Products.CMFPlone.utils import base_hasattr
 from Products.CMFPlone.utils import safe_unicode
 from Products.statusmessages.interfaces import IStatusMessage
-from six import string_types
 from zExceptions import Redirect
 from zope.component import getMultiAdapter
 from zope.component import getUtility
