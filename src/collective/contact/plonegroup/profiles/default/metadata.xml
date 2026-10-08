@@ -3,5 +3,7 @@
   <version>10</version>
   <dependencies>
     <dependency>profile-collective.contact.core:default</dependency>
+    <dependency>profile-imio.actionspanel:default</dependency>
+    <dependency>profile-imio.helpers:default</dependency>
   </dependencies>
 </metadata>

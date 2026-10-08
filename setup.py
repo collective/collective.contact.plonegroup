@@ -19,7 +19,7 @@ long_description = (
 
 setup(
     name='collective.contact.plonegroup',
-    version='1.58.dev0',
+    version='2.0.dev0',
     description="Organizations and functions combinations to create plone groups",
     long_description=long_description,
     # Get more from http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -27,11 +27,11 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
         "Framework :: Plone",
-        "Framework :: Plone :: 4.3",
+        "Framework :: Plone :: 6.1",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.13",
     ],
     keywords='plone contact management group suffix',
     author='Ecreall, Entrouvert, IMIO',
@@ -51,8 +51,11 @@ setup(
         'collective.contact.core',
         'collective.eeafaceted.z3ctable',
         'collective.elephantvocabulary',
-        'plone.formwidget.masterselect ~= 1.7',
-        'imio.helpers > 0.61'
+        'plone.formwidget.masterselect',
+        'imio.helpers > 0.61',
+        'z3c.batching',
+        'imio.prettylink',
+        'imio.actionspanel',
     ],
     extras_require={
         'test': [

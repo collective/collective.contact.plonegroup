@@ -2,7 +2,7 @@
 from collective.contact.core.content.held_position import IHeldPosition
 from plone.indexer import indexer
 from Products.CMFPlone.utils import base_hasattr
-from Products.PluginIndexes.common.UnIndex import _marker as common_marker
+from Products.PluginIndexes.unindex import _marker as common_marker
 
 
 @indexer(IHeldPosition)

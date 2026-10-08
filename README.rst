@@ -41,6 +41,12 @@ Installation
 * Re-run buildout.
 * Install the product in your plone site.
 
+Versions
+========
+
+- Version 2.x is for Plone 6.1+ only
+- Version 1.x is for Plone 4
+
 Credits
 =======
 

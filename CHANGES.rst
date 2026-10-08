@@ -1,11 +1,11 @@
 Changelog
 =========
 
-1.58 (unreleased)
------------------
+2.0 (unreleased)
+----------------
 
-- Nothing changed yet.
-
+- Migrate to Plone 6 / drop Plone 4 compatibility
+  [laulaz, chris-adam]
 
 1.57 (2026-10-08)
 -----------------
