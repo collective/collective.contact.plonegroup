@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.57 (unreleased)
+1.57 (2026-10-08)
 -----------------
 
 - Fixed `@@display-group-users.group_title(short=True)` when organization title
