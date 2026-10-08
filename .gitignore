@@ -3,12 +3,10 @@
 *.pyc
 .installed.cfg
 .mr.developer.cfg
-.plone*
 .project
 .pydevproject
 .settings/
 bin/
-checkversion*
 develop-eggs/
 include/
 lib/
@@ -23,9 +21,12 @@ htmlcov
 *.log
 output.xml
 *.swp
-/.idea
-pip-selfcheck.json
+.idea
 pyvenv.cfg
 temp_auto_push.bat
 temp_interactive_push.bat
 .gitignore
+.plone-version
+.plone*
+checkversion*.html
+.python-version
