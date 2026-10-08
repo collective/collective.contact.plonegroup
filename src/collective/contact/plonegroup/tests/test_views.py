@@ -182,8 +182,6 @@ class TestViews(FunctionalTestCase):
         self.assertEqual(view.group_title(observer), 'Observers')
 
     def test_suborganizations(self):
-        import transaction
-        transaction.commit()
         own_org = get_own_organization()
         view = own_org.restrictedTraverse('@@suborganizations')
         rendered = view()
