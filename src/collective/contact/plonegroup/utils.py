@@ -16,7 +16,7 @@ from operator import attrgetter
 from operator import methodcaller
 from plone import api
 from plone.api.exc import GroupNotFoundError
-from Products.CMFPlone.utils import base_hasattr
+from plone.base.utils import base_hasattr
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.globalrequest import getRequest

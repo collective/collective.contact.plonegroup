@@ -1,10 +1,12 @@
 Changelog
 =========
 
-2.0 (unreleased)
-----------------
+2.0.0 (unreleased)
+------------------
 
 - Migrate to Plone 6 / drop Plone 4 compatibility
+  [laulaz, chris-adam]
+- Migrate to Plone 6.2, based on the work started by @laulaz on `python3`.
   [laulaz, chris-adam]
 
 1.57 (2026-10-08)

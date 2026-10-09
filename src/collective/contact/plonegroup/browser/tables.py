@@ -13,9 +13,9 @@ from collective.eeafaceted.z3ctable.columns import BaseColumn
 from collective.eeafaceted.z3ctable.columns import BooleanColumn
 from collective.eeafaceted.z3ctable.columns import PrettyLinkWithAdditionalInfosColumn
 from plone import api
+from plone.base.utils import base_hasattr
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import _checkPermission
-from Products.CMFPlone.utils import base_hasattr
 from Products.Five import BrowserView
 from zope.cachedescriptors.property import CachedProperty
 from zope.i18n import translate

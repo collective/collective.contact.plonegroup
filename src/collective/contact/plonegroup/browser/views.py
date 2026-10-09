@@ -15,7 +15,7 @@ from collective.z3cform.datagridfield.row import DictRow
 from imio.helpers.security import fplog
 from operator import methodcaller
 from plone import api
-from Products.CMFPlone import PloneMessageFactory as PMF
+from plone.base import PloneMessageFactory as PMF
 from z3c.form import button
 from z3c.form import field
 from z3c.form.form import EditForm

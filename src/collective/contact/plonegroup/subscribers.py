@@ -11,11 +11,11 @@ from collective.contact.plonegroup.utils import get_breaches_for_obj
 from plone import api
 from plone.app.linkintegrity.handlers import removedContent
 from plone.app.linkintegrity.utils import linkintegrity_enabled
+from plone.base.utils import base_hasattr
+from plone.base.utils import safe_text
 from plone.behavior.interfaces import IBehavior
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
-from Products.CMFPlone.utils import base_hasattr
-from Products.CMFPlone.utils import safe_unicode
 from Products.statusmessages.interfaces import IStatusMessage
 from zExceptions import Redirect
 from zope.component import getMultiAdapter
@@ -203,7 +203,7 @@ def group_deleted(event):
         api.portal.show_message(
             message=_(
                 "You cannot delete the group '${group}', linked to used organization " "'${orga}'.",
-                mapping={"group": group, "orga": safe_unicode(orga.Title())},
+                mapping={"group": group, "orga": safe_text(orga.Title())},
             ),
             request=request,
             type="error",

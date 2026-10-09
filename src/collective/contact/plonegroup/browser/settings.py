@@ -23,11 +23,11 @@ from plone.api.exc import InvalidParameterError
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.autoform.directives import widget
+from plone.base import PloneMessageFactory
 from plone.memoize import ram
 from plone.memoize.interfaces import ICacheChooser
 from plone.registry.interfaces import IRecordModifiedEvent
 from plone.z3cform import layout
-from Products.CMFPlone import PloneMessageFactory
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget

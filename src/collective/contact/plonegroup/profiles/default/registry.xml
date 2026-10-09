@@ -4,7 +4,7 @@
     </records>
 
     <records prefix="plone.bundles/collective-contact-plonegroup"
-             interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+             interface='plone.base.interfaces.IBundleRegistry'>
       <value key="enabled">True</value>
       <value key="csscompilation">++resource++collective.contact.plonegroup/plonegroup.css</value>
       <value key="jscompilation">++resource++collective.contact.plonegroup/plonegroup.js</value>
