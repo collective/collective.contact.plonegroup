@@ -42,17 +42,17 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
     # we can't check only fields using plonegroup vocabulary because maybe another vocabulary name is used
     # this can be long but this operation is not made so often
 
-    request = aq_get(s_obj, 'REQUEST', None)
+    request = aq_get(s_obj, "REQUEST", None)
     if not request:
         return
     try:
-        catalog = api.portal.get_tool('portal_catalog')
+        catalog = api.portal.get_tool("portal_catalog")
     except api.portal.CannotGetPortalError:
         # When deleting site, the portal is no more found...
         return
 
     def list_fields(ptype, filter_interfaces=(IText, ICollection, IChoice)):
-        """ return for the portal_type the selected fields """
+        """return for the portal_type the selected fields"""
         if ptype not in type_fields:
             type_fields[ptype] = []
             fti = getUtility(IDexterityFTI, name=ptype)
@@ -77,7 +77,7 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
         return False
 
     def check_attribute(val):
-        """ check the attribute value and walk in it """
+        """check the attribute value and walk in it"""
         if isinstance(val, dict):
             for v in list(val.values()):
                 res = check_attribute(v)
@@ -87,7 +87,7 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
             if check_value(val):
                 res = [val]
                 return res
-        elif base_hasattr(val, '__iter__'):
+        elif base_hasattr(val, "__iter__"):
             for v in val:
                 res = check_attribute(v)
                 if res:
@@ -98,9 +98,9 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
         return []
 
     breaches = []
-    criterias = {'object_provides': IDexterityContent.__identifier__}
+    criterias = {"object_provides": IDexterityContent.__identifier__}
     if p_types:
-        criterias['portal_type'] = p_types
+        criterias["portal_type"] = p_types
     for brain in catalog.unrestrictedSearchResults(**criterias):
         obj = brain._unrestrictedGetObject()
         if obj == s_obj:
@@ -117,7 +117,7 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
 
 def objectRemoved(obj, event):
     """
-        Ensure linkintegrity is called for removed organization integrity.
+    Ensure linkintegrity is called for removed organization integrity.
     """
     removedContent(obj, event)
 
@@ -128,10 +128,7 @@ def plonegroupuserlink_modified(contact, event):
     if contact.portal_type != "person":
         return
     mod_attr = [
-        name
-        for at in getattr(event, "descriptions", [])
-        if base_hasattr(at, "attributes")
-        for name in at.attributes
+        name for at in getattr(event, "descriptions", []) if base_hasattr(at, "attributes") for name in at.attributes
     ]
     if "IPlonegroupUserLink.userid" in mod_attr:
         for hp in contact.objectValues():
@@ -140,35 +137,41 @@ def plonegroupuserlink_modified(contact, event):
 
 def plonegroup_contact_transition(contact, event):
     """
-        React when a IPloneGroupContact transition is done
+    React when a IPloneGroupContact transition is done
     """
-    if event.transition and event.transition.id == 'deactivate':
+    if event.transition and event.transition.id == "deactivate":
         # check if the transition is selected
         errors = []
         if contact.UID() in get_registry_organizations():
-            errors.append(_('This contact is selected in configuration'))
+            errors.append(_("This contact is selected in configuration"))
         elif linkintegrity_enabled():
             # look for breaches and manually raise an exception
             breaches = get_breaches_for_obj(contact)
             if breaches:
-                errors.append(_("This contact is used in following content: ${items}",
-                                mapping={'items': ', '.join(['<a href="%s" target="_blank">%s</a>'
-                                                             % (i["url"], i["title"])
-                                                             for i in breaches])}))
+                errors.append(
+                    _(
+                        "This contact is used in following content: ${items}",
+                        mapping={
+                            "items": ", ".join(
+                                ['<a href="%s" target="_blank">%s</a>' % (i["url"], i["title"]) for i in breaches]
+                            )
+                        },
+                    )
+                )
         if errors:
             smi = IStatusMessage(contact.REQUEST)
-            smi.addStatusMessage(_('You cannot deactivate this item !'), type='error')
-            smi.addStatusMessage(errors[0], type='error')
-            view_url = getMultiAdapter((contact, contact.REQUEST), name='plone_context_state').view_url()
+            smi.addStatusMessage(_("You cannot deactivate this item !"), type="error")
+            smi.addStatusMessage(errors[0], type="error")
+            view_url = getMultiAdapter((contact, contact.REQUEST), name="plone_context_state").view_url()
             # contact.REQUEST['RESPONSE'].redirect(view_url)
             raise Redirect(view_url)
 
 
 def mark_organization(contact, event):
-    """ Set a marker interface on contact content. """
+    """Set a marker interface on contact content."""
     if IObjectRemovedEvent.providedBy(event):
         return
-    if '/%s' % PLONEGROUP_ORG in contact.absolute_url_path():
+    if "/%s" % PLONEGROUP_ORG in contact.absolute_url_path():
         if not IPloneGroupContact.providedBy(contact):
             alsoProvides(contact, IPloneGroupContact)
         if INotPloneGroupContact.providedBy(contact):
@@ -179,25 +182,30 @@ def mark_organization(contact, event):
         if IPloneGroupContact.providedBy(contact):
             noLongerProvides(contact, IPloneGroupContact)
 
-    contact.reindexObject(idxs='object_provides')
+    contact.reindexObject(idxs="object_provides")
 
 
 def group_deleted(event):
     """
-        Raises exception if group cannot be deleted
+    Raises exception if group cannot be deleted
     """
     group = event.principal
     portal = api.portal.get()
     request = portal.REQUEST
 
-    parts = group.split('_')
+    parts = group.split("_")
     if len(parts) == 1:
         return
     org_uid = parts[0]
-    group_suffix = '_'.join(parts[1:])
+    group_suffix = "_".join(parts[1:])
     if org_uid in get_registry_organizations() and group_suffix in get_all_suffixes(org_uid):
         orga = api.content.find(UID=org_uid)[0].getObject()
-        api.portal.show_message(message=_("You cannot delete the group '${group}', linked to used organization "
-                                          "'${orga}'.", mapping={'group': group, 'orga': safe_unicode(orga.Title())}),
-                                request=request, type='error')
-        raise Redirect(request.get('ACTUAL_URL'))
+        api.portal.show_message(
+            message=_(
+                "You cannot delete the group '${group}', linked to used organization " "'${orga}'.",
+                mapping={"group": group, "orga": safe_unicode(orga.Title())},
+            ),
+            request=request,
+            type="error",
+        )
+        raise Redirect(request.get("ACTUAL_URL"))

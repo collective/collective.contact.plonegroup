@@ -39,60 +39,83 @@ class TestUtils(IntegrationTestCase):
 
     def setUp(self):
         """Custom shared utility setup for tests."""
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
         # Organizations creation
-        self.portal.invokeFactory('directory', DEFAULT_DIRECTORY_ID)
+        self.portal.invokeFactory("directory", DEFAULT_DIRECTORY_ID)
         self.diry = self.portal[DEFAULT_DIRECTORY_ID]
-        self.diry.invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
+        self.diry.invokeFactory("organization", PLONEGROUP_ORG, title="My organization")
         self.own_orga = get_own_organization()
         self.dep1 = api.content.create(
-            container=self.own_orga, type='organization', id='department1', title='Department 1')
+            container=self.own_orga, type="organization", id="department1", title="Department 1"
+        )
         self.uid = self.dep1.UID()
         self.dep2 = api.content.create(
-            container=self.own_orga, type='organization', id='department2', title='Department 2')
+            container=self.own_orga, type="organization", id="department2", title="Department 2"
+        )
         self.registry = getUtility(IRegistry)
         set_registry_organizations([self.uid])
-        set_registry_functions([{'fct_title': 'Observers',
-                                 'fct_id': 'observer',
-                                 'fct_orgs': [],
-                                 'fct_management': False,
-                                 'enabled': True},
-                                {'fct_title': 'Director',
-                                 'fct_id': 'director',
-                                 'fct_orgs': [],
-                                 'fct_management': False,
-                                 'enabled': True}, ])
-        api.group.add_user(groupname='%s_director' % self.uid, username=TEST_USER_ID)
+        set_registry_functions(
+            [
+                {
+                    "fct_title": "Observers",
+                    "fct_id": "observer",
+                    "fct_orgs": [],
+                    "fct_management": False,
+                    "enabled": True,
+                },
+                {
+                    "fct_title": "Director",
+                    "fct_id": "director",
+                    "fct_orgs": [],
+                    "fct_management": False,
+                    "enabled": True,
+                },
+            ]
+        )
+        api.group.add_user(groupname="%s_director" % self.uid, username=TEST_USER_ID)
         # create an organization outside PLONEGROUP_ORG
         self.outside_org = api.content.create(
             container=self.portal[DEFAULT_DIRECTORY_ID],
-            type='organization',
-            id='outside_org',
-            title='Outside organization')
+            type="organization",
+            id="outside_org",
+            title="Outside organization",
+        )
 
     def test_get_persons_from_userid(self):
         person1 = createContentInContainer(
-            self.diry, 'person', id='dexter', firstname='Dexter', lastname='Morgan',
-            email='dexter.morgan@mpd.am', userid=None)
+            self.diry,
+            "person",
+            id="dexter",
+            firstname="Dexter",
+            lastname="Morgan",
+            email="dexter.morgan@mpd.am",
+            userid=None,
+        )
         # make sure a person is returned as userid is also indexed on contained held_positions
-        createContentInContainer(person1, 'held_position', id='hp1')
+        createContentInContainer(person1, "held_position", id="hp1")
         person2 = createContentInContainer(
-            self.diry, 'person', id='debra', firstname='Debra', lastname='Morgan',
-            email='debra.morgan@mpd.am', userid=None)
-        createContentInContainer(person2, 'held_position', id='hp2')
+            self.diry,
+            "person",
+            id="debra",
+            firstname="Debra",
+            lastname="Morgan",
+            email="debra.morgan@mpd.am",
+            userid=None,
+        )
+        createContentInContainer(person2, "held_position", id="hp2")
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), None)
         self.diry.dexter.userid = TEST_USER_ID
-        self.diry.dexter.reindexObject(['userid'])
-        self.diry.dexter.hp1.reindexObject(['userid'])
+        self.diry.dexter.reindexObject(["userid"])
+        self.diry.dexter.hp1.reindexObject(["userid"])
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
         self.diry.debra.userid = TEST_USER_ID
-        self.diry.debra.reindexObject(['userid'])
-        self.diry.debra.hp2.reindexObject(['userid'])
+        self.diry.debra.reindexObject(["userid"])
+        self.diry.debra.hp2.reindexObject(["userid"])
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
-        api.content.transition(self.diry.dexter, 'deactivate')
+        api.content.transition(self.diry.dexter, "deactivate")
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID), [self.diry.dexter, self.diry.debra])
         self.assertListEqual(get_persons_from_userid(TEST_USER_ID, only_active=True), [self.diry.debra])
         self.assertEqual(get_person_from_userid(TEST_USER_ID), self.diry.dexter)
@@ -102,105 +125,125 @@ class TestUtils(IntegrationTestCase):
         class Dum(object):
             def __init__(self, id):
                 self.id = id
+
         ret = organizations_with_suffixes([], [])
         self.assertListEqual(ret, [])
-        ret = organizations_with_suffixes([Dum('a'), Dum('b_1'), Dum('c_1'), Dum('c_2'), Dum('d_2'), Dum('e_3')],
-                                          ['1', '3'])
-        self.assertListEqual(ret, ['b', 'c', 'e'])
-        ret = organizations_with_suffixes([Dum('a'), Dum('b_1_1'), Dum('c_1_1')], ['1_1'])
-        self.assertListEqual(ret, ['b', 'c'])
+        ret = organizations_with_suffixes(
+            [Dum("a"), Dum("b_1"), Dum("c_1"), Dum("c_2"), Dum("d_2"), Dum("e_3")], ["1", "3"]
+        )
+        self.assertListEqual(ret, ["b", "c", "e"])
+        ret = organizations_with_suffixes([Dum("a"), Dum("b_1_1"), Dum("c_1_1")], ["1_1"])
+        self.assertListEqual(ret, ["b", "c"])
 
     def test_get_selected_org_suffix_users(self):
         self.assertListEqual(get_selected_org_suffix_users(self.uid, []), [])
-        self.assertListEqual([u.getUserName() for u in get_selected_org_suffix_users(self.uid, ['director'])],
-                             [api.user.get(username=TEST_USER_ID).getUserName()])
+        self.assertListEqual(
+            [u.getUserName() for u in get_selected_org_suffix_users(self.uid, ["director"])],
+            [api.user.get(username=TEST_USER_ID).getUserName()],
+        )
 
     def test_voc_selected_org_suffix_users(self):
         self.assertEqual(voc_selected_org_suffix_users(None, []).by_token, {})
-        self.assertEqual(voc_selected_org_suffix_users('--NOVALUE--', []).by_token, {})
+        self.assertEqual(voc_selected_org_suffix_users("--NOVALUE--", []).by_token, {})
         self.assertEqual(voc_selected_org_suffix_users(self.uid, []).by_token, {})
         test_user = api.user.get(username=TEST_USER_NAME)
-        test_user.setMemberProperties({'fullname': 'Test User'})
-        self.assertEqual(test_user.getProperty('fullname'), 'Test User')
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'])], [TEST_USER_NAME])
-        api.user.create(username='user1', email='t@t.be', properties={'fullname': 'User A'})
-        api.user.create(username='user2', email='t@t.be', properties={'fullname': 'User B'})
-        api.group.add_user(groupname='%s_director' % self.uid, username='user1')
-        api.group.add_user(groupname='%s_director' % self.uid, username='user2')
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'])],
-                             [TEST_USER_NAME, 'user1', 'user2'])
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'],
-                             first_member=api.user.get(username='user1'))],
-                             ['user1', TEST_USER_NAME, 'user2'])
+        test_user.setMemberProperties({"fullname": "Test User"})
+        self.assertEqual(test_user.getProperty("fullname"), "Test User")
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ["director"])], [TEST_USER_NAME])
+        api.user.create(username="user1", email="t@t.be", properties={"fullname": "User A"})
+        api.user.create(username="user2", email="t@t.be", properties={"fullname": "User B"})
+        api.group.add_user(groupname="%s_director" % self.uid, username="user1")
+        api.group.add_user(groupname="%s_director" % self.uid, username="user2")
+        self.assertListEqual(
+            [t.value for t in voc_selected_org_suffix_users(self.uid, ["director"])], [TEST_USER_NAME, "user1", "user2"]
+        )
+        self.assertListEqual(
+            [
+                t.value
+                for t in voc_selected_org_suffix_users(
+                    self.uid, ["director"], first_member=api.user.get(username="user1")
+                )
+            ],
+            ["user1", TEST_USER_NAME, "user2"],
+        )
         # well ordered by fullname
-        test_user.setMemberProperties({'fullname': 'User Test'})
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'])],
-                             ['user1', 'user2', TEST_USER_NAME])
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_users(self.uid, ['director'],
-                             first_member=api.user.get(username='user1'))],
-                             ['user1', 'user2', TEST_USER_NAME])
+        test_user.setMemberProperties({"fullname": "User Test"})
+        self.assertListEqual(
+            [t.value for t in voc_selected_org_suffix_users(self.uid, ["director"])], ["user1", "user2", TEST_USER_NAME]
+        )
+        self.assertListEqual(
+            [
+                t.value
+                for t in voc_selected_org_suffix_users(
+                    self.uid, ["director"], first_member=api.user.get(username="user1")
+                )
+            ],
+            ["user1", "user2", TEST_USER_NAME],
+        )
 
     def test_get_selected_org_suffix_principal_ids(self):
         self.assertListEqual(get_selected_org_suffix_principal_ids(self.uid, []), [])
-        self.assertListEqual(get_selected_org_suffix_principal_ids(self.uid, ['director']),
-                             [TEST_USER_ID])
+        self.assertListEqual(get_selected_org_suffix_principal_ids(self.uid, ["director"]), [TEST_USER_ID])
         # Groups are also listed
-        self.portal.portal_groups.addPrincipalToGroup('Reviewers', '%s_director' % self.uid)
-        self.assertListEqual(get_selected_org_suffix_principal_ids(self.uid, ['director']),
-                             ['Reviewers', TEST_USER_ID])
+        self.portal.portal_groups.addPrincipalToGroup("Reviewers", "%s_director" % self.uid)
+        self.assertListEqual(get_selected_org_suffix_principal_ids(self.uid, ["director"]), ["Reviewers", TEST_USER_ID])
 
     def test_voc_selected_org_suffix_userids(self):
         self.assertEqual(voc_selected_org_suffix_userids(None, []).by_token, {})
-        self.assertEqual(voc_selected_org_suffix_userids('--NOVALUE--', []).by_token, {})
+        self.assertEqual(voc_selected_org_suffix_userids("--NOVALUE--", []).by_token, {})
         self.assertEqual(voc_selected_org_suffix_userids(self.uid, []).by_token, {})
         test_user = api.user.get(username=TEST_USER_NAME)
-        test_user.setMemberProperties({'fullname': 'Test User'})
-        self.assertEqual(test_user.getProperty('fullname'), 'Test User')
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, ['director'])],
-                             [TEST_USER_ID])
-        api.user.create(username='user1', email='t@t.be', properties={'fullname': 'User A'})
-        api.user.create(username='user2', email='t@t.be', properties={'fullname': 'User B'})
-        api.group.add_user(groupname='%s_director' % self.uid, username='user1')
-        api.group.add_user(groupname='%s_director' % self.uid, username='user2')
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, ['director'])],
-                             [TEST_USER_ID, 'user1', 'user2'])
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, ['director'],
-                             first_userid='user1')],
-                             ['user1', TEST_USER_ID, 'user2'])
+        test_user.setMemberProperties({"fullname": "Test User"})
+        self.assertEqual(test_user.getProperty("fullname"), "Test User")
+        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, ["director"])], [TEST_USER_ID])
+        api.user.create(username="user1", email="t@t.be", properties={"fullname": "User A"})
+        api.user.create(username="user2", email="t@t.be", properties={"fullname": "User B"})
+        api.group.add_user(groupname="%s_director" % self.uid, username="user1")
+        api.group.add_user(groupname="%s_director" % self.uid, username="user2")
+        self.assertListEqual(
+            [t.value for t in voc_selected_org_suffix_userids(self.uid, ["director"])], [TEST_USER_ID, "user1", "user2"]
+        )
+        self.assertListEqual(
+            [t.value for t in voc_selected_org_suffix_userids(self.uid, ["director"], first_userid="user1")],
+            ["user1", TEST_USER_ID, "user2"],
+        )
         # well ordered by fullname
-        test_user.setMemberProperties({'fullname': 'User Test'})
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, ['director'])],
-                             ['user1', 'user2', TEST_USER_ID])
-        self.assertListEqual([t.value for t in voc_selected_org_suffix_userids(self.uid, ['director'],
-                             first_userid='user1')],
-                             ['user1', 'user2', TEST_USER_ID])
+        test_user.setMemberProperties({"fullname": "User Test"})
+        self.assertListEqual(
+            [t.value for t in voc_selected_org_suffix_userids(self.uid, ["director"])], ["user1", "user2", TEST_USER_ID]
+        )
+        self.assertListEqual(
+            [t.value for t in voc_selected_org_suffix_userids(self.uid, ["director"], first_userid="user1")],
+            ["user1", "user2", TEST_USER_ID],
+        )
 
     def test_get_plone_group_id(self):
-        self.assertEqual(get_plone_group_id('groupuid', 'suffix'), 'groupuid_suffix')
+        self.assertEqual(get_plone_group_id("groupuid", "suffix"), "groupuid_suffix")
 
     def test_get_plone_group(self):
-        self.assertIsNone(get_plone_group('groupuid', 'suffix'))
-        self.assertEqual(
-            get_plone_group(self.uid, 'observer'),
-            api.group.get('{0}_{1}'.format(self.uid, 'observer')))
+        self.assertIsNone(get_plone_group("groupuid", "suffix"))
+        self.assertEqual(get_plone_group(self.uid, "observer"), api.group.get("{0}_{1}".format(self.uid, "observer")))
 
     def test_get_plone_groups(self):
-        plone_groups = [get_plone_group(self.uid, 'observer'), get_plone_group(self.uid, 'director')]
+        plone_groups = [get_plone_group(self.uid, "observer"), get_plone_group(self.uid, "director")]
         self.assertEqual(get_plone_groups(self.uid, ids_only=False), plone_groups)
         self.assertEqual(get_plone_groups(self.uid, ids_only=False, verify_group_exist=False), plone_groups)
         self.assertEqual(get_plone_groups(self.uid, ids_only=True), [g.id for g in plone_groups])
-        self.assertEqual(get_plone_groups(self.uid, ids_only=True, verify_group_exist=False),
-                         [g.id for g in plone_groups])
-        self.assertEqual(get_plone_groups(self.uid, suffixes=['observer']), [plone_groups[0]])
-        self.assertEqual(get_plone_groups(self.uid, suffixes=['unknown_suffix']), [])
-        self.assertEqual(get_plone_groups(self.uid, ids_only=True, suffixes=['unknown_suffix']), [])
+        self.assertEqual(
+            get_plone_groups(self.uid, ids_only=True, verify_group_exist=False), [g.id for g in plone_groups]
+        )
+        self.assertEqual(get_plone_groups(self.uid, suffixes=["observer"]), [plone_groups[0]])
+        self.assertEqual(get_plone_groups(self.uid, suffixes=["unknown_suffix"]), [])
+        self.assertEqual(get_plone_groups(self.uid, ids_only=True, suffixes=["unknown_suffix"]), [])
         # when using verify_group_exist=False we must make sure it exists or it is returned
-        self.assertEqual(get_plone_groups("wrong_uid", ids_only=True, verify_group_exist=False),
-                         ['wrong_uid_observer', 'wrong_uid_director'])
+        self.assertEqual(
+            get_plone_groups("wrong_uid", ids_only=True, verify_group_exist=False),
+            ["wrong_uid_observer", "wrong_uid_director"],
+        )
         self.assertEqual(get_plone_groups("wrong_uid", ids_only=False, verify_group_exist=False), [])
 
     def test_get_organization(self):
-        suffixed_org = get_plone_group_id(self.uid, 'suffix')
+        suffixed_org = get_plone_group_id(self.uid, "suffix")
         # get_organization may receive a plone_group_id or an organization uid
         self.assertEqual(get_organization(suffixed_org), self.dep1)
         self.assertEqual(get_organization(self.uid), self.dep1)
@@ -218,124 +261,134 @@ class TestUtils(IntegrationTestCase):
         self.assertEqual(get_organizations(the_objects=False), [self.uid])
         # not_empty_suffix
         self.assertEqual(get_organizations(not_empty_suffix=None), [self.dep1])
-        self.assertEqual(get_organizations(not_empty_suffix='director'), [self.dep1])
-        self.assertEqual(get_organizations(not_empty_suffix='observer'), [])
+        self.assertEqual(get_organizations(not_empty_suffix="director"), [self.dep1])
+        self.assertEqual(get_organizations(not_empty_suffix="observer"), [])
 
     def test_get_organizations_follows_selected_organizations_order(self):
         self.assertEqual(get_organizations(only_selected=True), [self.dep1])
         select_organization(self.dep2.UID())
-        self.assertEqual(get_organizations(only_selected=True, caching=False),
-                         [self.dep1, self.dep2])
+        self.assertEqual(get_organizations(only_selected=True, caching=False), [self.dep1, self.dep2])
         select_organization(self.dep1.UID(), remove=True)
         select_organization(self.dep2.UID(), remove=True)
         select_organization(self.dep2.UID())
         select_organization(self.dep1.UID())
-        self.assertEqual(get_organizations(only_selected=True, caching=False),
-                         [self.dep2, self.dep1])
+        self.assertEqual(get_organizations(only_selected=True, caching=False), [self.dep2, self.dep1])
 
     def test_get_organizations_kept_org_uids(self):
         self.assertEqual(get_organizations(), [self.dep1])
-        self.assertEqual(get_organizations(kept_org_uids=['some_unexisting_uid']), [])
+        self.assertEqual(get_organizations(kept_org_uids=["some_unexisting_uid"]), [])
         self.assertEqual(get_organizations(kept_org_uids=[self.dep1.UID()]), [self.dep1])
-        self.assertEqual(
-            get_organizations(kept_org_uids=['some_unexisting_uid', self.dep1.UID()]),
-            [self.dep1])
+        self.assertEqual(get_organizations(kept_org_uids=["some_unexisting_uid", self.dep1.UID()]), [self.dep1])
         # make sure order is preserved
         self.assertEqual(
-            get_organizations(only_selected=False,
-                              kept_org_uids=[self.dep2.UID(), self.dep1.UID()]),
-            [self.dep2, self.dep1])
+            get_organizations(only_selected=False, kept_org_uids=[self.dep2.UID(), self.dep1.UID()]),
+            [self.dep2, self.dep1],
+        )
 
     def test_get_all_suffixes(self):
-        self.assertEqual(get_all_suffixes(self.uid), ['observer', 'director'])
+        self.assertEqual(get_all_suffixes(self.uid), ["observer", "director"])
         dep2_uid = self.dep2.UID()
-        self.assertEqual(get_all_suffixes(dep2_uid), ['observer', 'director'])
-        self.assertEqual(get_all_suffixes(), ['observer', 'director'])
+        self.assertEqual(get_all_suffixes(dep2_uid), ["observer", "director"])
+        self.assertEqual(get_all_suffixes(), ["observer", "director"])
 
     def test_get_all_suffixes_fct_orgs(self):
         dep2_uid = self.dep2.UID()
-        self.assertEqual(get_all_suffixes(dep2_uid), ['observer', 'director'])
+        self.assertEqual(get_all_suffixes(dep2_uid), ["observer", "director"])
         functions = get_registry_functions()
-        functions[0]['fct_orgs'] = [self.uid]
+        functions[0]["fct_orgs"] = [self.uid]
         set_registry_functions(functions)
-        self.assertEqual(get_all_suffixes(dep2_uid), ['director'])
+        self.assertEqual(get_all_suffixes(dep2_uid), ["director"])
 
     def test_get_all_suffixes_only_enabled(self):
         dep2_uid = self.dep2.UID()
-        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=True), ['observer', 'director'])
+        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=True), ["observer", "director"])
         functions = get_registry_functions()
-        functions[0]['enabled'] = False
+        functions[0]["enabled"] = False
         set_registry_functions(functions)
-        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=True), ['director'])
-        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=False), ['observer', 'director'])
+        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=True), ["director"])
+        self.assertEqual(get_all_suffixes(dep2_uid, only_enabled=False), ["observer", "director"])
 
     def test_get_all_suffixes_omitted_suffixes(self):
         dep2_uid = self.dep2.UID()
-        self.assertEqual(get_all_suffixes(dep2_uid), ['observer', 'director'])
-        self.assertEqual(get_all_suffixes(dep2_uid, omitted_suffixes=['unknown']),
-                         ['observer', 'director'])
-        self.assertEqual(get_all_suffixes(dep2_uid, omitted_suffixes=['observer']),
-                         ['director'])
+        self.assertEqual(get_all_suffixes(dep2_uid), ["observer", "director"])
+        self.assertEqual(get_all_suffixes(dep2_uid, omitted_suffixes=["unknown"]), ["observer", "director"])
+        self.assertEqual(get_all_suffixes(dep2_uid, omitted_suffixes=["observer"]), ["director"])
 
     def test_get_own_organization_path(self):
-        """ Test the returned organization path """
+        """Test the returned organization path"""
         self.assertEqual(get_own_organization(default=True), self.portal[DEFAULT_DIRECTORY_ID][PLONEGROUP_ORG])
         self.assertEqual(get_own_organization(default=False), self.portal[DEFAULT_DIRECTORY_ID][PLONEGROUP_ORG])
-        self.assertEqual(get_own_organization_path(default=True), '/plone/contacts/plonegroup-organization')
-        self.assertEqual(get_own_organization_path(default=False), '/plone/contacts/plonegroup-organization')
+        self.assertEqual(get_own_organization_path(default=True), "/plone/contacts/plonegroup-organization")
+        self.assertEqual(get_own_organization_path(default=False), "/plone/contacts/plonegroup-organization")
         # remove own organization
         api.content.delete(self.own_orga)
         self.assertIsNone(get_own_organization(default=True))
         self.assertIsNone(get_own_organization(default=False))
         self.assertIsNone(get_own_organization_path(default=True))
         self.assertIsNone(get_own_organization_path(default=False))
-        self.assertEqual(get_own_organization_path(not_found_value='unfound'), 'unfound')
+        self.assertEqual(get_own_organization_path(not_found_value="unfound"), "unfound")
 
     def test_get_suffixed_groups(self):
         groups = api.group.get_groups()
         self.assertEqual(len(groups), 6)  # 4 plone groups
-        self.assertEqual(len(get_suffixed_groups(['director'])), 1)
-        self.assertEqual(len(get_suffixed_groups(['observer'])), 1)
-        self.assertEqual(len(get_suffixed_groups(['unknown'])), 0)
-        self.assertNotIsInstance(get_suffixed_groups(['director'])[0], str)
-        self.assertIsInstance(get_suffixed_groups(['director'], ids_only=True)[0], str)
+        self.assertEqual(len(get_suffixed_groups(["director"])), 1)
+        self.assertEqual(len(get_suffixed_groups(["observer"])), 1)
+        self.assertEqual(len(get_suffixed_groups(["unknown"])), 0)
+        self.assertNotIsInstance(get_suffixed_groups(["director"])[0], str)
+        self.assertIsInstance(get_suffixed_groups(["director"], ids_only=True)[0], str)
 
     def test_select_org_for_function(self):
         """ """
-        self.assertEqual(get_registry_functions(),
-                         [{'fct_title': 'Observers',
-                           'fct_orgs': [],
-                           'fct_id': 'observer',
-                           'fct_management': False,
-                           'enabled': True},
-                          {'fct_title': 'Director',
-                           'fct_orgs': [],
-                           'fct_id': 'director',
-                           'fct_management': False,
-                           'enabled': True}])
-        select_org_for_function(self.uid, 'director')
-        self.assertTrue(self.uid in get_registry_functions()[1]['fct_orgs'])
-        select_org_for_function(self.uid, 'director', remove=True)
-        self.assertFalse(self.uid in get_registry_functions()[1]['fct_orgs'])
+        self.assertEqual(
+            get_registry_functions(),
+            [
+                {
+                    "fct_title": "Observers",
+                    "fct_orgs": [],
+                    "fct_id": "observer",
+                    "fct_management": False,
+                    "enabled": True,
+                },
+                {
+                    "fct_title": "Director",
+                    "fct_orgs": [],
+                    "fct_id": "director",
+                    "fct_management": False,
+                    "enabled": True,
+                },
+            ],
+        )
+        select_org_for_function(self.uid, "director")
+        self.assertTrue(self.uid in get_registry_functions()[1]["fct_orgs"])
+        select_org_for_function(self.uid, "director", remove=True)
+        self.assertFalse(self.uid in get_registry_functions()[1]["fct_orgs"])
 
     def test_enable_disable_function(self):
         """ """
-        self.assertEqual(get_registry_functions(),
-                         [{'fct_title': 'Observers',
-                           'fct_orgs': [],
-                           'fct_id': 'observer',
-                           'fct_management': False,
-                           'enabled': True},
-                          {'fct_title': 'Director',
-                           'fct_orgs': [],
-                           'fct_id': 'director',
-                           'fct_management': False,
-                           'enabled': True}])
-        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'observer')))
-        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'director')))
+        self.assertEqual(
+            get_registry_functions(),
+            [
+                {
+                    "fct_title": "Observers",
+                    "fct_orgs": [],
+                    "fct_id": "observer",
+                    "fct_management": False,
+                    "enabled": True,
+                },
+                {
+                    "fct_title": "Director",
+                    "fct_orgs": [],
+                    "fct_id": "director",
+                    "fct_management": False,
+                    "enabled": True,
+                },
+            ],
+        )
+        self.assertTrue(api.group.get("{0}_{1}".format(self.uid, "observer")))
+        self.assertTrue(api.group.get("{0}_{1}".format(self.uid, "director")))
         disable_function("observer")
-        self.assertFalse(api.group.get('{0}_{1}'.format(self.uid, 'observer')))
-        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'director')))
+        self.assertFalse(api.group.get("{0}_{1}".format(self.uid, "observer")))
+        self.assertTrue(api.group.get("{0}_{1}".format(self.uid, "director")))
         enable_function("observer")
-        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'observer')))
-        self.assertTrue(api.group.get('{0}_{1}'.format(self.uid, 'director')))
+        self.assertTrue(api.group.get("{0}_{1}".format(self.uid, "observer")))
+        self.assertTrue(api.group.get("{0}_{1}".format(self.uid, "director")))

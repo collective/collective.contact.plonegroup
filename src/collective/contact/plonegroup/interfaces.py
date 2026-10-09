@@ -12,41 +12,41 @@ class ICollectiveContactPlonegroupLayer(IDefaultPloneLayer):
 
 class IPloneGroupContact(Interface):
     """
-        Marker interface for plonegroup organizations.
+    Marker interface for plonegroup organizations.
     """
 
 
 class INotPloneGroupContact(Interface):
     """
-        Marker interface for non plonegroup contacts.
+    Marker interface for non plonegroup contacts.
     """
 
 
 class IPlonegroupGroupCreatedEvent(IPASEvent):
     """
-        A new Plone group linked to an organization has been created.
+    A new Plone group linked to an organization has been created.
     """
 
 
 class IGroupField(Interface):
     """
-        Interface for the GroupField
+    Interface for the GroupField
     """
 
 
 class IOrganizationField(Interface):
     """
-        Interface for the OrganizationField
+    Interface for the OrganizationField
     """
 
 
 class IDGFVocabularyField(Interface):
     """
-        Interface for the DGFVocabularyField
+    Interface for the DGFVocabularyField
     """
 
 
 class IDGFListField(Interface):
     """
-        Interface for the DGFListField
+    Interface for the DGFListField
     """

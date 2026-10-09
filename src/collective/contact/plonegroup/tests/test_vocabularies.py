@@ -11,21 +11,21 @@ class TestVocabularies(IntegrationTestCase):
 
     def setUp(self):
         """Custom shared utility setup for tests."""
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
         # Organizations creation
-        self.portal.invokeFactory('directory', DEFAULT_DIRECTORY_ID)
+        self.portal.invokeFactory("directory", DEFAULT_DIRECTORY_ID)
         self.directory = self.portal.get(DEFAULT_DIRECTORY_ID)
         self.directory.position_types = [
-            {'token': 'default', 'name': 'Default'},
-            {'token': 'position1', 'name': 'Position1'},
-            {'token': 'position2', 'name': 'Position2'}, ]
-        self.directory.invokeFactory(
-            'organization', PLONEGROUP_ORG, title='My organization')
+            {"token": "default", "name": "Default"},
+            {"token": "position1", "name": "Position1"},
+            {"token": "position2", "name": "Position2"},
+        ]
+        self.directory.invokeFactory("organization", PLONEGROUP_ORG, title="My organization")
         self.own_org = self.directory.get(PLONEGROUP_ORG)
 
     def test_PositionTypesVocabulary(self):
         """When called from outside the directory,
-           will return the position_types from the DEFAULT_DIRECTORY_ID."""
+        will return the position_types from the DEFAULT_DIRECTORY_ID."""
         vocab_factory = getUtility(IVocabularyFactory, "PositionTypes")
         # called on element inside the directory
         self.assertEqual(len(vocab_factory(self.own_org)), 3)

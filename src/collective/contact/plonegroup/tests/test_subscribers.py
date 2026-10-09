@@ -27,35 +27,28 @@ class TestSubscribers(IntegrationTestCase):
 
     def setUp(self):
         """Custom shared utility setup for tests."""
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
         # Organizations creation
-        self.portal.invokeFactory('directory', DEFAULT_DIRECTORY_ID)
-        self.portal[DEFAULT_DIRECTORY_ID].invokeFactory('organization', PLONEGROUP_ORG, title='My organization')
+        self.portal.invokeFactory("directory", DEFAULT_DIRECTORY_ID)
+        self.portal[DEFAULT_DIRECTORY_ID].invokeFactory("organization", PLONEGROUP_ORG, title="My organization")
         own_orga = get_own_organization()
-        own_orga.invokeFactory('organization', 'department1', title='Department 1')
-        own_orga.invokeFactory('organization', 'department2', title='Department 2')
-        self.contacts = [own_orga['department1'], own_orga['department2']]
+        own_orga.invokeFactory("organization", "department1", title="Department 1")
+        own_orga.invokeFactory("organization", "department2", title="Department 2")
+        self.contacts = [own_orga["department1"], own_orga["department2"]]
 
         set_registry_organizations([c.UID() for c in self.contacts])
-        set_registry_functions([{'fct_title': 'Director',
-                                 'fct_id': 'director',
-                                 'fct_orgs': [],
-                                 'fct_management': False,
-                                 'enabled': True}])
+        set_registry_functions(
+            [{"fct_title": "Director", "fct_id": "director", "fct_orgs": [], "fct_management": False, "enabled": True}]
+        )
 
-        self.portal.invokeFactory('acontent',
-                                  'acontent1',
-                                  title='Content 1',
-                                  pg_organization=self.contacts[0].UID())
-        self.portal.invokeFactory('acontent',
-                                  'acontent2',
-                                  title='Content 2',
-                                  pg_organization=self.contacts[1].UID())
+        self.portal.invokeFactory("acontent", "acontent1", title="Content 1", pg_organization=self.contacts[0].UID())
+        self.portal.invokeFactory("acontent", "acontent2", title="Content 2", pg_organization=self.contacts[1].UID())
 
     def test_plonegroupOrganizationRemoved_1(self):
-        """ We cannot remove an organization selected in settings and used in an object """
+        """We cannot remove an organization selected in settings and used in an object"""
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department1/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+            "{0}/{1}/department1/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+        )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 1)
         self.assertIn(breaches[0]["target"]["title"], "Department 1")
@@ -63,10 +56,11 @@ class TestSubscribers(IntegrationTestCase):
         self.assertIn(breaches[0]["sources"][0]["title"], "Content 1")
 
     def test_plonegroupOrganizationRemoved_2(self):
-        """ We cannot remove an organization no more selected in settings and used in an object """
+        """We cannot remove an organization no more selected in settings and used in an object"""
         set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department2/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+            "{0}/{1}/department2/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+        )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 1)
         self.assertIn(breaches[0]["target"]["title"], "Department 2")
@@ -74,29 +68,32 @@ class TestSubscribers(IntegrationTestCase):
         self.assertIn(breaches[0]["sources"][0]["title"], "Content 2")
 
     def test_plonegroupOrganizationRemoved_3(self):
-        """ We can remove an organization no more selected in settings and no more used in an object """
+        """We can remove an organization no more selected in settings and no more used in an object"""
         set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
-        self.portal['acontent2'].pg_organization = None
+        self.portal["acontent2"].pg_organization = None
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department2/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+            "{0}/{1}/department2/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+        )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 0)
 
     def test_plonegroupOrganizationRemoved_4(self):
-        """ We cannot remove an organization selected in settings and used in an object as dict or list """
+        """We cannot remove an organization selected in settings and used in an object as dict or list"""
         # set uid in dict
-        self.portal['acontent1'].pg_organization = {'uid': self.contacts[0].UID()}
+        self.portal["acontent1"].pg_organization = {"uid": self.contacts[0].UID()}
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department1/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+            "{0}/{1}/department1/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+        )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 1)
         self.assertIn(breaches[0]["target"]["title"], "Department 1")
         self.assertEqual(len(breaches[0]["sources"]), 1)
         self.assertIn(breaches[0]["sources"][0]["title"], "Content 1")
         # set uid in list
-        self.portal['acontent2'].pg_organization = [self.contacts[1].UID()]
+        self.portal["acontent2"].pg_organization = [self.contacts[1].UID()]
         view = self.portal.restrictedTraverse(
-            '{0}/{1}/department2/delete_confirmation_info'.format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG))
+            "{0}/{1}/department2/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+        )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 1)
         self.assertIn(breaches[0]["target"]["title"], "Department 2")
@@ -106,12 +103,12 @@ class TestSubscribers(IntegrationTestCase):
     def test_plonegroupuserlink_modified(self):
         """We test if a held position userid index is well updated after userid is defined on a person."""
         diry = self.portal[DEFAULT_DIRECTORY_ID]
-        diry.invokeFactory('person', 'john', firstname=u'John', lastname=u'Doe', userid=None)
-        person = diry['john']
+        diry.invokeFactory("person", "john", firstname="John", lastname="Doe", userid=None)
+        person = diry["john"]
         alsoProvides(person, IPlonegroupUserLink)
 
         # Create a held_position under the person
-        person.invokeFactory('held_position', 'hp1')
+        person.invokeFactory("held_position", "hp1")
 
         catalog = self.portal.portal_catalog
         self.assertEqual(len(catalog(userid=TEST_USER_ID)), 0)
@@ -122,32 +119,30 @@ class TestSubscribers(IntegrationTestCase):
         self.assertEqual(len(catalog(userid=TEST_USER_ID)), 1)
 
         # event with IPlonegroupUserLink.userid in descriptions ---
-        zope.event.notify(
-            ObjectModifiedEvent(person, Attributes(IPlonegroupUserLink, "IPlonegroupUserLink.userid"))
-        )
+        zope.event.notify(ObjectModifiedEvent(person, Attributes(IPlonegroupUserLink, "IPlonegroupUserLink.userid")))
         self.assertEqual(len(catalog(userid=TEST_USER_ID)), 2)
         self.assertEqual(len(catalog(userid=TEST_USER_ID, portal_type="held_position")), 1)
 
     def test_plonegroup_contact_transition_1(self):
-        """ We cannot deactivate an organization selected in settings """
-        self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition='deactivate')
-        self.assertEqual(api.content.get_state(obj=self.contacts[0]), 'active')
+        """We cannot deactivate an organization selected in settings"""
+        self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition="deactivate")
+        self.assertEqual(api.content.get_state(obj=self.contacts[0]), "active")
 
     def test_plonegroup_contact_transition_2(self):
-        """ We cannot deactivate an organization used in objects """
+        """We cannot deactivate an organization used in objects"""
         set_registry_organizations([self.contacts[1].UID()])  # unselects the contact
-        self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition='deactivate')
-        self.assertEqual(api.content.get_state(obj=self.contacts[0]), 'active')
+        self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition="deactivate")
+        self.assertEqual(api.content.get_state(obj=self.contacts[0]), "active")
 
     def test_plonegroup_contact_transition_3(self):
-        """ We can deactivate an organization not at all used """
+        """We can deactivate an organization not at all used"""
         set_registry_organizations([self.contacts[1].UID()])  # unselects the contact
-        self.portal['acontent1'].pg_organization = None
-        api.content.transition(obj=self.contacts[0], transition='deactivate')
-        self.assertEqual(api.content.get_state(obj=self.contacts[0]), 'deactivated')
+        self.portal["acontent1"].pg_organization = None
+        api.content.transition(obj=self.contacts[0], transition="deactivate")
+        self.assertEqual(api.content.get_state(obj=self.contacts[0]), "deactivated")
 
     def test_mark_organization(self):
-        """ We test marker interfaces """
+        """We test marker interfaces"""
         contacts = self.portal.get(DEFAULT_DIRECTORY_ID)
         pg_org = contacts[PLONEGROUP_ORG]
         self.assertTrue(IPloneGroupContact.providedBy(self.contacts[0]))
@@ -155,32 +150,34 @@ class TestSubscribers(IntegrationTestCase):
         self.assertTrue(IPloneGroupContact.providedBy(self.contacts[1]))
         self.assertFalse(INotPloneGroupContact.providedBy(self.contacts[1]))
 
-        normal = api.content.create(
-            type='organization', id='normal', container=contacts)
+        normal = api.content.create(type="organization", id="normal", container=contacts)
         self.assertTrue(INotPloneGroupContact.providedBy(normal))
         self.assertFalse(IPloneGroupContact.providedBy(normal))
 
-        api.content.move(source=contacts['normal'], target=pg_org)
-        self.assertTrue(IPloneGroupContact.providedBy(pg_org['normal']))
-        self.assertFalse(INotPloneGroupContact.providedBy(pg_org['normal']))
+        api.content.move(source=contacts["normal"], target=pg_org)
+        self.assertTrue(IPloneGroupContact.providedBy(pg_org["normal"]))
+        self.assertFalse(INotPloneGroupContact.providedBy(pg_org["normal"]))
 
-        api.content.move(source=pg_org['department1'], target=contacts)
-        self.assertTrue(INotPloneGroupContact.providedBy(contacts['department1']))
-        self.assertFalse(IPloneGroupContact.providedBy(contacts['department1']))
+        api.content.move(source=pg_org["department1"], target=contacts)
+        self.assertTrue(INotPloneGroupContact.providedBy(contacts["department1"]))
+        self.assertFalse(IPloneGroupContact.providedBy(contacts["department1"]))
 
     def test_group_deleted(self):
         class Dummy(object):
             def __init__(self, name):
                 self.principal = name
-        self.assertIsNone(group_deleted(Dummy('no-underscore')))
+
+        self.assertIsNone(group_deleted(Dummy("no-underscore")))
         request = self.portal.REQUEST
         smi = IStatusMessage(request)
         uid = self.contacts[0].UID()
-        self.assertRaises(Redirect, api.group.delete, groupname='%s_director' % uid)
+        self.assertRaises(Redirect, api.group.delete, groupname="%s_director" % uid)
         msgs = smi.show()
-        self.assertEqual(msgs[0].message, "You cannot delete the group '%s_director', "
-                         "linked to used organization 'Department 1'." % uid)
-        api.group.create(groupname='%s_other' % uid)
-        api.group.create(groupname='12345_director')
-        api.group.delete(groupname='%s_other' % uid)
-        api.group.delete(groupname='12345_director')
+        self.assertEqual(
+            msgs[0].message,
+            "You cannot delete the group '%s_director', " "linked to used organization 'Department 1'." % uid,
+        )
+        api.group.create(groupname="%s_other" % uid)
+        api.group.create(groupname="12345_director")
+        api.group.delete(groupname="%s_other" % uid)
+        api.group.delete(groupname="12345_director")

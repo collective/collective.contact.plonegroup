@@ -21,5 +21,5 @@ def postInstall(context):
         try:
             registry[FUNCTIONS_REGISTRY] = []
         except ConnectionStateError:
-            logger.warn('!!!Failed to set registry functions to []!!!')
+            logger.warn("!!!Failed to set registry functions to []!!!")
             registry.records[FUNCTIONS_REGISTRY].field.value_type = None

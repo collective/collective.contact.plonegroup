@@ -45,7 +45,7 @@ def dgf_list_widget(field, request):
 class GroupField(schema.Choice):
 
     def __init__(self, *args, **kwargs):
-        kwargs['vocabulary'] = ''
+        kwargs["vocabulary"] = ""
         super(GroupField, self).__init__(*args, **kwargs)
 
 
@@ -53,7 +53,7 @@ class GroupField(schema.Choice):
 class OrganizationField(schema.Choice):
 
     def __init__(self, *args, **kwargs):
-        kwargs['vocabulary'] = ''
+        kwargs["vocabulary"] = ""
         super(OrganizationField, self).__init__(*args, **kwargs)
 
 
@@ -64,31 +64,20 @@ class DGFVocabularyField(schema.Choice):
 
 class IGroupsUsers(Interface):
 
-    group = GroupField(
-        title=_('Group'),
-        vocabulary='plone.app.vocabularies.Groups',
-        required=False)
+    group = GroupField(title=_("Group"), vocabulary="plone.app.vocabularies.Groups", required=False)
 
-    user = DGFVocabularyField(
-        title=_('User'),
-        vocabulary='imio.helpers.SortedUsers',
-        required=False)
+    user = DGFVocabularyField(title=_("User"), vocabulary="imio.helpers.SortedUsers", required=False)
 
 
 class IOrganisationsUsers(Interface):
 
-    group = OrganizationField(
-        title=_ccc('Organization'),
-        required=False)
+    group = OrganizationField(title=_ccc("Organization"), required=False)
 
-    user = DGFVocabularyField(
-        title=_('User'),
-        vocabulary='imio.helpers.SortedUsers',
-        required=False)
+    user = DGFVocabularyField(title=_("User"), vocabulary="imio.helpers.SortedUsers", required=False)
 
 
 class FieldValidator(SimpleFieldValidator):
-    """ Not used """
+    """Not used"""
 
     def validate(self, value, force=False):
         if value is None or value is self.field.missing_value:
@@ -98,29 +87,29 @@ class FieldValidator(SimpleFieldValidator):
 class GroupsConfigurationAdapter(object):
 
     def __init__(self, form):
-        self.__dict__['context'] = form.context
-        self.__dict__['form'] = form
-        self.__dict__['old_values'] = {}
+        self.__dict__["context"] = form.context
+        self.__dict__["form"] = form
+        self.__dict__["old_values"] = {}
 
     def __getattr__(self, name):
         if name not in self.form.fieldnames:
             return getattr(self.context, name)
         values = []
-        if name == '_old_values_':
+        if name == "_old_values_":
             values = str(self.old_values)
-        elif name == '_groups_':
+        elif name == "_groups_":
             for group_id in sorted(self.form.groupids, key=self.form.groupids.get):
                 users = api.user.get_users(groupname=group_id)
-                for user in sorted(users, key=lambda u: u.getProperty('fullname', None) or u.id):
-                    values.append({'group': group_id, 'user': user.id})
+                for user in sorted(users, key=lambda u: u.getProperty("fullname", None) or u.id):
+                    values.append({"group": group_id, "user": user.id})
             self.old_values[name] = values
         else:
-            for org in sorted(self.form.functions_orgs[name], key=methodcaller('get_full_title')):
+            for org in sorted(self.form.functions_orgs[name], key=methodcaller("get_full_title")):
                 org_uid = org.UID()
                 group_id = get_plone_group_id(org_uid, name)
                 users = api.user.get_users(groupname=group_id)
-                for user in sorted(users, key=lambda u: u.getProperty('fullname', None) or u.id):
-                    values.append({'group': org_uid, 'user': user.id})
+                for user in sorted(users, key=lambda u: u.getProperty("fullname", None) or u.id):
+                    values.append({"group": org_uid, "user": user.id})
             self.old_values[name] = values
         return values
 
@@ -130,12 +119,13 @@ class GroupsConfigurationAdapter(object):
 
 class ManageOwnGroupUsers(EditForm):
     """
-        Manage own groups users
+    Manage own groups users
     """
-    label = _('Own groups management view')
-    description = _('Own groups management description')
-    successMessage = _('Own groups users succesfully updated.')
-    noChangesMessage = _('No changes were made.')
+
+    label = _("Own groups management view")
+    description = _("Own groups management description")
+    successMessage = _("Own groups users succesfully updated.")
+    noChangesMessage = _("No changes were made.")
 
     def __init__(self, context, request):
         self.context = context
@@ -146,36 +136,35 @@ class ManageOwnGroupUsers(EditForm):
         self.fieldnames = []
 
     def init(self):
-        """ user is now recognized """
+        """user is now recognized"""
         self.current_user = api.user.get_current()
-#        self.current_user = api.user.get(userid='chef')
+        #        self.current_user = api.user.get(userid='chef')
         self.current_user_id = self.current_user.getId()
         self.current_user_groups = [g for g in api.group.get_groups(user=self.current_user) if g]
 
     def _available_additional_condition(self):
-        """ additional condition for action availability, made to be overrided """
+        """additional condition for action availability, made to be overrided"""
         return True
 
     def available(self):
-        """ will the action be available? """
-        return (get_registry_groups_mgt() or self.get_manageable_functions()) \
-            and self._available_additional_condition()
+        """will the action be available?"""
+        return (get_registry_groups_mgt() or self.get_manageable_functions()) and self._available_additional_condition()
 
     def get_manageable_functions(self):
-        """ get all manageable functions """
+        """get all manageable functions"""
         for fct in get_registry_functions(as_copy=False):
-            if fct['fct_management']:
-                self.functions[fct['fct_id']] = fct['fct_title']
+            if fct["fct_management"]:
+                self.functions[fct["fct_id"]] = fct["fct_title"]
         return list(self.functions.keys())
 
     def get_user_manageable_functions(self):
-        """ get user manageable functions """
+        """get user manageable functions"""
         manageable_functions = self.get_manageable_functions()
         for group in self.current_user_groups:
-            parts = group.id.split('_')
+            parts = group.id.split("_")
             if len(parts) == 1:
                 continue
-            group_suffix = '_'.join(parts[1:])
+            group_suffix = "_".join(parts[1:])
             if group_suffix not in manageable_functions:
                 continue
             if group_suffix not in self.functions_orgs:
@@ -185,16 +174,16 @@ class ManageOwnGroupUsers(EditForm):
                 self.functions_orgs[group_suffix].append(get_organization(parts[0]))
 
     def get_manageable_groups(self):
-        """ get selected manageable groups """
+        """get selected manageable groups"""
         return get_registry_groups_mgt()
 
     def get_user_manageable_groups(self):
-        """ get user manageable groups """
+        """get user manageable groups"""
         manageable_groups = self.get_manageable_groups()
         for group in self.current_user_groups:
             if group.id not in manageable_groups:
                 continue
-            self.groupids[group.id] = group.getProperty('title')
+            self.groupids[group.id] = group.getProperty("title")
 
     def getContent(self):
         return GroupsConfigurationAdapter(self)
@@ -203,37 +192,43 @@ class ManageOwnGroupUsers(EditForm):
     def fields(self):
         self.init()  # second init with user recognized
         fields = []
-        description = _('You can <span class="trash_icon">remove</span> an assignment with the '
-                        '<span class="trash_icon">trash icon</span>. '
-                        'You can <span class="auto_append">add</span> a new assignment with the '
-                        '<span class="auto_append">blue line</span>. '
-                        'You can <span class="new_line">complete</span> it on the '
-                        '<span class="new_line">brown line</span>.')
+        description = _(
+            'You can <span class="trash_icon">remove</span> an assignment with the '
+            '<span class="trash_icon">trash icon</span>. '
+            'You can <span class="auto_append">add</span> a new assignment with the '
+            '<span class="auto_append">blue line</span>. '
+            'You can <span class="new_line">complete</span> it on the '
+            '<span class="new_line">brown line</span>.'
+        )
         self.get_user_manageable_functions()
         for function in self.functions_orgs:
             fld = DGFListField(
                 __name__=function,
-                title=_("Assignments for groups related to '${function}' function",
-                        mapping={'function': self.functions[function]}),
+                title=_(
+                    "Assignments for groups related to '${function}' function",
+                    mapping={"function": self.functions[function]},
+                ),
                 description=description,
                 required=False,
-                value_type=DictRow(title="org_users", schema=IOrganisationsUsers, required=False))
+                value_type=DictRow(title="org_users", schema=IOrganisationsUsers, required=False),
+            )
             fields.append(fld)
         fields = sorted(fields, key=lambda x: x.title)
 
         self.get_user_manageable_groups()
         if self.groupids:
             fld = DGFListField(
-                __name__='_groups_',
-                title=_('Global groups assignments.'),
+                __name__="_groups_",
+                title=_("Global groups assignments."),
                 description=description,
                 required=False,
-                value_type=DictRow(title="users", schema=IGroupsUsers, required=False))
+                value_type=DictRow(title="users", schema=IGroupsUsers, required=False),
+            )
             fields.insert(0, fld)
 
         fld = schema.TextLine(
-            __name__='_old_values_',
-            title='not_showed',
+            __name__="_old_values_",
+            title="not_showed",
             required=False,
         )
         fields.append(fld)
@@ -241,16 +236,16 @@ class ManageOwnGroupUsers(EditForm):
         self.fieldnames = [afield.__name__ for afield in fields]
         return field.Fields(*fields)
 
-#    def datagridInitialise(self, subform, widget):
-#        pass
+    #    def datagridInitialise(self, subform, widget):
+    #        pass
 
-#    def datagridUpdateWidgets(self, subform, widgets, widget):
-#        pass
+    #    def datagridUpdateWidgets(self, subform, widgets, widget):
+    #        pass
 
     def updateWidgets(self):
         super(ManageOwnGroupUsers, self).updateWidgets()
         for wid in self.widgets:
-            if wid == '_old_values_':
+            if wid == "_old_values_":
                 self.widgets[wid].mode = HIDDEN_MODE
             else:
                 self.widgets[wid].allow_reorder = False
@@ -258,7 +253,7 @@ class ManageOwnGroupUsers(EditForm):
                 self.widgets[wid].allow_delete = True
                 self.widgets[wid].auto_append = True
 
-    @button.buttonAndHandler(_z3cf('Apply'), name='apply')
+    @button.buttonAndHandler(_z3cf("Apply"), name="apply")
     def handleApply(self, action):
         data, errors = self.extractData()
         if errors:
@@ -266,56 +261,64 @@ class ManageOwnGroupUsers(EditForm):
             return
         changes = False
         users = {}
-        old_values = eval(data.pop('_old_values_'))
-        factory = getUtility(IVocabularyFactory, 'plone.app.vocabularies.Groups')
+        old_values = eval(data.pop("_old_values_"))
+        factory = getUtility(IVocabularyFactory, "plone.app.vocabularies.Groups")
         groups_voc = factory(self.context)
         for name in old_values:
             try:
                 new_value = data[name]  # If the field is not in the data, then go on to the next one
             except KeyError:
                 continue
-            new_value = set([
-                (str(dic['group'][0]) if isinstance(dic['group'], tuple) else dic['group'],
-                 str(dic['user'][0]) if isinstance(dic['user'], tuple) else dic['user'])
-                for dic in data[name]
-            ])
-            old_value = set([(dic['group'], dic['user']) for dic in old_values[name]])
+            new_value = set(
+                [
+                    (
+                        str(dic["group"][0]) if isinstance(dic["group"], tuple) else dic["group"],
+                        str(dic["user"][0]) if isinstance(dic["user"], tuple) else dic["user"],
+                    )
+                    for dic in data[name]
+                ]
+            )
+            old_value = set([(dic["group"], dic["user"]) for dic in old_values[name]])
             if old_value == new_value:
                 continue
-            for action, result in (('removed', old_value - new_value), ('added', new_value - old_value)):
-                for (group_id, user_id) in result:
+            for action, result in (("removed", old_value - new_value), ("added", new_value - old_value)):
+                for group_id, user_id in result:
                     if group_id is None or user_id is None:
-                        required_message = _("There was a problem in added assignments. "
-                                             "Don't forget to complete the 2 columns! "
-                                             "You have to redo all the manipulations.")
-                        api.portal.show_message(message=required_message, request=self.request, type='error')
-                        raise Redirect(self.request.get('ACTUAL_URL'))
+                        required_message = _(
+                            "There was a problem in added assignments. "
+                            "Don't forget to complete the 2 columns! "
+                            "You have to redo all the manipulations."
+                        )
+                        api.portal.show_message(message=required_message, request=self.request, type="error")
+                        raise Redirect(self.request.get("ACTUAL_URL"))
                     if user_id == self.current_user_id:
                         user_message = _("You cannot remove your user from a group!")
-                        api.portal.show_message(message=user_message, request=self.request, type='error')
-                        raise Redirect(self.request.get('ACTUAL_URL'))
-                    if name != '_groups_':
+                        api.portal.show_message(message=user_message, request=self.request, type="error")
+                        raise Redirect(self.request.get("ACTUAL_URL"))
+                    if name != "_groups_":
                         group_id = get_plone_group_id(group_id, name)
                     if group_id not in users:
                         users[group_id] = [u.id for u in api.user.get_users(groupname=group_id)]
-                    if action == 'removed' and user_id in users[group_id]:
+                    if action == "removed" and user_id in users[group_id]:
                         api.group.remove_user(groupname=group_id, username=user_id)
-                        extras = 'group_id={0} group_title={2} user_id={1}'.format(group_id, user_id,
-                                                                                   groups_voc.getTerm(group_id).title)
-                        fplog('manage_own_groups_removed_user', extras=extras)
+                        extras = "group_id={0} group_title={2} user_id={1}".format(
+                            group_id, user_id, groups_voc.getTerm(group_id).title
+                        )
+                        fplog("manage_own_groups_removed_user", extras=extras)
                         changes = True
-                    elif action == 'added' and user_id not in users[group_id]:
+                    elif action == "added" and user_id not in users[group_id]:
                         api.group.add_user(groupname=group_id, username=user_id)
-                        extras = 'group_id={0} group_title={2} user_id={1}'.format(group_id, user_id,
-                                                                                   groups_voc.getTerm(group_id).title)
-                        fplog('manage_own_groups_added_user', extras=extras)
+                        extras = "group_id={0} group_title={2} user_id={1}".format(
+                            group_id, user_id, groups_voc.getTerm(group_id).title
+                        )
+                        fplog("manage_own_groups_added_user", extras=extras)
                         changes = True
         if changes:
             api.portal.show_message(message=self.successMessage, request=self.request)
         else:
-            api.portal.show_message(message=self.noChangesMessage, request=self.request, type='warn')
-        self.request.response.redirect(self.request.get('ACTUAL_URL'))
+            api.portal.show_message(message=self.noChangesMessage, request=self.request, type="warn")
+        self.request.response.redirect(self.request.get("ACTUAL_URL"))
 
-    @button.buttonAndHandler(PMF('return_to_view'), name='cancel')
+    @button.buttonAndHandler(PMF("return_to_view"), name="cancel")
     def handleCancel(self, action):
-        self.request.response.redirect(self.request.get('URL1'))
+        self.request.response.redirect(self.request.get("URL1"))
