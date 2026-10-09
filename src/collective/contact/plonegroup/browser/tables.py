@@ -104,6 +104,11 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
         "display_tag_title": False,
     }
 
+    def getPrettyLink(self, obj):
+        """The .link-tooltip tooltip (collective.contact.core forms.js) loads the data-base_url page."""
+        link = super(OrgaPrettyLinkWithAdditionalInfosColumn, self).getPrettyLink(obj)
+        return link.replace(" href=", " data-base_url='{0}' href=".format(obj.absolute_url()), 1)
+
     def contentValue(self, item):
         """Display get_full_title instead title."""
         if IOrganization.providedBy(item):

@@ -359,7 +359,8 @@ def invalidate_soev_cache():
     invalidate cache of SelectedOrganizationsElephantVocabulary
     """
     invalidate_cachekey_volatile_for(
-        "collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary"
+        "collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary",
+        get_again=True,
     )
 
 
@@ -368,7 +369,8 @@ def invalidate_ssoev_cache():
     invalidate cache of SortedSelectedOrganizationsElephantVocabulary
     """
     invalidate_cachekey_volatile_for(
-        "collective.contact.plonegroup.browser.settings.SortedSelectedOrganizationsElephantVocabulary"
+        "collective.contact.plonegroup.browser.settings.SortedSelectedOrganizationsElephantVocabulary",
+        get_again=True,
     )
 
 

@@ -258,7 +258,8 @@ def get_selected_org_suffix_users(org_uid, suffixes):
         for member in members:
             if base_hasattr(member, "isGroup") and member.isGroup():
                 continue
-            if member not in org_members:
+            # MemberData has no __eq__ on Plone 6: compare ids
+            if member.getId() not in [m.getId() for m in org_members]:
                 org_members.append(member)
     return org_members
 
