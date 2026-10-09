@@ -11,7 +11,7 @@
         category="Products"
         condition_expr=""
         url_expr="string:${portal_url}/@@contact-plonegroup-settings"
-        icon_expr=""
+        icon_expr="string:diagram-3"
         visible="True"
         i18n:attributes="title">
         <permission>Plone Site Setup: Site</permission>

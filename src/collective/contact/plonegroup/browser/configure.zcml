@@ -14,7 +14,7 @@
 
     <browser:page
         name="contact-plonegroup-settings"
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        for="plone.base.interfaces.IPloneSiteRoot"
         permission="plone.app.controlpanel.Site"
         class=".settings.SettingsView" />
 
@@ -59,7 +59,7 @@
         layer="collective.contact.plonegroup.interfaces.ICollectiveContactPlonegroupLayer" />
 
     <browser:page
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        for="plone.base.interfaces.IPloneSiteRoot"
         name="display-group-users"
         template="templates/display_group_users.pt"
         class=".tables.DisplayGroupUsersView"

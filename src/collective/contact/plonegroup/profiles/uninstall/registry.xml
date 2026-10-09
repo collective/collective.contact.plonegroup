@@ -1,0 +1,5 @@
+<registry>
+  <records prefix="plone.bundles/collective-contact-plonegroup"
+           interface="plone.base.interfaces.IBundleRegistry"
+           remove="True" />
+</registry>

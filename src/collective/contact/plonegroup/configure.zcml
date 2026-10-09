@@ -32,6 +32,13 @@
         description="Installs the collective.contact.plonegroup add-on."
         provides="Products.GenericSetup.interfaces.EXTENSION" />
 
+    <genericsetup:registerProfile
+        name="uninstall"
+        title="collective.contact.plonegroup uninstall"
+        directory="profiles/uninstall"
+        description="Uninstalls the collective.contact.plonegroup add-on."
+        provides="Products.GenericSetup.interfaces.EXTENSION" />
+
     <plone:behavior
         title="Plonegroup user link"
         description="Adds user related fields"

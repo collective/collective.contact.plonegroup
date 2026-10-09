@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from collective.contact.core.content.held_position import IHeldPosition
+from plone.base.utils import base_hasattr
 from plone.indexer import indexer
-from Products.CMFPlone.utils import base_hasattr
 from Products.PluginIndexes.unindex import _marker as common_marker
 
 

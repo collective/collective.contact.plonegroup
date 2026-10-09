@@ -16,9 +16,7 @@ class PlonegroupDeleteConfirmationInfo(DeleteConfirmationInfo):
         breaches = super(PlonegroupDeleteConfirmationInfo, self).check_object(
             obj, excluded_path=excluded_path, excluded_paths=excluded_paths
         )
-        plonegroup_breaches = search_value_in_objects(
-            obj, obj.UID(), p_types=[], type_fields={}
-        )
+        plonegroup_breaches = search_value_in_objects(obj, obj.UID(), p_types=[], type_fields={})
         if not any([breaches, plonegroup_breaches]):
             return
 
