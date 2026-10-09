@@ -12,6 +12,7 @@ from collective.contact.plonegroup.subscribers import group_deleted
 from collective.contact.plonegroup.testing import IntegrationTestCase
 from collective.contact.plonegroup.utils import get_own_organization
 from plone import api
+from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
 from plone.app.testing import TEST_USER_ID
 from Products.statusmessages.interfaces import IStatusMessage
 from zExceptions import Redirect
@@ -100,6 +101,20 @@ class TestSubscribers(IntegrationTestCase):
         self.assertEqual(len(breaches[0]["sources"]), 1)
         self.assertIn(breaches[0]["sources"][0]["title"], "Content 2")
 
+    def test_plonegroupOrganizationRemoved_5(self):
+        """Really deleting an organization no more selected in settings but used in an object is refused"""
+        set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
+        self.assertRaises(LinkIntegrityNotificationException, api.content.delete, obj=self.contacts[1])
+
+    def test_plonegroupOrganizationRemoved_6(self):
+        """Really deleting an organization not selected in settings and not used is done"""
+        set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
+        self.portal["acontent2"].pg_organization = None
+        own_orga = get_own_organization()
+        api.content.delete(obj=self.contacts[1])
+        self.assertNotIn("department2", own_orga)
+        self.assertNotIn("department2", [b.id for b in self.portal.portal_catalog(portal_type="organization")])
+
     def test_plonegroupuserlink_modified(self):
         """We test if a held position userid index is well updated after userid is defined on a person."""
         diry = self.portal[DEFAULT_DIRECTORY_ID]
@@ -133,6 +148,14 @@ class TestSubscribers(IntegrationTestCase):
         set_registry_organizations([self.contacts[1].UID()])  # unselects the contact
         self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition="deactivate")
         self.assertEqual(api.content.get_state(obj=self.contacts[0]), "active")
+        self.assertEqual(
+            [msg.message for msg in IStatusMessage(self.portal.REQUEST).show()],
+            [
+                "You cannot deactivate this item !",
+                'This contact is used in following content: <a href="http://nohost/plone/acontent1" '
+                'target="_blank">Content 1</a>',
+            ],
+        )
 
     def test_plonegroup_contact_transition_3(self):
         """We can deactivate an organization not at all used"""

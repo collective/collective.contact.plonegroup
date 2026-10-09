@@ -141,6 +141,14 @@ class TestUtils(IntegrationTestCase):
             [u.getUserName() for u in get_selected_org_suffix_users(self.uid, ["director"])],
             [api.user.get(username=TEST_USER_ID).getUserName()],
         )
+        # a user in 2 suffixed groups of the organization is listed once
+        api.user.create(username="user1", email="t@t.be", properties={"fullname": "User A"})
+        api.group.add_user(groupname="%s_director" % self.uid, username="user1")
+        api.group.add_user(groupname="%s_observer" % self.uid, username="user1")
+        self.assertListEqual(
+            sorted([u.getUserName() for u in get_selected_org_suffix_users(self.uid, ["director", "observer"])]),
+            [TEST_USER_NAME, "user1"],
+        )
 
     def test_voc_selected_org_suffix_users(self):
         self.assertEqual(voc_selected_org_suffix_users(None, []).by_token, {})
@@ -179,6 +187,12 @@ class TestUtils(IntegrationTestCase):
                 )
             ],
             ["user1", "user2", TEST_USER_NAME],
+        )
+        # a user in 2 suffixed groups of the organization gives one term
+        api.group.add_user(groupname="%s_observer" % self.uid, username="user1")
+        self.assertListEqual(
+            [t.token for t in voc_selected_org_suffix_users(self.uid, ["director", "observer"])],
+            ["user1", "user2", TEST_USER_ID],
         )
 
     def test_get_selected_org_suffix_principal_ids(self):
@@ -219,6 +233,9 @@ class TestUtils(IntegrationTestCase):
 
     def test_get_plone_group_id(self):
         self.assertEqual(get_plone_group_id("groupuid", "suffix"), "groupuid_suffix")
+        self.assertEqual(get_plone_group_id("groupuid", "suffix"), "groupuid_suffix")
+        # an organization object instead of its UID is refused
+        self.assertRaises(TypeError, get_plone_group_id, self.dep1, "suffix")
 
     def test_get_plone_group(self):
         self.assertIsNone(get_plone_group("groupuid", "suffix"))

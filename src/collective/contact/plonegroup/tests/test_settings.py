@@ -14,6 +14,7 @@ from collective.contact.plonegroup.utils import get_own_organization
 from collective.contact.plonegroup.utils import get_plone_group_id
 from plone import api
 from plone.app.testing import TEST_USER_ID
+from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import validator
 from zExceptions import Redirect
 from zope import event
@@ -22,6 +23,8 @@ from zope.i18n import translate
 from zope.interface import Invalid
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
+
+import unittest
 
 
 class TestSettings(IntegrationTestCase):
@@ -470,3 +473,62 @@ class TestSettings(IntegrationTestCase):
         vocab_wrp = factory_wrp(self.portal)
         self.assertListEqual([v.title for v in vocab_wrp], ["Department 1", "Department 2", "Department 3"])
         self.assertListEqual(sorted([v.token for v in vocab_wrp]), sorted(get_registry_organizations()))
+
+    @unittest.expectedFailure
+    def test_SettingsEditForm_label(self):
+        """The settings form label is English in an English site.
+        Bug: locales/en/LC_MESSAGES/plone.po translates it in French."""
+        self.assertEqual(
+            translate(settings.SettingsEditForm.label, target_language="en"), "Contact Plone Group settings"
+        )
+
+    def test_SettingsEditForm(self):
+        """Test the settings form, rendered and saved like a user would do"""
+        own_orga = get_own_organization()
+        organizations = get_registry_organizations()
+        view = self.portal.restrictedTraverse("@@contact-plonegroup-settings")
+        rendered = view()
+        self.assertIn("Department 1 - Service 1", rendered)
+        self.assertIn('name="form.widgets.functions.0.widgets.fct_id"', rendered)
+        self.assertIn('value="director"', rendered)
+        self.assertIn('value="Worker"', rendered)
+        # save, adding a function without selecting its organizations
+        request = self.layer["request"]
+        request.form.update(
+            {
+                "form.widgets.organizations": organizations,
+                "form.widgets.organizations-empty-marker": "1",
+                "form.widgets.functions.count": "3",
+                "form.widgets.groups_management-empty-marker": "1",
+                "form.buttons.save": "Save",
+            }
+        )
+        for i, (fct_id, fct_title) in enumerate([("director", "Director"), ("worker", "Worker"), ("chief", "Chief")]):
+            prefix = "form.widgets.functions.{0}".format(i)
+            request.form.update(
+                {
+                    prefix + "-empty-marker": "1",
+                    prefix + ".widgets.fct_id": fct_id,
+                    prefix + ".widgets.fct_title": fct_title,
+                    prefix + ".widgets.fct_orgs-empty-marker": "1",
+                    prefix + ".widgets.fct_management-empty-marker": "1",
+                    prefix + ".widgets.enabled": ["selected"],
+                    prefix + ".widgets.enabled-empty-marker": "1",
+                }
+            )
+        view = self.portal.restrictedTraverse("@@contact-plonegroup-settings")
+        view()
+        self.assertEqual(request.response.getStatus(), 302)
+        self.assertEqual([msg.message for msg in IStatusMessage(request).show()], ["Changes saved."])
+        self.assertEqual(get_registry_organizations(), organizations)
+        self.assertEqual(
+            get_registry_functions()[2],
+            {"fct_id": "chief", "fct_title": "Chief", "fct_orgs": [], "fct_management": False, "enabled": True},
+        )
+        # the Plone groups of the new function are created for every selected organization
+        for org_uid in organizations:
+            self.assertEqual(
+                api.group.get(get_plone_group_id(org_uid, "chief")).getProperty("title"),
+                "{0} (Chief)".format(api.content.get(UID=org_uid).get_full_title(separator=" - ", first_index=1)),
+            )
+        self.assertIsNone(api.group.get(get_plone_group_id(own_orga["department1"].UID(), "unknown")))

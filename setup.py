@@ -63,6 +63,7 @@ setup(
         'test': [
             'collective.eeafaceted.z3ctable[test]',
             'ecreall.helpers.testing',
+            'plone.app.robotframework',
             'plone.app.testing',
         ],
     },

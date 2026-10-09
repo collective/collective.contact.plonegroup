@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ utils.py tests for this package."""
 
+from collective.contact.plonegroup.browser.tables import SelectedInPlonegroupColumn
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.config import PLONEGROUP_ORG
@@ -19,6 +20,8 @@ from zExceptions import Redirect
 from zope.component import getUtility
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
+
+import re
 
 
 class TestViews(FunctionalTestCase):
@@ -212,6 +215,141 @@ class TestViews(FunctionalTestCase):
         self.assertTrue("actionspanel" in rendered)
         self.assertTrue(self.dep1.absolute_url() in rendered)
         self.assertTrue(self.dep2.absolute_url() in rendered)
+        # link to the settings
+        self.assertIn('<a href="http://nohost/plone/@@contact-plonegroup-settings">', rendered)
+        # columns
+        self.assertEqual(
+            re.findall(r'<th class="th_header_(\w+)">', rendered),
+            ["Title", "PloneGroupUsersGroupsColumn", "SelectedInPlonegroupColumn"],
+        )
+        rows = rendered.split("<tr  class=")[1:]
+        self.assertEqual(len(rows), 2)
+        # title: pretty link opened in a new tab, with a tooltip, full title
+        # Plone 6: data-base_url is the page loaded by the tooltip (collective.contact.core forms.js)
+        self.assertIn(
+            "<a class='pretty_link link-tooltip' data-base_url='{0}' href='{0}' target='_blank'>".format(
+                self.dep1.absolute_url()
+            ),
+            rows[0],
+        )
+        self.assertIn("<span class='pretty_link_content state-active'>Department 1</span>", rows[0])
+        # groups and users: collapsible "Details" loading the Plone groups of the organization
+        self.assertIn(
+            "load_view='@@display-group-users?group_ids={0}_observer&group_ids={0}_director"
+            "&short:boolean=True', base_url='http://nohost/plone');\">".format(self.uid),
+            rows[0],
+        )
+        self.assertIn("Details</", rows[0])
+        self.assertIn(
+            '<div id="collapsible-group-users_{0}" class="collapsible-content" style="display: none;">'.format(
+                self.uid
+            ),
+            rows[0],
+        )
+        # selected in plonegroup: Yes for department1, No for department2
+        self.assertIn('<td class="td_cell_SelectedInPlonegroupColumn bool_value_true">', rows[0])
+        self.assertIn('<td class="td_cell_SelectedInPlonegroupColumn bool_value_false">', rows[1])
+        # actions: edit, delete, cut, copy, rename
+        for action in ('/edit"', "view_name='@@delete_givenuid'", "/object_cut", "/object_copy", "/object_rename"):
+            self.assertIn(action, rows[1])
+        self.assertIn('id="actions-panel-identifier-{0}"'.format(self.dep2.UID()), rows[1])
         # does not fail to render on an organization containing no organization
         view = self.dep1.restrictedTraverse("@@suborganizations")
         self.assertTrue("There is no organizations in this organization." in view())
+
+    def test_suborganizations_content_icon(self):
+        """The organization icon shown in the title column is an existing image."""
+        rendered = get_own_organization().restrictedTraverse("@@suborganizations")()
+        icon_url = re.search(
+            r"<span class='pretty_link_icons'><img title='Organization' src='([^']+)'", rendered
+        ).group(1)
+        self.assertTrue(self.portal.unrestrictedTraverse(str(icon_url.replace(self.portal.absolute_url() + "/", ""))))
+
+    def test_render_original_suborgs(self):
+        """With ajax_load (in a tooltip), the original collective.contact.core list is rendered."""
+        own_org = get_own_organization()
+        original = own_org.restrictedTraverse("@@original-suborganizations")()
+        self.assertIn('id="sub_organizations"', original)
+        self.assertIn('<a class="link-tooltip" href="{0}"'.format(self.dep1.absolute_url()), original)
+        self.layer["request"].form["ajax_load"] = "1"
+        rendered = own_org.restrictedTraverse("@@suborganizations")()
+        self.assertIn('id="sub_organizations"', rendered)
+        self.assertIn('<a class="link-tooltip" href="{0}"'.format(self.dep2.absolute_url()), rendered)
+        self.assertNotIn("suborganizations-listing", rendered)
+
+    def test_renderHeadCell(self):
+        """The "Selected in plonegroup" header links to the settings."""
+        request = self.layer["request"]
+        request.other.pop("LANGUAGE_TOOL", None)
+        request.environ["HTTP_ACCEPT_LANGUAGE"] = "fr"
+        column = SelectedInPlonegroupColumn(self.own_orga, request, None)
+        self.assertEqual(
+            column.renderHeadCell(),
+            "S\xe9lectionn\xe9 dans <a href='http://nohost/plone/@@contact-plonegroup-settings'>"
+            '"Configuration des groupes plone via contact"</a>',
+        )
+
+    def test_group_users(self):
+        """A Manager sees links, ids and emails, other users only see names."""
+        observer = get_plone_group_id(self.uid, "observer")
+        api.group.add_user(groupname=observer, username="dexter")
+        self.portal.portal_groups.addPrincipalToGroup("technicians", observer)
+        api.group.add_user(groupname="technicians", username="debra")
+        view = self.portal.restrictedTraverse("@@display-group-users")
+        rendered = view(group_ids=[observer])
+        self.assertIn(
+            '<a target="_parent" href="http://nohost/plone/@@usergroup-groupmembership?groupname={0}">'.format(
+                observer
+            ),
+            rendered.replace("target='_parent'", 'target="_parent"'),
+        )
+        users = view.group_users(api.group.get(observer))
+        self.assertEqual(
+            users,
+            "<a class='user-or-group-level-0' href='http://nohost/plone/@@user-information?userid=dexter' "
+            "title=\"View Plone user\"><acronym><img src='http://nohost/plone/user.png'></acronym></a> "
+            "<div class='user-or-group user-or-group-level-0'>Dexter Morgan (dexter, dxm@miami.pol)</div>"
+            "<a class='user-or-group-level-1' href='http://nohost/plone/@@usergroup-groupmembership?"
+            "groupname=technicians' title=\"View Plone group\"><acronym><img src='http://nohost/plone/group.png'>"
+            "</acronym></a> <div class='user-or-group user-or-group-level-1'>Technicians (technicians)</div>"
+            "<a class='user-or-group-level-2' href='http://nohost/plone/@@user-information?userid=debra' "
+            "title=\"View Plone user\"><acronym><img src='http://nohost/plone/user.png'></acronym></a> "
+            "<div class='user-or-group user-or-group-level-2'>Debra Morgan (debra, dbm@miami.pol)</div>",
+        )
+        # as a simple member
+        login(self.portal, "dexter")
+        view = self.portal.restrictedTraverse("@@display-group-users")
+        rendered = view(group_ids=[observer])
+        self.assertNotIn("@@usergroup-groupmembership", rendered)
+        self.assertEqual(
+            view.group_users(api.group.get(observer)),
+            "<img src='http://nohost/plone/user.png'> <div class='user-or-group user-or-group-level-0'>Dexter Morgan"
+            "</div><img src='http://nohost/plone/user.png'> <div class='user-or-group user-or-group-level-1'>"
+            "Debra Morgan</div>",
+        )
+
+    def test_available(self):
+        """The own-groups user action is available when groups or functions are manageable."""
+        action = self.portal.portal_actions.user["own-groups"]
+        self.assertEqual(action.url_expr, "string:${portal_url}/@@manage-own-groups-users")
+        self.assertFalse(action.visible)
+
+        def available():
+            infos = self.portal.portal_actions.listActionInfos(
+                action_chain="user/own-groups", object=self.portal, check_visibility=0
+            )
+            return infos and infos[0]["available"] or False
+
+        view = self.portal.restrictedTraverse("@@manage-own-groups-users")
+        self.assertFalse(view.available())
+        self.assertFalse(available())
+        set_registry_groups_mgt(["investigators"])
+        self.assertTrue(view.available())
+        self.assertTrue(available())
+        set_registry_groups_mgt([])
+        functions = get_registry_functions()
+        functions[1]["fct_management"] = True
+        set_registry_functions(functions)
+        view = self.portal.restrictedTraverse("@@manage-own-groups-users")
+        self.assertTrue(view.available())
+        self.assertTrue(available())
