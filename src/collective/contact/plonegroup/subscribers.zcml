@@ -1,54 +1,55 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:zcml="http://namespaces.zope.org/zcml"
-    i18n_domain="collective.contact.plonegroup">
+    i18n_domain="collective.contact.plonegroup"
+    >
 
-    <subscriber
-        for="plone.registry.interfaces.IRecordModifiedEvent"
-        handler=".browser.settings.detectContactPlonegroupChange"
-        />
+  <subscriber
+      for="plone.registry.interfaces.IRecordModifiedEvent"
+      handler=".browser.settings.detectContactPlonegroupChange"
+      />
 
-    <subscriber
-        for=".interfaces.IPloneGroupContact
-             zope.lifecycleevent.interfaces.IObjectMovedEvent"
-        handler=".browser.settings.adaptPloneGroupDefinition"
-        />
+  <subscriber
+      for=".interfaces.IPloneGroupContact
+           zope.lifecycleevent.interfaces.IObjectMovedEvent"
+      handler=".browser.settings.adaptPloneGroupDefinition"
+      />
 
-    <subscriber
-        for=".interfaces.IPloneGroupContact
-             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-        handler=".browser.settings.adaptPloneGroupDefinition"
-        />
+  <subscriber
+      for=".interfaces.IPloneGroupContact
+           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".browser.settings.adaptPloneGroupDefinition"
+      />
 
-    <subscriber
-        for=".interfaces.IPloneGroupContact
-             Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
-        handler=".subscribers.plonegroup_contact_transition"
-        />
+  <subscriber
+      for=".interfaces.IPloneGroupContact
+           Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
+      handler=".subscribers.plonegroup_contact_transition"
+      />
 
-    <subscriber
-        for=".interfaces.IPloneGroupContact
-             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-        handler=".subscribers.objectRemoved"
-        />
+  <subscriber
+      for=".interfaces.IPloneGroupContact
+           zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+      handler=".subscribers.objectRemoved"
+      />
 
-    <subscriber
-        for=".behaviors.IPlonegroupUserLink
-             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-        handler=".subscribers.plonegroupuserlink_modified"
-        />
+  <subscriber
+      for=".behaviors.IPlonegroupUserLink
+           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".subscribers.plonegroupuserlink_modified"
+      />
 
-    <subscriber
-        for="Products.PluggableAuthService.interfaces.events.IGroupDeletedEvent"
-        handler=".subscribers.group_deleted"
-        />
+  <subscriber
+      for="Products.PluggableAuthService.interfaces.events.IGroupDeletedEvent"
+      handler=".subscribers.group_deleted"
+      />
 
-    <!-- Is notified on addition, moving, deletion -->
-    <subscriber
-        zcml:condition="installed zope.lifecycleevent"
-        for="collective.contact.widget.interfaces.IContactContent
-             zope.lifecycleevent.interfaces.IObjectMovedEvent"
-        handler=".subscribers.mark_organization"
-        />
+  <!-- Is notified on addition, moving, deletion -->
+  <subscriber
+      for="collective.contact.widget.interfaces.IContactContent
+           zope.lifecycleevent.interfaces.IObjectMovedEvent"
+      handler=".subscribers.mark_organization"
+      zcml:condition="installed zope.lifecycleevent"
+      />
 
 </configure>

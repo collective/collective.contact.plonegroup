@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import organizations_with_suffixes
@@ -19,11 +17,13 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 def filter_user_organizations(userid):
     """
-        Filter user organizations
+    Filter user organizations
     """
     if not userid:
         return SimpleVocabulary([])
-    factory = getUtility(IVocabularyFactory, 'collective.contact.plonegroup.primary_organizations')
+    factory = getUtility(
+        IVocabularyFactory, "collective.contact.plonegroup.primary_organizations"
+    )
     vocab = factory(None, userid=userid)
     return SimpleVocabulary([term for term in vocab._terms])
 
@@ -32,53 +32,73 @@ def filter_user_organizations(userid):
 class IPlonegroupUserLink(model.Schema):
 
     userid = MasterSelectField(
-        title=_('Plone user'),
+        title=_("Plone user"),
         required=False,
-        vocabulary='imio.helpers.SortedUsers',
+        vocabulary="imio.helpers.SortedUsers",
         slave_fields=(
-            {'name': 'IPlonegroupUserLink.primary_organization',
-             'action': 'vocabulary',
-             'vocab_method': filter_user_organizations,
-             'control_param': 'userid',
-             'initial_trigger': True,
-             },
-        )
+            {
+                "name": "IPlonegroupUserLink.primary_organization",
+                "action": "vocabulary",
+                "vocab_method": filter_user_organizations,
+                "control_param": "userid",
+                "initial_trigger": True,
+            },
+        ),
     )
-    directives.read_permission(userid='collective.contact.plonegroup.read_userlink_fields')
-    directives.write_permission(userid='collective.contact.plonegroup.write_userlink_fields')
+    directives.read_permission(
+        userid="collective.contact.plonegroup.read_userlink_fields"
+    )
+    directives.write_permission(
+        userid="collective.contact.plonegroup.write_userlink_fields"
+    )
 
     primary_organization = schema.Choice(
-        title=_('Primary organization'),
+        title=_("Primary organization"),
         required=False,
-        vocabulary='collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary',
+        vocabulary="collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary",
     )
-    directives.read_permission(primary_organization='collective.contact.plonegroup.read_userlink_fields')
-    directives.write_permission(primary_organization='collective.contact.plonegroup.write_userlink_fields')
+    directives.read_permission(
+        primary_organization="collective.contact.plonegroup.read_userlink_fields"
+    )
+    directives.write_permission(
+        primary_organization="collective.contact.plonegroup.write_userlink_fields"
+    )
 
-    model.fieldset('app_parameters',
-                   label=_("Application parameters"),
-                   fields=['userid', 'primary_organization'])
+    model.fieldset(
+        "app_parameters",
+        label=_("Application parameters"),
+        fields=["userid", "primary_organization"],
+    )
 
 
-def primary_organizations_vocabulary_cache_key(method, self, context, userid, suffixes, base_voc):
-    date = get_cachekey_volatile('_users_groups_value')
+def primary_organizations_vocabulary_cache_key(
+    method, self, context, userid, suffixes, base_voc
+):
+    date = get_cachekey_volatile("_users_groups_value")
     return date, userid, suffixes, base_voc
 
 
 @implementer(IVocabularyFactory)
-class PrimaryOrganizationsVocabulary(object):
-    """ Primary organizations vocabulary """
+class PrimaryOrganizationsVocabulary:
+    """Primary organizations vocabulary"""
 
     # @ram.cache(primary_organizations_vocabulary_cache_key)
-    def PrimaryOrganizationsVocabulary__call__(self, context, userid=None, suffixes=[],
-                                               base_voc='collective.contact.plonegroup.browser.settings.'
-                                                        'SelectedOrganizationsElephantVocabulary'):
+    def PrimaryOrganizationsVocabulary__call__(
+        self,
+        context,
+        userid=None,
+        suffixes=[],
+        base_voc="collective.contact.plonegroup.browser.settings."
+        "SelectedOrganizationsElephantVocabulary",
+    ):
         if not suffixes:
             suffixes = get_all_suffixes()
         groups = get_plone_groups_for_user(user_id=userid)
         user_orgs = organizations_with_suffixes(groups, suffixes, group_as_str=True)
         factory = getUtility(IVocabularyFactory, base_voc)
         vocab = factory(None)
-        return SimpleVocabulary([term for term in vocab._terms if term.value in user_orgs])
+        return SimpleVocabulary(
+            [term for term in vocab._terms if term.value in user_orgs]
+        )
 
     __call__ = PrimaryOrganizationsVocabulary__call__
