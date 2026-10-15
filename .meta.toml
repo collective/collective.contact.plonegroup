@@ -22,6 +22,12 @@ report.html
 
 [tox]
 use_mxdev = true
+# the tests check French translations (buildout: zope_i18n_compile_mo_files = true);
+# robot suites written for Firefox (buildout geckodriver): Chrome intercepts their clicks
+test_environment_variables = """
+    zope_i18n_compile_mo_files=true
+    ROBOT_BROWSER=headlessfirefox
+"""
 test_matrix = {"6.2" = ["*"]}
 test_deps_additional = """
 horse-with-no-namespace

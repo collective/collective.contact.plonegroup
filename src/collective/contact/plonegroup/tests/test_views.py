@@ -248,7 +248,7 @@ class TestViews(FunctionalTestCase):
         self.assertTrue(self.dep2.absolute_url() in rendered)
         # link to the settings
         self.assertIn(
-            '<a href="http://nohost/plone/@@contact-plonegroup-settings">', rendered
+            '<a href="http://nohost/plone/@@contact-plonegroup-settings" >', rendered
         )
         # columns
         self.assertEqual(
@@ -355,7 +355,7 @@ class TestViews(FunctionalTestCase):
         view = self.portal.restrictedTraverse("@@display-group-users")
         rendered = view(group_ids=[observer])
         self.assertIn(
-            '<a target="_parent" href="http://nohost/plone/@@usergroup-groupmembership?groupname={}">'.format(
+            '<a target="_parent" href="http://nohost/plone/@@usergroup-groupmembership?groupname={}" >'.format(
                 observer
             ),
             rendered.replace("target='_parent'", 'target="_parent"'),
