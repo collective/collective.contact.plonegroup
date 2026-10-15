@@ -32,7 +32,6 @@ test_matrix = {"6.2" = ["*"]}
 test_deps_additional = """
 horse-with-no-namespace
     collective.contact.core @ file://{toxinidir}/sources/collective.contact.core
-    collective.contact.widget @ file://{toxinidir}/sources/collective.contact.widget
     collective.eeafaceted.z3ctable @ file://{toxinidir}/sources/collective.eeafaceted.z3ctable
     collective.elephantvocabulary @ file://{toxinidir}/sources/collective.elephantvocabulary
     collective.js.tooltipster @ file://{toxinidir}/sources/collective.js.tooltipster
