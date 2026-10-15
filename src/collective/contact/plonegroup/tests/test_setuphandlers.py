@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """setuphandlers.py tests for this package."""
 
 from collective.contact.plonegroup.config import FUNCTIONS_REGISTRY
@@ -21,11 +20,18 @@ class TestSetuphandlers(IntegrationTestCase):
         # reapplying the step initializes a None value and keeps a stored value
         registry[ORGANIZATIONS_REGISTRY] = None
         functions = [
-            {"fct_title": "Director", "fct_id": "director", "fct_orgs": [], "fct_management": False, "enabled": True}
+            {
+                "fct_title": "Director",
+                "fct_id": "director",
+                "fct_orgs": [],
+                "fct_management": False,
+                "enabled": True,
+            }
         ]
         set_registry_functions(functions)
         self.portal.portal_setup.runImportStepFromProfile(
-            "profile-collective.contact.plonegroup:default", "contact-plonegroup-postInstall"
+            "profile-collective.contact.plonegroup:default",
+            "contact-plonegroup-postInstall",
         )
         self.assertEqual(registry[ORGANIZATIONS_REGISTRY], [])
         self.assertEqual(registry[FUNCTIONS_REGISTRY], functions)

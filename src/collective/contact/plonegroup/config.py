@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
-
 from copy import deepcopy
 from plone import api
 
-
 # Registry keys
 ORGANIZATIONS_REGISTRY = "collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.organizations"
-FUNCTIONS_REGISTRY = "collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.functions"
+FUNCTIONS_REGISTRY = (
+    "collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.functions"
+)
 GROUPS_MGT_REGISTRY = "collective.contact.plonegroup.browser.settings.IContactPlonegroupConfig.groups_management"
 PLONEGROUP_ORG = "plonegroup-organization"
 DEFAULT_DIRECTORY_ID = "contacts"

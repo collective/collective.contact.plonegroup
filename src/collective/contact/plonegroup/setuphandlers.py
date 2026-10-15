@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collective.contact.plonegroup import logger
 from collective.contact.plonegroup.browser.settings import invalidate_soev_cache
 from collective.contact.plonegroup.browser.settings import invalidate_ssoev_cache

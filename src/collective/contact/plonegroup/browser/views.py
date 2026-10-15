@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collective.contact.core import _ as _ccc
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_functions
@@ -46,7 +44,7 @@ class GroupField(schema.Choice):
 
     def __init__(self, *args, **kwargs):
         kwargs["vocabulary"] = ""
-        super(GroupField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 @implementer(IOrganizationField)
@@ -54,7 +52,7 @@ class OrganizationField(schema.Choice):
 
     def __init__(self, *args, **kwargs):
         kwargs["vocabulary"] = ""
-        super(OrganizationField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 @implementer(IDGFVocabularyField)
@@ -64,16 +62,22 @@ class DGFVocabularyField(schema.Choice):
 
 class IGroupsUsers(Interface):
 
-    group = GroupField(title=_("Group"), vocabulary="plone.app.vocabularies.Groups", required=False)
+    group = GroupField(
+        title=_("Group"), vocabulary="plone.app.vocabularies.Groups", required=False
+    )
 
-    user = DGFVocabularyField(title=_("User"), vocabulary="imio.helpers.SortedUsers", required=False)
+    user = DGFVocabularyField(
+        title=_("User"), vocabulary="imio.helpers.SortedUsers", required=False
+    )
 
 
 class IOrganisationsUsers(Interface):
 
     group = OrganizationField(title=_ccc("Organization"), required=False)
 
-    user = DGFVocabularyField(title=_("User"), vocabulary="imio.helpers.SortedUsers", required=False)
+    user = DGFVocabularyField(
+        title=_("User"), vocabulary="imio.helpers.SortedUsers", required=False
+    )
 
 
 class FieldValidator(SimpleFieldValidator):
@@ -84,7 +88,7 @@ class FieldValidator(SimpleFieldValidator):
             raise RequiredMissing
 
 
-class GroupsConfigurationAdapter(object):
+class GroupsConfigurationAdapter:
 
     def __init__(self, form):
         self.__dict__["context"] = form.context
@@ -100,15 +104,21 @@ class GroupsConfigurationAdapter(object):
         elif name == "_groups_":
             for group_id in sorted(self.form.groupids, key=self.form.groupids.get):
                 users = api.user.get_users(groupname=group_id)
-                for user in sorted(users, key=lambda u: u.getProperty("fullname", None) or u.id):
+                for user in sorted(
+                    users, key=lambda u: u.getProperty("fullname", None) or u.id
+                ):
                     values.append({"group": group_id, "user": user.id})
             self.old_values[name] = values
         else:
-            for org in sorted(self.form.functions_orgs[name], key=methodcaller("get_full_title")):
+            for org in sorted(
+                self.form.functions_orgs[name], key=methodcaller("get_full_title")
+            ):
                 org_uid = org.UID()
                 group_id = get_plone_group_id(org_uid, name)
                 users = api.user.get_users(groupname=group_id)
-                for user in sorted(users, key=lambda u: u.getProperty("fullname", None) or u.id):
+                for user in sorted(
+                    users, key=lambda u: u.getProperty("fullname", None) or u.id
+                ):
                     values.append({"group": org_uid, "user": user.id})
             self.old_values[name] = values
         return values
@@ -140,15 +150,19 @@ class ManageOwnGroupUsers(EditForm):
         self.current_user = api.user.get_current()
         #        self.current_user = api.user.get(userid='chef')
         self.current_user_id = self.current_user.getId()
-        self.current_user_groups = [g for g in api.group.get_groups(user=self.current_user) if g]
+        self.current_user_groups = [
+            g for g in api.group.get_groups(user=self.current_user) if g
+        ]
 
     def _available_additional_condition(self):
-        """additional condition for action availability, made to be overrided"""
+        """additional condition for action availability, made to be overridden"""
         return True
 
     def available(self):
         """will the action be available?"""
-        return (get_registry_groups_mgt() or self.get_manageable_functions()) and self._available_additional_condition()
+        return (
+            get_registry_groups_mgt() or self.get_manageable_functions()
+        ) and self._available_additional_condition()
 
     def get_manageable_functions(self):
         """get all manageable functions"""
@@ -210,7 +224,9 @@ class ManageOwnGroupUsers(EditForm):
                 ),
                 description=description,
                 required=False,
-                value_type=DictRow(title="org_users", schema=IOrganisationsUsers, required=False),
+                value_type=DictRow(
+                    title="org_users", schema=IOrganisationsUsers, required=False
+                ),
             )
             fields.append(fld)
         fields = sorted(fields, key=lambda x: x.title)
@@ -243,7 +259,7 @@ class ManageOwnGroupUsers(EditForm):
     #        pass
 
     def updateWidgets(self):
-        super(ManageOwnGroupUsers, self).updateWidgets()
+        super().updateWidgets()
         for wid in self.widgets:
             if wid == "_old_values_":
                 self.widgets[wid].mode = HIDDEN_MODE
@@ -266,22 +282,33 @@ class ManageOwnGroupUsers(EditForm):
         groups_voc = factory(self.context)
         for name in old_values:
             try:
-                new_value = data[name]  # If the field is not in the data, then go on to the next one
+                new_value = data[
+                    name
+                ]  # If the field is not in the data, then go on to the next one
             except KeyError:
                 continue
-            new_value = set(
-                [
+            new_value = {
+                (
                     (
-                        str(dic["group"][0]) if isinstance(dic["group"], tuple) else dic["group"],
-                        str(dic["user"][0]) if isinstance(dic["user"], tuple) else dic["user"],
-                    )
-                    for dic in data[name]
-                ]
-            )
-            old_value = set([(dic["group"], dic["user"]) for dic in old_values[name]])
+                        str(dic["group"][0])
+                        if isinstance(dic["group"], tuple)
+                        else dic["group"]
+                    ),
+                    (
+                        str(dic["user"][0])
+                        if isinstance(dic["user"], tuple)
+                        else dic["user"]
+                    ),
+                )
+                for dic in data[name]
+            }
+            old_value = {(dic["group"], dic["user"]) for dic in old_values[name]}
             if old_value == new_value:
                 continue
-            for action, result in (("removed", old_value - new_value), ("added", new_value - old_value)):
+            for action, result in (
+                ("removed", old_value - new_value),
+                ("added", new_value - old_value),
+            ):
                 for group_id, user_id in result:
                     if group_id is None or user_id is None:
                         required_message = _(
@@ -289,16 +316,22 @@ class ManageOwnGroupUsers(EditForm):
                             "Don't forget to complete the 2 columns! "
                             "You have to redo all the manipulations."
                         )
-                        api.portal.show_message(message=required_message, request=self.request, type="error")
+                        api.portal.show_message(
+                            message=required_message, request=self.request, type="error"
+                        )
                         raise Redirect(self.request.get("ACTUAL_URL"))
                     if user_id == self.current_user_id:
                         user_message = _("You cannot remove your user from a group!")
-                        api.portal.show_message(message=user_message, request=self.request, type="error")
+                        api.portal.show_message(
+                            message=user_message, request=self.request, type="error"
+                        )
                         raise Redirect(self.request.get("ACTUAL_URL"))
                     if name != "_groups_":
                         group_id = get_plone_group_id(group_id, name)
                     if group_id not in users:
-                        users[group_id] = [u.id for u in api.user.get_users(groupname=group_id)]
+                        users[group_id] = [
+                            u.id for u in api.user.get_users(groupname=group_id)
+                        ]
                     if action == "removed" and user_id in users[group_id]:
                         api.group.remove_user(groupname=group_id, username=user_id)
                         extras = "group_id={0} group_title={2} user_id={1}".format(
@@ -316,7 +349,9 @@ class ManageOwnGroupUsers(EditForm):
         if changes:
             api.portal.show_message(message=self.successMessage, request=self.request)
         else:
-            api.portal.show_message(message=self.noChangesMessage, request=self.request, type="warn")
+            api.portal.show_message(
+                message=self.noChangesMessage, request=self.request, type="warn"
+            )
         self.request.response.redirect(self.request.get("ACTUAL_URL"))
 
     @button.buttonAndHandler(PMF("return_to_view"), name="cancel")

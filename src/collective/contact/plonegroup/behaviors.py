@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.utils import get_all_suffixes
 from collective.contact.plonegroup.utils import organizations_with_suffixes
@@ -23,7 +21,9 @@ def filter_user_organizations(userid):
     """
     if not userid:
         return SimpleVocabulary([])
-    factory = getUtility(IVocabularyFactory, "collective.contact.plonegroup.primary_organizations")
+    factory = getUtility(
+        IVocabularyFactory, "collective.contact.plonegroup.primary_organizations"
+    )
     vocab = factory(None, userid=userid)
     return SimpleVocabulary([term for term in vocab._terms])
 
@@ -45,27 +45,41 @@ class IPlonegroupUserLink(model.Schema):
             },
         ),
     )
-    directives.read_permission(userid="collective.contact.plonegroup.read_userlink_fields")
-    directives.write_permission(userid="collective.contact.plonegroup.write_userlink_fields")
+    directives.read_permission(
+        userid="collective.contact.plonegroup.read_userlink_fields"
+    )
+    directives.write_permission(
+        userid="collective.contact.plonegroup.write_userlink_fields"
+    )
 
     primary_organization = schema.Choice(
         title=_("Primary organization"),
         required=False,
         vocabulary="collective.contact.plonegroup.browser.settings.SelectedOrganizationsElephantVocabulary",
     )
-    directives.read_permission(primary_organization="collective.contact.plonegroup.read_userlink_fields")
-    directives.write_permission(primary_organization="collective.contact.plonegroup.write_userlink_fields")
+    directives.read_permission(
+        primary_organization="collective.contact.plonegroup.read_userlink_fields"
+    )
+    directives.write_permission(
+        primary_organization="collective.contact.plonegroup.write_userlink_fields"
+    )
 
-    model.fieldset("app_parameters", label=_("Application parameters"), fields=["userid", "primary_organization"])
+    model.fieldset(
+        "app_parameters",
+        label=_("Application parameters"),
+        fields=["userid", "primary_organization"],
+    )
 
 
-def primary_organizations_vocabulary_cache_key(method, self, context, userid, suffixes, base_voc):
+def primary_organizations_vocabulary_cache_key(
+    method, self, context, userid, suffixes, base_voc
+):
     date = get_cachekey_volatile("_users_groups_value")
     return date, userid, suffixes, base_voc
 
 
 @implementer(IVocabularyFactory)
-class PrimaryOrganizationsVocabulary(object):
+class PrimaryOrganizationsVocabulary:
     """Primary organizations vocabulary"""
 
     # @ram.cache(primary_organizations_vocabulary_cache_key)
@@ -74,7 +88,8 @@ class PrimaryOrganizationsVocabulary(object):
         context,
         userid=None,
         suffixes=[],
-        base_voc="collective.contact.plonegroup.browser.settings." "SelectedOrganizationsElephantVocabulary",
+        base_voc="collective.contact.plonegroup.browser.settings."
+        "SelectedOrganizationsElephantVocabulary",
     ):
         if not suffixes:
             suffixes = get_all_suffixes()
@@ -82,6 +97,8 @@ class PrimaryOrganizationsVocabulary(object):
         user_orgs = organizations_with_suffixes(groups, suffixes, group_as_str=True)
         factory = getUtility(IVocabularyFactory, base_voc)
         vocab = factory(None)
-        return SimpleVocabulary([term for term in vocab._terms if term.value in user_orgs])
+        return SimpleVocabulary(
+            [term for term in vocab._terms if term.value in user_orgs]
+        )
 
     __call__ = PrimaryOrganizationsVocabulary__call__

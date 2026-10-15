@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
@@ -78,7 +76,8 @@ class IFunctionSchema(Interface):
         title=_("Plone group suffix organizations"),
         description=_("Plone group organizations description"),
         value_type=schema.Choice(
-            vocabulary="collective.contact.plonegroup.browser.settings." "SortedSelectedOrganizationsElephantVocabulary"
+            vocabulary="collective.contact.plonegroup.browser.settings."
+            "SortedSelectedOrganizationsElephantVocabulary"
         ),
         required=False,
     )
@@ -95,11 +94,13 @@ class IFunctionSchema(Interface):
 
 
 def voc_cache_key(method, self, context):
-    return get_cachekey_volatile("%s.%s" % (self.__class__.__module__, self.__class__.__name__))
+    return get_cachekey_volatile(
+        f"{self.__class__.__module__}.{self.__class__.__name__}"
+    )
 
 
 @implementer(IVocabularyFactory)
-class BaseOrganizationServicesVocabulary(object):
+class BaseOrganizationServicesVocabulary:
     """
     Base vocabulary returning organizations from a particular root level.
     """
@@ -137,14 +138,18 @@ class BaseOrganizationServicesVocabulary(object):
         """Method that render term title, separated to ease override."""
         term_title = orga.title
         if parent_label:
-            term_title = "%s - %s" % (parent_label, term_title)
+            term_title = f"{parent_label} - {term_title}"
         return term_title
 
-    def __call__(self, context, root_portal_type="organization", root_id=PLONEGROUP_ORG):
+    def __call__(
+        self, context, root_portal_type="organization", root_id=PLONEGROUP_ORG
+    ):
         portal = getSite()
         terms = []
         pcat = portal.portal_catalog
-        brains = pcat.unrestrictedSearchResults(portal_type=root_portal_type, id=root_id)
+        brains = pcat.unrestrictedSearchResults(
+            portal_type=root_portal_type, id=root_id
+        )
         if not brains:
             terms.append(
                 SimpleTerm(
@@ -166,7 +171,8 @@ class BaseOrganizationServicesVocabulary(object):
                     None,
                     token="multifound",
                     title=_(
-                        "You must have only one '${root_portal_type}' " "with id '${pgo}' !",
+                        "You must have only one '${root_portal_type}' "
+                        "with id '${pgo}' !",
                         mapping={"root_portal_type": root_portal_type, "pgo": root_id},
                     ),
                 )
@@ -181,11 +187,11 @@ class BaseOrganizationServicesVocabulary(object):
 
 class OwnOrganizationServicesVocabulary(BaseOrganizationServicesVocabulary):
     """
-    Returns every organiztions stored in PLONEGROUP_ORG.
+    Returns every organizations stored in PLONEGROUP_ORG.
     """
 
     def __call__(self, context):
-        return super(OwnOrganizationServicesVocabulary, self).__call__(context)
+        return super().__call__(context)
 
 
 class EveryOrganizationsVocabulary(BaseOrganizationServicesVocabulary):
@@ -195,7 +201,7 @@ class EveryOrganizationsVocabulary(BaseOrganizationServicesVocabulary):
     """
 
     def __call__(self, context):
-        return super(EveryOrganizationsVocabulary, self).__call__(
+        return super().__call__(
             context, root_portal_type="directory", root_id=DEFAULT_DIRECTORY_ID
         )
 
@@ -208,7 +214,9 @@ class IContactPlonegroupConfig(Interface):
     # plone.registry cannot store schema.Choice different from named vocabularies !
     organizations = schema.List(
         title=_("Selected organizations"),
-        description=_("Choose multiple organization levels for which you want to create a plone group."),
+        description=_(
+            "Choose multiple organization levels for which you want to create a plone group."
+        ),
         required=True,
         value_type=schema.Choice(
             vocabulary="collective.contact.plonegroup.organization_services",
@@ -218,7 +226,9 @@ class IContactPlonegroupConfig(Interface):
 
     functions = schema.List(
         title=_("Function list"),
-        description=_("Each defined function will suffix each organization plone group."),
+        description=_(
+            "Each defined function will suffix each organization plone group."
+        ),
         required=True,
         value_type=DictRow(title=_("Function"), schema=IFunctionSchema),
     )
@@ -227,7 +237,9 @@ class IContactPlonegroupConfig(Interface):
     groups_management = schema.List(
         title=_("Selected global groups can be managed by a contained user"),
         required=False,
-        value_type=schema.Choice(vocabulary="collective.contact.plonegroup.global_groups"),
+        value_type=schema.Choice(
+            vocabulary="collective.contact.plonegroup.global_groups"
+        ),
     )
     widget("groups_management", CheckBoxFieldWidget, multiple="multiple", size=15)
 
@@ -254,7 +266,10 @@ class IContactPlonegroupConfig(Interface):
                     raise Invalid(
                         _(
                             "can_not_remove_function_every_plone_groups_not_empty",
-                            mapping={"removed_function": removed_suffix, "plone_group_id": plone_group_id},
+                            mapping={
+                                "removed_function": removed_suffix,
+                                "plone_group_id": plone_group_id,
+                            },
                         )
                     )
 
@@ -262,21 +277,32 @@ class IContactPlonegroupConfig(Interface):
         # every linked Plone groups of not selected orgs are empty
         stored_functions = get_registry_functions()
         old_functions = {
-            dic["fct_id"]: {"fct_title": dic["fct_title"], "fct_orgs": dic["fct_orgs"], "enabled": dic["enabled"]}
+            dic["fct_id"]: {
+                "fct_title": dic["fct_title"],
+                "fct_orgs": dic["fct_orgs"],
+                "enabled": dic["enabled"],
+            }
             for dic in stored_functions
         }
         new_functions = {
-            dic["fct_id"]: {"fct_title": dic["fct_title"], "fct_orgs": dic["fct_orgs"], "enabled": dic["enabled"]}
+            dic["fct_id"]: {
+                "fct_title": dic["fct_title"],
+                "fct_orgs": dic["fct_orgs"],
+                "enabled": dic["enabled"],
+            }
             for dic in data.functions
         }
         for new_function, new_function_infos in list(new_functions.items()):
             if (
                 new_function_infos["fct_orgs"]
                 and new_function in old_functions
-                and old_functions[new_function]["fct_orgs"] != new_function_infos["fct_orgs"]
+                and old_functions[new_function]["fct_orgs"]
+                != new_function_infos["fct_orgs"]
             ):
                 # check that Plone group is empty for not selected fct_orgs
-                for org_uid in get_organizations(only_selected=False, the_objects=False):
+                for org_uid in get_organizations(
+                    only_selected=False, the_objects=False
+                ):
                     if org_uid in new_function_infos["fct_orgs"]:
                         continue
                     plone_group_id = get_plone_group_id(org_uid, new_function)
@@ -286,12 +312,17 @@ class IContactPlonegroupConfig(Interface):
                         raise Invalid(
                             _(
                                 "can_not_select_function_orgs_every_other_plone_groups_not_empty",
-                                mapping={"function": new_function, "plone_group_id": plone_group_id},
+                                mapping={
+                                    "function": new_function,
+                                    "plone_group_id": plone_group_id,
+                                },
                             )
                         )
             if new_function_infos["enabled"] is False:
                 # check that Plone groups are all empty
-                for org_uid in get_organizations(only_selected=False, the_objects=False):
+                for org_uid in get_organizations(
+                    only_selected=False, the_objects=False
+                ):
                     plone_group_id = get_plone_group_id(org_uid, new_function)
                     plone_group = api.group.get(plone_group_id)
                     # use getGroupMembers to ignore '<not found>' users
@@ -299,7 +330,10 @@ class IContactPlonegroupConfig(Interface):
                         raise Invalid(
                             _(
                                 "can_not_disable_suffix_plone_groups_not_empty",
-                                mapping={"disabled_function": new_function, "plone_group_id": plone_group_id},
+                                mapping={
+                                    "disabled_function": new_function,
+                                    "plone_group_id": plone_group_id,
+                                },
                             )
                         )
 
@@ -313,7 +347,7 @@ def addOrModifyGroup(orga, function_id, function_title):
     function_title = safe_encode(function_title)
     group_name = get_plone_group_id(orga.UID(), function_id)
     group = api.group.get(groupname=group_name)
-    group_title = "%s (%s)" % (organization_title, function_title)
+    group_title = f"{organization_title} ({function_title})"
     if group is None:
         group = api.group.create(
             groupname=group_name,
@@ -338,10 +372,12 @@ def invalidate_sopgv_cache():
     """
     cache_chooser = getUtility(ICacheChooser)
     thecache = cache_chooser(
-        "collective.contact.plonegroup.browser.settings." "selectedOrganizationsPloneGroupsVocabulary"
+        "collective.contact.plonegroup.browser.settings."
+        "selectedOrganizationsPloneGroupsVocabulary"
     )
     thecache.ramcache.invalidate(
-        "collective.contact.plonegroup.browser.settings." "selectedOrganizationsPloneGroupsVocabulary"
+        "collective.contact.plonegroup.browser.settings."
+        "selectedOrganizationsPloneGroupsVocabulary"
     )
 
 
@@ -350,8 +386,12 @@ def invalidate_sov_cache():
     invalidate cache of selectedOrganizationsVocabulary
     """
     cache_chooser = getUtility(ICacheChooser)
-    thecache = cache_chooser("collective.contact.plonegroup.browser.settings.selectedOrganizationsVocabulary")
-    thecache.ramcache.invalidate("collective.contact.plonegroup.browser.settings.selectedOrganizationsVocabulary")
+    thecache = cache_chooser(
+        "collective.contact.plonegroup.browser.settings.selectedOrganizationsVocabulary"
+    )
+    thecache.ramcache.invalidate(
+        "collective.contact.plonegroup.browser.settings.selectedOrganizationsVocabulary"
+    )
 
 
 def invalidate_soev_cache():
@@ -378,7 +418,9 @@ def detectContactPlonegroupChange(event):
     """
     Manage our record changes
     """
-    if IRecordModifiedEvent.providedBy(event):  # and event.record.interface == IContactPlonegroupConfig:
+    if IRecordModifiedEvent.providedBy(
+        event
+    ):  # and event.record.interface == IContactPlonegroupConfig:
         changes = False
         # this can be called before plonegroup is installed and registry contains relevant keys
         try:
@@ -408,12 +450,20 @@ def detectContactPlonegroupChange(event):
         elif event.record.fieldName == "functions" and registry_orgs:
             changes = True
             old_functions = {
-                dic["fct_id"]: {"fct_title": dic["fct_title"], "fct_orgs": dic["fct_orgs"], "enabled": dic["enabled"]}
+                dic["fct_id"]: {
+                    "fct_title": dic["fct_title"],
+                    "fct_orgs": dic["fct_orgs"],
+                    "enabled": dic["enabled"],
+                }
                 for dic in old_value
             }
             old_set = set(old_functions.keys())
             new_functions = {
-                dic["fct_id"]: {"fct_title": dic["fct_title"], "fct_orgs": dic["fct_orgs"], "enabled": dic["enabled"]}
+                dic["fct_id"]: {
+                    "fct_title": dic["fct_title"],
+                    "fct_orgs": dic["fct_orgs"],
+                    "enabled": dic["enabled"],
+                }
                 for dic in new_value
             }
             new_set = set(new_functions.keys())
@@ -434,7 +484,9 @@ def detectContactPlonegroupChange(event):
             # We may remove Plone groups as we checked before that every are empty
             removed_set = old_set.difference(new_set)
             for removed_id in removed_set:
-                for orga_uid in get_organizations(only_selected=False, the_objects=False):
+                for orga_uid in get_organizations(
+                    only_selected=False, the_objects=False
+                ):
                     plone_group_id = get_plone_group_id(orga_uid, removed_id)
                     plone_group = api.group.get(plone_group_id)
                     # we check if group is empty because the function removal can be done programmatically
@@ -453,7 +505,9 @@ def detectContactPlonegroupChange(event):
                 else:
                     # fct_orgs changed, we remove every linked Plone groups
                     # except ones defined in new_orgs
-                    for orga_uid in get_organizations(only_selected=False, the_objects=False):
+                    for orga_uid in get_organizations(
+                        only_selected=False, the_objects=False
+                    ):
                         if enabled is True and orga_uid in new_orgs:
                             # make sure Plone group is created or updated if suffix title changed
                             orga = uuidToObject(orga_uid)
@@ -507,11 +561,16 @@ def adaptPloneGroupDefinition(organization, event):
     # zope.lifecycleevent.ObjectModifiedEvent : edit, rename
     # is the container who's modified at creation ?
     # bypass if we are removing the Plone Site
-    if IContainerModifiedEvent.providedBy(event) or event.object.portal_type == "Plone Site":
+    if (
+        IContainerModifiedEvent.providedBy(event)
+        or event.object.portal_type == "Plone Site"
+    ):
         return
     # is the current organization a part of own organization
     organization_path = "/".join(organization.getPhysicalPath())
-    if not organization_path.startswith(get_own_organization_path(not_found_value="unfound")):  # can be unfound too
+    if not organization_path.startswith(
+        get_own_organization_path(not_found_value="unfound")
+    ):  # can be unfound too
         return
     portal = getSite()
     # when an organization is removed (and its content), we check if it is used in plonegroup configuration
@@ -526,7 +585,9 @@ def adaptPloneGroupDefinition(organization, event):
             ),
             type="error",
         )
-        view_url = getMultiAdapter((organization, organization.REQUEST), name="plone_context_state").view_url()
+        view_url = getMultiAdapter(
+            (organization, organization.REQUEST), name="plone_context_state"
+        ).view_url()
         organization.REQUEST["RESPONSE"].redirect(view_url)
         raise Redirect(view_url)
         return
@@ -563,13 +624,15 @@ def selectedOrganizationsPloneGroupsVocabulary(functions=[], group_title=True):
     functions = functions or get_all_suffixes()
     for orga_uid in get_registry_organizations():
         for fct_id in functions:
-            group_id = "%s_%s" % (orga_uid, fct_id)
+            group_id = f"{orga_uid}_{fct_id}"
             group = api.group.get(groupname=group_id)
             if group is not None:
                 if group_title:
                     title = group.getProperty("title")
                 else:
-                    title = uuidToObject(orga_uid).get_full_title(separator=" - ", first_index=1)
+                    title = uuidToObject(orga_uid).get_full_title(
+                        separator=" - ", first_index=1
+                    )
                 terms.append(SimpleTerm(group_id, token=group_id, title=title))
     return SimpleVocabulary(terms)
 
@@ -588,7 +651,9 @@ def getSelectedOrganizations(separator=" - ", first_index=1):
                 ret.append((orga_uid, title))
     else:
         for orga_uid in registry_orgs:
-            title = uuidToObject(orga_uid).get_full_title(separator=separator, first_index=first_index)
+            title = uuidToObject(orga_uid).get_full_title(
+                separator=separator, first_index=first_index
+            )
             ret.append((orga_uid, title))
     return ret
 
@@ -606,7 +671,7 @@ class SearchableSimpleVocabulary(SimpleVocabulary):
 
     def search(self, query, limit=50):
         # transform query in a regexp
-        regexp = " ".join(["{}.*".format(p) for p in query.split(" ")])
+        regexp = " ".join([f"{p}.*" for p in query.split(" ")])
         regexp = re.compile(regexp, re.I)
         return [term for term in self._terms if re.search(regexp, term.title)]
 
@@ -616,7 +681,7 @@ class SelectedOrganizationsElephantVocabulary(OwnOrganizationServicesVocabulary)
 
     @ram.cache(voc_cache_key)
     def SelectedOrganizationsElephantVocabulary__call__(self, context):
-        vocab = super(SelectedOrganizationsElephantVocabulary, self).__call__(context)
+        vocab = super().__call__(context)
         terms = vocab.by_value
         ordered_terms = []
         for uid in get_registry_organizations():
@@ -633,12 +698,14 @@ class SelectedOrganizationsElephantVocabulary(OwnOrganizationServicesVocabulary)
     __call__ = SelectedOrganizationsElephantVocabulary__call__
 
 
-class SortedSelectedOrganizationsElephantVocabulary(SelectedOrganizationsElephantVocabulary):
+class SortedSelectedOrganizationsElephantVocabulary(
+    SelectedOrganizationsElephantVocabulary
+):
     """Vocabulary of selected plonegroup-organizations services sorted on title."""
 
     @ram.cache(voc_cache_key)
     def SortedSelectedOrganizationsElephantVocabulary__call__(self, context):
-        wrapped_vocab = super(SortedSelectedOrganizationsElephantVocabulary, self).__call__(context)
+        wrapped_vocab = super().__call__(context)
         # sort by title
         sorted_vocab = sorted(wrapped_vocab.vocab, key=attrgetter("title"))
         wrapped_vocab.vocab = SimpleVocabulary(sorted_vocab)

@@ -1,8 +1,6 @@
-.. image:: https://github.com/collective/collective.contact.plonegroup/actions/workflows/main.yml/badge.svg
-   :target: https://github.com/collective/collective.contact.plonegroup/actions/workflows/main.yml
+.. image:: https://github.com/collective/collective.contact.plonegroup/actions/workflows/meta.yml/badge.svg?branch=master
+    :target: https://github.com/collective/collective.contact.plonegroup/actions/workflows/meta.yml
 
-.. image:: https://coveralls.io/repos/github/collective/collective.contact.plonegroup/badge.svg
-   :target: https://coveralls.io/github/collective/collective.contact.plonegroup
 
 =============================
 collective.contact.plonegroup
@@ -20,7 +18,7 @@ This product makes the link between:
 How-to
 ======
 
-First, create a directory in your site (object from collective.contact.core). This directory will contain all the informations related to your contacts.
+First, create a directory in your site (object from collective.contact.core). This directory will contain all the information related to your contacts.
 
 You can then add your organization in it (with a specific id equal to 'plonegroup-organization').
 An organization can contain organizations (such as services, divisions or department).

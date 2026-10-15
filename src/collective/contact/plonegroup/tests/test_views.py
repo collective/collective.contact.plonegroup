@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-""" utils.py tests for this package."""
+"""utils.py tests for this package."""
 
 from collective.contact.plonegroup.browser.tables import SelectedInPlonegroupColumn
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
@@ -30,19 +29,33 @@ class TestViews(FunctionalTestCase):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
         # Organizations creation
-        self.portal.invokeFactory("directory", DEFAULT_DIRECTORY_ID, organization_levels=[])
-        self.portal[DEFAULT_DIRECTORY_ID].invokeFactory("organization", PLONEGROUP_ORG, title="My organization")
+        self.portal.invokeFactory(
+            "directory", DEFAULT_DIRECTORY_ID, organization_levels=[]
+        )
+        self.portal[DEFAULT_DIRECTORY_ID].invokeFactory(
+            "organization", PLONEGROUP_ORG, title="My organization"
+        )
         self.own_orga = get_own_organization()
         self.dep1 = api.content.create(
-            container=self.own_orga, type="organization", id="department1", title="Department 1"
+            container=self.own_orga,
+            type="organization",
+            id="department1",
+            title="Department 1",
         )
         self.uid = self.dep1.UID()
         self.dep2 = api.content.create(
-            container=self.own_orga, type="organization", id="department2", title="Department 2"
+            container=self.own_orga,
+            type="organization",
+            id="department2",
+            title="Department 2",
         )
         # users and groups
-        api.user.create("dxm@miami.pol", "dexter", properties={"fullname": "Dexter Morgan"})
-        api.user.create("dbm@miami.pol", "debra", properties={"fullname": "Debra Morgan"})
+        api.user.create(
+            "dxm@miami.pol", "dexter", properties={"fullname": "Dexter Morgan"}
+        )
+        api.user.create(
+            "dbm@miami.pol", "debra", properties={"fullname": "Debra Morgan"}
+        )
         self.inv_group = api.group.create("investigators", "Investigators")
         self.tech_group = api.group.create("technicians", "Technicians")
         # settings
@@ -87,12 +100,21 @@ class TestViews(FunctionalTestCase):
 
         # we add the current user to the activated groups, so he can manage it
         api.group.add_user(groupname="investigators", username=TEST_USER_ID)
-        api.group.add_user(groupname="{}_observer".format(self.uid), username=TEST_USER_ID)
+        api.group.add_user(groupname=f"{self.uid}_observer", username=TEST_USER_ID)
 
         def get_user_groups(userid):
-            return sorted([g.id for g in api.group.get_groups(username=userid) if g.id not in ["AuthenticatedUsers"]])
+            return sorted(
+                [
+                    g.id
+                    for g in api.group.get_groups(username=userid)
+                    if g.id not in ["AuthenticatedUsers"]
+                ]
+            )
 
-        self.assertListEqual(get_user_groups(TEST_USER_ID), sorted(["{}_observer".format(self.uid), "investigators"]))
+        self.assertListEqual(
+            get_user_groups(TEST_USER_ID),
+            sorted([f"{self.uid}_observer", "investigators"]),
+        )
         view = self.portal.unrestrictedTraverse("@@manage-own-groups-users")
         view.init()
         self.assertListEqual(view.get_manageable_groups(), ["investigators"])
@@ -106,8 +128,12 @@ class TestViews(FunctionalTestCase):
         view.update()
         self.assertListEqual(view.fieldnames, ["_groups_", "observer", "_old_values_"])
         content = view.getContent()
-        self.assertListEqual(content._groups_, [{"group": "investigators", "user": "test_user_1_"}])
-        self.assertListEqual(content.observer, [{"group": self.uid, "user": "test_user_1_"}])
+        self.assertListEqual(
+            content._groups_, [{"group": "investigators", "user": "test_user_1_"}]
+        )
+        self.assertListEqual(
+            content.observer, [{"group": self.uid, "user": "test_user_1_"}]
+        )
         old_values = (
             "{{'_groups_': [{{'group': 'investigators', 'user': 'test_user_1_'}}], 'observer': "
             "[{{'group': '{}', 'user': 'test_user_1_'}}]}}".format(self.uid)
@@ -118,13 +144,14 @@ class TestViews(FunctionalTestCase):
         self.assertListEqual(get_user_groups("dexter"), [])
         self.assertListEqual(get_user_groups("debra"), [])
         data = {
-            "_groups_": content._groups_ + [{"group": "investigators", "user": "debra"}],
+            "_groups_": content._groups_
+            + [{"group": "investigators", "user": "debra"}],
             "observer": content.observer + [{"group": self.uid, "user": "dexter"}],
             "_old_values_": old_values,
         }
         view.widgets.extract = lambda *a, **kw: (data, [])
         view.handleApply(view, "apply")
-        self.assertListEqual(get_user_groups("dexter"), ["{}_observer".format(self.uid)])
+        self.assertListEqual(get_user_groups("dexter"), [f"{self.uid}_observer"])
         self.assertListEqual(get_user_groups("debra"), ["investigators"])
         # we add/remove users
         data = {
@@ -137,7 +164,7 @@ class TestViews(FunctionalTestCase):
         view.widgets.extract = lambda *a, **kw: (data, [])
         view.handleApply(view, "apply")
         self.assertListEqual(get_user_groups("dexter"), ["investigators"])
-        self.assertListEqual(get_user_groups("debra"), ["{}_observer".format(self.uid)])
+        self.assertListEqual(get_user_groups("debra"), [f"{self.uid}_observer"])
 
         # we cannot remove current user
         data = {
@@ -196,7 +223,9 @@ class TestViews(FunctionalTestCase):
         notify(ObjectModifiedEvent(self.dep1))
         observer = get_plone_group(self.dep1.UID(), "observer")
         view.short = False
-        self.assertEqual(view.group_title(observer), "Department 1 (Sample) (Observers)")
+        self.assertEqual(
+            view.group_title(observer), "Department 1 (Sample) (Observers)"
+        )
         view.short = True
         self.assertEqual(view.group_title(observer), "Observers")
         # when org title contains several parentheses
@@ -204,7 +233,9 @@ class TestViews(FunctionalTestCase):
         notify(ObjectModifiedEvent(self.dep1))
         observer = get_plone_group(self.dep1.UID(), "observer")
         view.short = False
-        self.assertEqual(view.group_title(observer), "Department 1 (Sample) (Additional) (Observers)")
+        self.assertEqual(
+            view.group_title(observer), "Department 1 (Sample) (Additional) (Observers)"
+        )
         view.short = True
         self.assertEqual(view.group_title(observer), "Observers")
 
@@ -216,7 +247,9 @@ class TestViews(FunctionalTestCase):
         self.assertTrue(self.dep1.absolute_url() in rendered)
         self.assertTrue(self.dep2.absolute_url() in rendered)
         # link to the settings
-        self.assertIn('<a href="http://nohost/plone/@@contact-plonegroup-settings">', rendered)
+        self.assertIn(
+            '<a href="http://nohost/plone/@@contact-plonegroup-settings">', rendered
+        )
         # columns
         self.assertEqual(
             re.findall(r'<th class="th_header_(\w+)">', rendered),
@@ -232,27 +265,42 @@ class TestViews(FunctionalTestCase):
             ),
             rows[0],
         )
-        self.assertIn("<span class='pretty_link_content state-active'>Department 1</span>", rows[0])
+        self.assertIn(
+            "<span class='pretty_link_content state-active'>Department 1</span>",
+            rows[0],
+        )
         # groups and users: collapsible "Details" loading the Plone groups of the organization
         self.assertIn(
             "load_view='@@display-group-users?group_ids={0}_observer&group_ids={0}_director"
-            "&short:boolean=True', base_url='http://nohost/plone');\">".format(self.uid),
+            "&short:boolean=True', base_url='http://nohost/plone');\">".format(
+                self.uid
+            ),
             rows[0],
         )
         self.assertIn("Details</", rows[0])
         self.assertIn(
-            '<div id="collapsible-group-users_{0}" class="collapsible-content" style="display: none;">'.format(
+            '<div id="collapsible-group-users_{}" class="collapsible-content" style="display: none;">'.format(
                 self.uid
             ),
             rows[0],
         )
         # selected in plonegroup: Yes for department1, No for department2
-        self.assertIn('<td class="td_cell_SelectedInPlonegroupColumn bool_value_true">', rows[0])
-        self.assertIn('<td class="td_cell_SelectedInPlonegroupColumn bool_value_false">', rows[1])
+        self.assertIn(
+            '<td class="td_cell_SelectedInPlonegroupColumn bool_value_true">', rows[0]
+        )
+        self.assertIn(
+            '<td class="td_cell_SelectedInPlonegroupColumn bool_value_false">', rows[1]
+        )
         # actions: edit, delete, cut, copy, rename
-        for action in ('/edit"', "view_name='@@delete_givenuid'", "/object_cut", "/object_copy", "/object_rename"):
+        for action in (
+            '/edit"',
+            "view_name='@@delete_givenuid'",
+            "/object_cut",
+            "/object_copy",
+            "/object_rename",
+        ):
             self.assertIn(action, rows[1])
-        self.assertIn('id="actions-panel-identifier-{0}"'.format(self.dep2.UID()), rows[1])
+        self.assertIn(f'id="actions-panel-identifier-{self.dep2.UID()}"', rows[1])
         # does not fail to render on an organization containing no organization
         view = self.dep1.restrictedTraverse("@@suborganizations")
         self.assertTrue("There is no organizations in this organization." in view())
@@ -261,20 +309,29 @@ class TestViews(FunctionalTestCase):
         """The organization icon shown in the title column is an existing image."""
         rendered = get_own_organization().restrictedTraverse("@@suborganizations")()
         icon_url = re.search(
-            r"<span class='pretty_link_icons'><img title='Organization' src='([^']+)'", rendered
+            r"<span class='pretty_link_icons'><img title='Organization' src='([^']+)'",
+            rendered,
         ).group(1)
-        self.assertTrue(self.portal.unrestrictedTraverse(str(icon_url.replace(self.portal.absolute_url() + "/", ""))))
+        self.assertTrue(
+            self.portal.unrestrictedTraverse(
+                str(icon_url.replace(self.portal.absolute_url() + "/", ""))
+            )
+        )
 
     def test_render_original_suborgs(self):
         """With ajax_load (in a tooltip), the original collective.contact.core list is rendered."""
         own_org = get_own_organization()
         original = own_org.restrictedTraverse("@@original-suborganizations")()
         self.assertIn('id="sub_organizations"', original)
-        self.assertIn('<a class="link-tooltip" href="{0}"'.format(self.dep1.absolute_url()), original)
+        self.assertIn(
+            f'<a class="link-tooltip" href="{self.dep1.absolute_url()}"', original
+        )
         self.layer["request"].form["ajax_load"] = "1"
         rendered = own_org.restrictedTraverse("@@suborganizations")()
         self.assertIn('id="sub_organizations"', rendered)
-        self.assertIn('<a class="link-tooltip" href="{0}"'.format(self.dep2.absolute_url()), rendered)
+        self.assertIn(
+            f'<a class="link-tooltip" href="{self.dep2.absolute_url()}"', rendered
+        )
         self.assertNotIn("suborganizations-listing", rendered)
 
     def test_renderHeadCell(self):
@@ -298,7 +355,7 @@ class TestViews(FunctionalTestCase):
         view = self.portal.restrictedTraverse("@@display-group-users")
         rendered = view(group_ids=[observer])
         self.assertIn(
-            '<a target="_parent" href="http://nohost/plone/@@usergroup-groupmembership?groupname={0}">'.format(
+            '<a target="_parent" href="http://nohost/plone/@@usergroup-groupmembership?groupname={}">'.format(
                 observer
             ),
             rendered.replace("target='_parent'", 'target="_parent"'),
@@ -331,7 +388,9 @@ class TestViews(FunctionalTestCase):
     def test_available(self):
         """The own-groups user action is available when groups or functions are manageable."""
         action = self.portal.portal_actions.user["own-groups"]
-        self.assertEqual(action.url_expr, "string:${portal_url}/@@manage-own-groups-users")
+        self.assertEqual(
+            action.url_expr, "string:${portal_url}/@@manage-own-groups-users"
+        )
         self.assertFalse(action.visible)
 
         def available():

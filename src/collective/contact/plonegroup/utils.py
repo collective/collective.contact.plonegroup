@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
 from collective.contact.plonegroup.config import get_registry_functions
 from collective.contact.plonegroup.config import get_registry_organizations
@@ -25,7 +23,14 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 
-def get_persons_from_userid(userid, context=None, depth=None, unrestricted=False, objects=True, only_active=False):
+def get_persons_from_userid(
+    userid,
+    context=None,
+    depth=None,
+    unrestricted=False,
+    objects=True,
+    only_active=False,
+):
     """Return persons from userid.
 
     :param userid: mandatory string
@@ -48,7 +53,14 @@ def get_persons_from_userid(userid, context=None, depth=None, unrestricted=False
     return res
 
 
-def get_person_from_userid(userid, context=None, depth=None, unrestricted=False, objects=True, only_active=False):
+def get_person_from_userid(
+    userid,
+    context=None,
+    depth=None,
+    unrestricted=False,
+    objects=True,
+    only_active=False,
+):
     """Return one person from userid.
 
     :param userid: mandatory string
@@ -60,7 +72,12 @@ def get_person_from_userid(userid, context=None, depth=None, unrestricted=False,
     :return: object or brain
     """
     res = get_persons_from_userid(
-        userid, context=context, depth=depth, unrestricted=unrestricted, objects=objects, only_active=only_active
+        userid,
+        context=context,
+        depth=depth,
+        unrestricted=unrestricted,
+        objects=objects,
+        only_active=only_active,
     )
     if not res:
         return None
@@ -89,7 +106,7 @@ def get_plone_group_id(prefix, suffix):
     # make sure we received an str as org_uid, not an org
     if not isinstance(prefix, str):
         raise TypeError("Parameter prefix must be str or unicode instance!")
-    return "{0}_{1}".format(prefix, suffix)
+    return f"{prefix}_{suffix}"
 
 
 def get_plone_group(prefix, suffix):
@@ -136,7 +153,7 @@ def get_organization(plone_group_id_or_org_uid, only_in_own_org=True, caching=Tr
         request = getRequest()
         if request:
             # in some cases like in tests, request can not be retrieved
-            key = "plonegroup-utils-get_organization-{0}-{1}".format(org_uid, only_in_own_org)
+            key = f"plonegroup-utils-get_organization-{org_uid}-{only_in_own_org}"
             cache = IAnnotations(request)
             org = cache.get(key, None)
         else:
@@ -144,7 +161,11 @@ def get_organization(plone_group_id_or_org_uid, only_in_own_org=True, caching=Tr
 
     if not org:
         if (
-            only_in_own_org and org_uid in get_organizations(only_selected=False, the_objects=False, caching=caching)
+            only_in_own_org
+            and org_uid
+            in get_organizations(
+                only_selected=False, the_objects=False, caching=caching
+            )
         ) or not only_in_own_org:
             org = uuidToObject(org_uid, unrestricted=True)
             if caching:
@@ -153,7 +174,13 @@ def get_organization(plone_group_id_or_org_uid, only_in_own_org=True, caching=Tr
     return org
 
 
-def get_organizations(only_selected=True, the_objects=True, not_empty_suffix=None, kept_org_uids=[], caching=True):
+def get_organizations(
+    only_selected=True,
+    the_objects=True,
+    not_empty_suffix=None,
+    kept_org_uids=[],
+    caching=True,
+):
     """
     Return organizations.
     If only_selected, check registry if org is selected.
@@ -168,8 +195,11 @@ def get_organizations(only_selected=True, the_objects=True, not_empty_suffix=Non
         request = getRequest()
         if request:
             # in some cases like in tests, request can not be retrieved
-            key = "plonegroup-utils-get_organizations-{0}-{1}-{2}-{3}".format(
-                not_empty_suffix or "", str(only_selected), str(the_objects), "_".join(sorted(kept_org_uids))
+            key = "plonegroup-utils-get_organizations-{}-{}-{}-{}".format(
+                not_empty_suffix or "",
+                str(only_selected),
+                str(the_objects),
+                "_".join(sorted(kept_org_uids)),
             )
             cache = IAnnotations(request)
             orgs = cache.get(key, None)
@@ -181,14 +211,21 @@ def get_organizations(only_selected=True, the_objects=True, not_empty_suffix=Non
             org_uids = get_registry_organizations()
         else:
             # use the vocabulary to get selectable organizations so if vocabulary
-            # is overrided get_organizations is still consistent
-            vocab = getUtility(IVocabularyFactory, name="collective.contact.plonegroup.organization_services")
+            # is overridden get_organizations is still consistent
+            vocab = getUtility(
+                IVocabularyFactory,
+                name="collective.contact.plonegroup.organization_services",
+            )
             portal = api.portal.get()
             org_uids = [term.value for term in vocab(portal)._terms]
         # filter out regarding parameter kept_org_uids
         if kept_org_uids:
             # make sure order defined by kept_org_uids is kept
-            org_uids = [kept_org_uid for kept_org_uid in kept_org_uids if kept_org_uid in org_uids]
+            org_uids = [
+                kept_org_uid
+                for kept_org_uid in kept_org_uids
+                if kept_org_uid in org_uids
+            ]
         # we only keep orgs for which Plone group with not_empty_suffix suffix contains members
         if not_empty_suffix:
             filtered_orgs = []
@@ -235,7 +272,7 @@ def get_suffixed_groups(suffixes, ids_only=False):
     ret = []
     for group in api.group.get_groups():
         for suffix in suffixes:
-            if group.id.endswith("_{}".format(suffix)):
+            if group.id.endswith(f"_{suffix}"):
                 if ids_only:
                     ret.append(group.id)
                 else:
@@ -250,7 +287,7 @@ def get_selected_org_suffix_users(org_uid, suffixes):
     org_members = []
     # only add to vocabulary users with these functions in the organization
     for function_id in suffixes:
-        groupname = "{}_{}".format(org_uid, function_id)
+        groupname = f"{org_uid}_{function_id}"
         try:
             members = api.user.get_users(groupname=groupname)
         except GroupNotFoundError:  # suffix can be limited to some organization...
@@ -276,7 +313,10 @@ def voc_selected_org_suffix_users(org_uid, suffixes, first_member=None, escaped=
         return SimpleVocabulary([])
     terms = []
     # only add to vocabulary users with these functions in the organization
-    for member in sorted(get_selected_org_suffix_users(org_uid, suffixes), key=methodcaller("getUserName")):
+    for member in sorted(
+        get_selected_org_suffix_users(org_uid, suffixes),
+        key=methodcaller("getUserName"),
+    ):
         fullname = member.getUser().getProperty("fullname")
         if escaped:
             fullname = escape(fullname)
@@ -315,7 +355,7 @@ def get_selected_org_suffix_principal_ids(org_uid, suffixes):
     gpm = api.portal.get_tool("acl_users").source_groups._group_principal_map
     # only add to vocabulary users with these functions in the organization
     for function_id in suffixes:
-        groupname = "{}_{}".format(org_uid, function_id)
+        groupname = f"{org_uid}_{function_id}"
         for principal in gpm.get(groupname, []):
             if principal not in principal_ids:
                 principal_ids.append(principal)

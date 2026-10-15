@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collective.contact.core.content.organization import IOrganization
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_organizations
@@ -36,7 +34,7 @@ class SubOrganizationsTable(ExtendedCSSTable):
     results = []
 
     def __init__(self, context, request):
-        super(SubOrganizationsTable, self).__init__(context, request)
+        super().__init__(context, request)
         self.portal = api.portal.getSite()
         self.context_path = self.context.absolute_url_path()
         self.context_path_level = len(self.context_path.split("/"))
@@ -56,7 +54,7 @@ class SubOrganizationsTableView(BrowserView):
     local_search = True
 
     def __init__(self, context, request):
-        super(SubOrganizationsTableView, self).__init__(context, request)
+        super().__init__(context, request)
 
     def query_dict(self):
         crit = {"object_provides": self.provides}
@@ -80,12 +78,18 @@ class SubOrganizationsTableView(BrowserView):
 
         # sort by parent path and by position
         # the catalog search returns also context, remove it
-        self.table.results = [brain for brain in sorted(brains, key=keys) if brain.UID != self.context.UID()]
+        self.table.results = [
+            brain
+            for brain in sorted(brains, key=keys)
+            if brain.UID != self.context.UID()
+        ]
         self.table.update()
 
     def render_original_suborgs(self):
         """Render suborganizations like it is originally made in collective.contact.core."""
-        original_suborgs_view = self.context.restrictedTraverse("@@original-suborganizations")
+        original_suborgs_view = self.context.restrictedTraverse(
+            "@@original-suborganizations"
+        )
         return original_suborgs_view()
 
     def __call__(self):
@@ -106,8 +110,8 @@ class OrgaPrettyLinkWithAdditionalInfosColumn(PrettyLinkWithAdditionalInfosColum
 
     def getPrettyLink(self, obj):
         """The .link-tooltip tooltip (collective.contact.core forms.js) loads the data-base_url page."""
-        link = super(OrgaPrettyLinkWithAdditionalInfosColumn, self).getPrettyLink(obj)
-        return link.replace(" href=", " data-base_url='{0}' href=".format(obj.absolute_url()), 1)
+        link = super().getPrettyLink(obj)
+        return link.replace(" href=", f" data-base_url='{obj.absolute_url()}' href=", 1)
 
     def contentValue(self, item):
         """Display get_full_title instead title."""
@@ -158,7 +162,9 @@ class DisplayGroupUsersView(BrowserView):
                 self._check_auth(group_id)
                 # me received a organization UID, get the Plone group ids
                 suffixes = self._get_suffixes(group_id)
-                group_ids = [get_plone_group_id(group_id, suffix) for suffix in suffixes]
+                group_ids = [
+                    get_plone_group_id(group_id, suffix) for suffix in suffixes
+                ]
             else:
                 group_ids = [group_ids]
         # be defensive in case we try to get suffixes for an organization
@@ -192,9 +198,11 @@ class DisplayGroupUsersView(BrowserView):
         for principal in group.getAllGroupMembers():
             isGroup = base_hasattr(principal, "isGroup") and principal.isGroup() or 0
             if isGroup:
-                members += self._get_groups_and_members(principal, index + 1, keep_subgroups)
+                members += self._get_groups_and_members(
+                    principal, index + 1, keep_subgroups
+                )
             else:
-                # avoid 2 times same member whith sub groups and keep_subgroups=False
+                # avoid 2 times same member with sub groups and keep_subgroups=False
                 if keep_subgroups or (principal not in [p for i, p in members]):
                     members.append((index, principal))
         return members
@@ -215,7 +223,11 @@ class DisplayGroupUsersView(BrowserView):
                 "<a class='user-or-group-level-{{index}}' href='{portal_url}/"
                 "@@user-information?userid={{member_id}}' "
                 'title="{user_tag_title}"><acronym>{pattern}</acronym></a> '.format(
-                    **{"portal_url": self.portal_url, "pattern": patterns[0].strip(), "user_tag_title": user_tag_title}
+                    **{
+                        "portal_url": self.portal_url,
+                        "pattern": patterns[0].strip(),
+                        "user_tag_title": user_tag_title,
+                    }
                 )
             )
             patterns[1] = (
@@ -229,24 +241,35 @@ class DisplayGroupUsersView(BrowserView):
                     }
                 )
             )
-        for index, principal in self._get_groups_and_members(group, keep_subgroups=self.is_manager):
+        for index, principal in self._get_groups_and_members(
+            group, keep_subgroups=self.is_manager
+        ):
             # member may be a user or group
             isGroup = base_hasattr(principal, "isGroup") and principal.isGroup() or 0
             principal_title = html.escape(
-                principal.getProperty("fullname") or principal.getProperty("title") or principal.getId()
+                principal.getProperty("fullname")
+                or principal.getProperty("title")
+                or principal.getId()
             )
             if self.is_manager:
                 details = (
-                    " ({0})".format(principal.id)
+                    f" ({principal.id})"
                     if isGroup
-                    else " ({0}, {1})".format(principal.id, principal.getProperty("email"))
+                    else " ({}, {})".format(
+                        principal.id, principal.getProperty("email")
+                    )
                 )
                 principal_title += details
 
-            principal_title = "<div class='user-or-group user-or-group-level-{0}'>{1}</div>".format(
-                index, principal_title
+            principal_title = (
+                "<div class='user-or-group user-or-group-level-{}'>{}</div>".format(
+                    index, principal_title
+                )
             )
-            value = patterns[isGroup].format(**{"member_id": principal.id, "index": index}) + principal_title
+            value = (
+                patterns[isGroup].format(**{"member_id": principal.id, "index": index})
+                + principal_title
+            )
             res.append((index, principal_title, value))
         # sort on member_title
         res = sorted(res)
@@ -303,7 +326,7 @@ class SelectedInPlonegroupColumn(BooleanColumn):
     def renderHeadCell(self):
         """ """
         portal = api.portal.get()
-        plonegroup_url = "{0}/@@contact-plonegroup-settings".format(portal.absolute_url())
+        plonegroup_url = f"{portal.absolute_url()}/@@contact-plonegroup-settings"
         return translate(
             "Selected in plonegroup",
             domain="collective.contact.plonegroup",

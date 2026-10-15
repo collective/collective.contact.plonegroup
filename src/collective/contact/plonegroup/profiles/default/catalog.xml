@@ -1,7 +1,9 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <object name="portal_catalog">
 
- <index name="userid" meta_type="FieldIndex">
-  <indexed_attr value="userid"/>
- </index>
+  <index meta_type="FieldIndex"
+         name="userid"
+  >
+    <indexed_attr value="userid" />
+  </index>
 </object>

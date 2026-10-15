@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Setup/installation tests for this package."""
 
 from collective.contact.plonegroup.behaviors import IPlonegroupUserLink
@@ -31,7 +30,9 @@ class TestSubscribers(IntegrationTestCase):
         self.portal = self.layer["portal"]
         # Organizations creation
         self.portal.invokeFactory("directory", DEFAULT_DIRECTORY_ID)
-        self.portal[DEFAULT_DIRECTORY_ID].invokeFactory("organization", PLONEGROUP_ORG, title="My organization")
+        self.portal[DEFAULT_DIRECTORY_ID].invokeFactory(
+            "organization", PLONEGROUP_ORG, title="My organization"
+        )
         own_orga = get_own_organization()
         own_orga.invokeFactory("organization", "department1", title="Department 1")
         own_orga.invokeFactory("organization", "department2", title="Department 2")
@@ -39,16 +40,34 @@ class TestSubscribers(IntegrationTestCase):
 
         set_registry_organizations([c.UID() for c in self.contacts])
         set_registry_functions(
-            [{"fct_title": "Director", "fct_id": "director", "fct_orgs": [], "fct_management": False, "enabled": True}]
+            [
+                {
+                    "fct_title": "Director",
+                    "fct_id": "director",
+                    "fct_orgs": [],
+                    "fct_management": False,
+                    "enabled": True,
+                }
+            ]
         )
 
-        self.portal.invokeFactory("acontent", "acontent1", title="Content 1", pg_organization=self.contacts[0].UID())
-        self.portal.invokeFactory("acontent", "acontent2", title="Content 2", pg_organization=self.contacts[1].UID())
+        self.portal.invokeFactory(
+            "acontent",
+            "acontent1",
+            title="Content 1",
+            pg_organization=self.contacts[0].UID(),
+        )
+        self.portal.invokeFactory(
+            "acontent",
+            "acontent2",
+            title="Content 2",
+            pg_organization=self.contacts[1].UID(),
+        )
 
     def test_plonegroupOrganizationRemoved_1(self):
         """We cannot remove an organization selected in settings and used in an object"""
         view = self.portal.restrictedTraverse(
-            "{0}/{1}/department1/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+            f"{DEFAULT_DIRECTORY_ID}/{PLONEGROUP_ORG}/department1/delete_confirmation_info"
         )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 1)
@@ -60,7 +79,7 @@ class TestSubscribers(IntegrationTestCase):
         """We cannot remove an organization no more selected in settings and used in an object"""
         set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
         view = self.portal.restrictedTraverse(
-            "{0}/{1}/department2/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+            f"{DEFAULT_DIRECTORY_ID}/{PLONEGROUP_ORG}/department2/delete_confirmation_info"
         )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 1)
@@ -73,7 +92,7 @@ class TestSubscribers(IntegrationTestCase):
         set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
         self.portal["acontent2"].pg_organization = None
         view = self.portal.restrictedTraverse(
-            "{0}/{1}/department2/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+            f"{DEFAULT_DIRECTORY_ID}/{PLONEGROUP_ORG}/department2/delete_confirmation_info"
         )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 0)
@@ -83,7 +102,7 @@ class TestSubscribers(IntegrationTestCase):
         # set uid in dict
         self.portal["acontent1"].pg_organization = {"uid": self.contacts[0].UID()}
         view = self.portal.restrictedTraverse(
-            "{0}/{1}/department1/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+            f"{DEFAULT_DIRECTORY_ID}/{PLONEGROUP_ORG}/department1/delete_confirmation_info"
         )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 1)
@@ -93,7 +112,7 @@ class TestSubscribers(IntegrationTestCase):
         # set uid in list
         self.portal["acontent2"].pg_organization = [self.contacts[1].UID()]
         view = self.portal.restrictedTraverse(
-            "{0}/{1}/department2/delete_confirmation_info".format(DEFAULT_DIRECTORY_ID, PLONEGROUP_ORG)
+            f"{DEFAULT_DIRECTORY_ID}/{PLONEGROUP_ORG}/department2/delete_confirmation_info"
         )
         breaches = view.get_breaches()
         self.assertEqual(len(breaches), 1)
@@ -104,7 +123,9 @@ class TestSubscribers(IntegrationTestCase):
     def test_plonegroupOrganizationRemoved_5(self):
         """Really deleting an organization no more selected in settings but used in an object is refused"""
         set_registry_organizations([self.contacts[0].UID()])  # unselects the contact
-        self.assertRaises(LinkIntegrityNotificationException, api.content.delete, obj=self.contacts[1])
+        self.assertRaises(
+            LinkIntegrityNotificationException, api.content.delete, obj=self.contacts[1]
+        )
 
     def test_plonegroupOrganizationRemoved_6(self):
         """Really deleting an organization not selected in settings and not used is done"""
@@ -113,12 +134,17 @@ class TestSubscribers(IntegrationTestCase):
         own_orga = get_own_organization()
         api.content.delete(obj=self.contacts[1])
         self.assertNotIn("department2", own_orga)
-        self.assertNotIn("department2", [b.id for b in self.portal.portal_catalog(portal_type="organization")])
+        self.assertNotIn(
+            "department2",
+            [b.id for b in self.portal.portal_catalog(portal_type="organization")],
+        )
 
     def test_plonegroupuserlink_modified(self):
         """We test if a held position userid index is well updated after userid is defined on a person."""
         diry = self.portal[DEFAULT_DIRECTORY_ID]
-        diry.invokeFactory("person", "john", firstname="John", lastname="Doe", userid=None)
+        diry.invokeFactory(
+            "person", "john", firstname="John", lastname="Doe", userid=None
+        )
         person = diry["john"]
         alsoProvides(person, IPlonegroupUserLink)
 
@@ -134,19 +160,35 @@ class TestSubscribers(IntegrationTestCase):
         self.assertEqual(len(catalog(userid=TEST_USER_ID)), 1)
 
         # event with IPlonegroupUserLink.userid in descriptions ---
-        zope.event.notify(ObjectModifiedEvent(person, Attributes(IPlonegroupUserLink, "IPlonegroupUserLink.userid")))
+        zope.event.notify(
+            ObjectModifiedEvent(
+                person, Attributes(IPlonegroupUserLink, "IPlonegroupUserLink.userid")
+            )
+        )
         self.assertEqual(len(catalog(userid=TEST_USER_ID)), 2)
-        self.assertEqual(len(catalog(userid=TEST_USER_ID, portal_type="held_position")), 1)
+        self.assertEqual(
+            len(catalog(userid=TEST_USER_ID, portal_type="held_position")), 1
+        )
 
     def test_plonegroup_contact_transition_1(self):
         """We cannot deactivate an organization selected in settings"""
-        self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition="deactivate")
+        self.assertRaises(
+            Redirect,
+            api.content.transition,
+            obj=self.contacts[0],
+            transition="deactivate",
+        )
         self.assertEqual(api.content.get_state(obj=self.contacts[0]), "active")
 
     def test_plonegroup_contact_transition_2(self):
         """We cannot deactivate an organization used in objects"""
         set_registry_organizations([self.contacts[1].UID()])  # unselects the contact
-        self.assertRaises(Redirect, api.content.transition, obj=self.contacts[0], transition="deactivate")
+        self.assertRaises(
+            Redirect,
+            api.content.transition,
+            obj=self.contacts[0],
+            transition="deactivate",
+        )
         self.assertEqual(api.content.get_state(obj=self.contacts[0]), "active")
         self.assertEqual(
             [msg.message for msg in IStatusMessage(self.portal.REQUEST).show()],
@@ -173,7 +215,9 @@ class TestSubscribers(IntegrationTestCase):
         self.assertTrue(IPloneGroupContact.providedBy(self.contacts[1]))
         self.assertFalse(INotPloneGroupContact.providedBy(self.contacts[1]))
 
-        normal = api.content.create(type="organization", id="normal", container=contacts)
+        normal = api.content.create(
+            type="organization", id="normal", container=contacts
+        )
         self.assertTrue(INotPloneGroupContact.providedBy(normal))
         self.assertFalse(IPloneGroupContact.providedBy(normal))
 
@@ -186,7 +230,7 @@ class TestSubscribers(IntegrationTestCase):
         self.assertFalse(IPloneGroupContact.providedBy(contacts["department1"]))
 
     def test_group_deleted(self):
-        class Dummy(object):
+        class Dummy:
             def __init__(self, name):
                 self.principal = name
 
@@ -198,7 +242,8 @@ class TestSubscribers(IntegrationTestCase):
         msgs = smi.show()
         self.assertEqual(
             msgs[0].message,
-            "You cannot delete the group '%s_director', " "linked to used organization 'Department 1'." % uid,
+            "You cannot delete the group '%s_director', "
+            "linked to used organization 'Department 1'." % uid,
         )
         api.group.create(groupname="%s_other" % uid)
         api.group.create(groupname="12345_director")

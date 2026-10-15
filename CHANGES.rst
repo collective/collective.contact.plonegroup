@@ -8,6 +8,8 @@ Changelog
   [laulaz, chris-adam]
 - Migrate to Plone 6.2, based on the work started by @laulaz on `python3`.
   [laulaz, chris-adam]
+- Added plone.meta configuration (tox, pre-commit, GitHub Actions).
+  [chris-adam]
 
 1.57 (2026-10-08)
 -----------------
@@ -286,7 +288,7 @@ Changelog
   sometimes faultly.  Adapted `utils.get_all_suffixes(only_enabled=True)`
   to only get enabled functions.
   Added upgrade step to version `6` to manage new value `enabled=True`
-  in `functions` stored in the `regsitry`.
+  in `functions` stored in the `registry`.
   [gbastien]
 - Remove item `UID` from link in `OrgaPrettyLinkWithAdditionalInfosColumn`
   as it is now displayed as additional information by default.
@@ -531,8 +533,8 @@ Changelog
 
 - Added utils.get_plone_group_id to get Plone group id for given organization and suffix.
   [gbastien]
-- Overrided "@@suborganizations" view to display the entire hierarchy of contained
-  organizations and sub-organizations and more informations in a table.
+- Overrode "@@suborganizations" view to display the entire hierarchy of contained
+  organizations and sub-organizations and more information in a table.
   [gbastien]
 - When the plonegroup-organization is displayed in a tooltip, use original way
   to display sub organizations because the new rendering using the table takes

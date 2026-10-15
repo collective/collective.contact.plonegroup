@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from Acquisition import aq_get
 from collective.contact.plonegroup import _
 from collective.contact.plonegroup.config import get_registry_organizations
@@ -98,10 +96,10 @@ def search_value_in_objects(s_obj, ref, p_types=[], type_fields={}):
         return []
 
     breaches = []
-    criterias = {"object_provides": IDexterityContent.__identifier__}
+    criteria = {"object_provides": IDexterityContent.__identifier__}
     if p_types:
-        criterias["portal_type"] = p_types
-    for brain in catalog.unrestrictedSearchResults(**criterias):
+        criteria["portal_type"] = p_types
+    for brain in catalog.unrestrictedSearchResults(**criteria):
         obj = brain._unrestrictedGetObject()
         if obj == s_obj:
             continue
@@ -128,7 +126,10 @@ def plonegroupuserlink_modified(contact, event):
     if contact.portal_type != "person":
         return
     mod_attr = [
-        name for at in getattr(event, "descriptions", []) if base_hasattr(at, "attributes") for name in at.attributes
+        name
+        for at in getattr(event, "descriptions", [])
+        if base_hasattr(at, "attributes")
+        for name in at.attributes
     ]
     if "IPlonegroupUserLink.userid" in mod_attr:
         for hp in contact.objectValues():
@@ -153,7 +154,12 @@ def plonegroup_contact_transition(contact, event):
                         "This contact is used in following content: ${items}",
                         mapping={
                             "items": ", ".join(
-                                ['<a href="%s" target="_blank">%s</a>' % (i["url"], i["title"]) for i in breaches]
+                                [
+                                    '<a href="{}" target="_blank">{}</a>'.format(
+                                        i["url"], i["title"]
+                                    )
+                                    for i in breaches
+                                ]
                             )
                         },
                     )
@@ -162,7 +168,9 @@ def plonegroup_contact_transition(contact, event):
             smi = IStatusMessage(contact.REQUEST)
             smi.addStatusMessage(_("You cannot deactivate this item !"), type="error")
             smi.addStatusMessage(errors[0], type="error")
-            view_url = getMultiAdapter((contact, contact.REQUEST), name="plone_context_state").view_url()
+            view_url = getMultiAdapter(
+                (contact, contact.REQUEST), name="plone_context_state"
+            ).view_url()
             # contact.REQUEST['RESPONSE'].redirect(view_url)
             raise Redirect(view_url)
 
@@ -198,11 +206,14 @@ def group_deleted(event):
         return
     org_uid = parts[0]
     group_suffix = "_".join(parts[1:])
-    if org_uid in get_registry_organizations() and group_suffix in get_all_suffixes(org_uid):
+    if org_uid in get_registry_organizations() and group_suffix in get_all_suffixes(
+        org_uid
+    ):
         orga = api.content.find(UID=org_uid)[0].getObject()
         api.portal.show_message(
             message=_(
-                "You cannot delete the group '${group}', linked to used organization " "'${orga}'.",
+                "You cannot delete the group '${group}', linked to used organization "
+                "'${orga}'.",
                 mapping={"group": group, "orga": safe_text(orga.Title())},
             ),
             request=request,
