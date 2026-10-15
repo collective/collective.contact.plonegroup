@@ -1,6 +1,5 @@
 """Installer for the collective.contact.plonegroup package."""
 
-from setuptools import find_packages
 from setuptools import setup
 
 long_description = (
@@ -42,8 +41,6 @@ setup(
     url="https://github.com/collective/collective.contact.plonegroup",
     download_url="https://pypi.org/project/collective.contact.plonegroup",
     license="GPL",
-    packages=find_packages("src", exclude=["ez_setup"]),
-    package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
     python_requires=">=3.10",
