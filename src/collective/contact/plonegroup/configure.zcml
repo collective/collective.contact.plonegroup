@@ -1,85 +1,111 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:plone="http://namespaces.plone.org/plone"
     xmlns:five="http://namespaces.zope.org/five"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    i18n_domain="collective.contact.plonegroup">
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="collective.contact.plonegroup"
+    >
 
-    <include package="plone.behavior" file="meta.zcml" />
+  <include
+      package="plone.behavior"
+      file="meta.zcml"
+      />
 
-    <permission id="collective.contact.plonegroup.read_userlink_fields"
-                title="collective.contact.plonegroup: Read user link fields"/>
-    <permission id="collective.contact.plonegroup.write_userlink_fields"
-                title="collective.contact.plonegroup: Write user link fields"/>
+  <permission
+      id="collective.contact.plonegroup.read_userlink_fields"
+      title="collective.contact.plonegroup: Read user link fields"
+      />
+  <permission
+      id="collective.contact.plonegroup.write_userlink_fields"
+      title="collective.contact.plonegroup: Write user link fields"
+      />
 
-    <i18n:registerTranslations directory="locales" />
+  <i18n:registerTranslations directory="locales" />
 
-    <five:registerPackage package="." initialize=".initialize" />
+  <five:registerPackage
+      package="."
+      initialize=".initialize"
+      />
 
-    <include package=".browser" />
-    <include package=".content" />
-    <include package="plone.api" />
-    <include package="collective.contact.core" />
-    <include package="imio.helpers" />
+  <include package=".browser" />
+  <include package=".content" />
+  <include package="plone.api" />
+  <include package="collective.contact.core" />
+  <include package="imio.helpers" />
 
-    <include file="subscribers.zcml" />
+  <include file="subscribers.zcml" />
 
-    <genericsetup:registerProfile
-        name="default"
-        title="collective.contact.plonegroup"
-        directory="profiles/default"
-        description="Installs the collective.contact.plonegroup add-on."
-        provides="Products.GenericSetup.interfaces.EXTENSION" />
+  <genericsetup:registerProfile
+      name="default"
+      title="collective.contact.plonegroup"
+      description="Installs the collective.contact.plonegroup add-on."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/default"
+      />
 
-    <plone:behavior
-        title="Plonegroup user link"
-        description="Adds user related fields"
-        provides=".behaviors.IPlonegroupUserLink"
-        />
+  <genericsetup:registerProfile
+      name="uninstall"
+      title="collective.contact.plonegroup uninstall"
+      description="Uninstalls the collective.contact.plonegroup add-on."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/uninstall"
+      />
 
-    <utility
-        name="collective.contact.plonegroup.primary_organizations"
-        factory=".behaviors.PrimaryOrganizationsVocabulary" />
+  <plone:behavior
+      title="Plonegroup user link"
+      description="Adds user related fields"
+      provides=".behaviors.IPlonegroupUserLink"
+      />
 
-    <utility
-        name="collective.contact.plonegroup.functions"
-        factory=".vocabularies.FunctionsVocabulary" />
+  <utility
+      factory=".behaviors.PrimaryOrganizationsVocabulary"
+      name="collective.contact.plonegroup.primary_organizations"
+      />
 
-    <utility
-        name="collective.contact.plonegroup.global_groups"
-        factory=".vocabularies.GlobalGroupsVocabulary" />
+  <utility
+      factory=".vocabularies.FunctionsVocabulary"
+      name="collective.contact.plonegroup.functions"
+      />
 
-    <adapter
-        for="zope.interface.Interface
-             z3c.form.interfaces.IFormLayer
-             zope.interface.Interface
-             collective.contact.plonegroup.interfaces.IGroupField
-             z3c.form.interfaces.IWidget"
-        provides="z3c.form.interfaces.ITerms"
-        factory=".vocabularies.GroupsTerms"
-        />
+  <utility
+      factory=".vocabularies.GlobalGroupsVocabulary"
+      name="collective.contact.plonegroup.global_groups"
+      />
 
-    <adapter
-        for="zope.interface.Interface
-             z3c.form.interfaces.IFormLayer
-             zope.interface.Interface
-             collective.contact.plonegroup.interfaces.IOrganizationField
-             z3c.form.interfaces.IWidget"
-        provides="z3c.form.interfaces.ITerms"
-        factory=".vocabularies.OrganizationsTerms"
-        />
+  <adapter
+      factory=".vocabularies.GroupsTerms"
+      provides="z3c.form.interfaces.ITerms"
+      for="zope.interface.Interface
+           z3c.form.interfaces.IFormLayer
+           zope.interface.Interface
+           collective.contact.plonegroup.interfaces.IGroupField
+           z3c.form.interfaces.IWidget"
+      />
 
-    <adapter
-        for="zope.interface.Interface
-             z3c.form.interfaces.IFormLayer
-             zope.interface.Interface
-             collective.contact.plonegroup.interfaces.IDGFVocabularyField
-             z3c.form.interfaces.IWidget"
-        provides="z3c.form.interfaces.ITerms"
-        factory=".vocabularies.DGFVocabularyTerms"
-        />
+  <adapter
+      factory=".vocabularies.OrganizationsTerms"
+      provides="z3c.form.interfaces.ITerms"
+      for="zope.interface.Interface
+           z3c.form.interfaces.IFormLayer
+           zope.interface.Interface
+           collective.contact.plonegroup.interfaces.IOrganizationField
+           z3c.form.interfaces.IWidget"
+      />
 
-    <adapter name="userid" factory=".adapters.heldposition_userid_index" />
+  <adapter
+      factory=".vocabularies.DGFVocabularyTerms"
+      provides="z3c.form.interfaces.ITerms"
+      for="zope.interface.Interface
+           z3c.form.interfaces.IFormLayer
+           zope.interface.Interface
+           collective.contact.plonegroup.interfaces.IDGFVocabularyField
+           z3c.form.interfaces.IWidget"
+      />
+
+  <adapter
+      factory=".adapters.heldposition_userid_index"
+      name="userid"
+      />
 
 </configure>

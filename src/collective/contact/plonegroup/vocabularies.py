@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collective.contact.core.vocabularies import get_vocabulary
 from collective.contact.core.vocabularies import PositionTypes
 from collective.contact.plonegroup.config import DEFAULT_DIRECTORY_ID
@@ -18,7 +16,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 class PositionTypesVocabulary(PositionTypes):
 
     def __call__(self, context):
-        res = super(PositionTypesVocabulary, self).__call__(context)
+        res = super().__call__(context)
         if not res:
             portal = api.portal.get()
             directory = portal.get(DEFAULT_DIRECTORY_ID)
@@ -28,7 +26,7 @@ class PositionTypesVocabulary(PositionTypes):
 
 
 @implementer(IVocabularyFactory)
-class FunctionsVocabulary(object):
+class FunctionsVocabulary:
     """Vocabulary of existing functions."""
 
     def __call__(self, context):
@@ -36,28 +34,36 @@ class FunctionsVocabulary(object):
         terms = []
         for function in functions:
             terms.append(
-                SimpleTerm(function['fct_id'],
-                           function['fct_id'],
-                           function['fct_title']))
+                SimpleTerm(
+                    function["fct_id"], function["fct_id"], function["fct_title"]
+                )
+            )
         return SimpleVocabulary(terms)
 
 
 @implementer(IVocabularyFactory)
-class GlobalGroupsVocabulary(object):
-    """ Vocabulary of global groups. Return all groups but suffixed groups and special groups """
+class GlobalGroupsVocabulary:
+    """Vocabulary of global groups. Return all groups but suffixed groups and special groups"""
 
     def __call__(self, context):
         all_suffixes = get_all_suffixes()
         terms = []
         for group in api.group.get_groups():
-            if group.id in ('Administrators', 'Reviewers', 'Site Administrators', 'AuthenticatedUsers'):
+            if group.id in (
+                "Administrators",
+                "Reviewers",
+                "Site Administrators",
+                "AuthenticatedUsers",
+            ):
                 continue
-            parts = group.id.split('_')
+            parts = group.id.split("_")
             if len(parts) > 1:
-                group_suffix = '_'.join(parts[1:])
+                group_suffix = "_".join(parts[1:])
                 if group_suffix in all_suffixes:
                     continue
-            terms.append(SimpleTerm(group.id, title=group.getProperty('title') or group.id))
+            terms.append(
+                SimpleTerm(group.id, title=group.getProperty("title") or group.id)
+            )
         return SimpleVocabulary(terms)
 
 
@@ -89,10 +95,16 @@ class OrganizationsTerms(ChoiceTermsVocabulary):
         # see DataGridFieldObjectSubForm
         mainform = self.form.parentForm
         # like 'form.widgets.encodeur.0'
-        fieldname = self.form.__parent__.name.split('.')[2]
+        fieldname = self.form.__parent__.name.split(".")[2]
         terms = []
-        for org in sorted(mainform.functions_orgs[fieldname], key=methodcaller('get_full_title')):
-            terms.append(SimpleTerm(org.UID(), title=org.get_full_title(separator=' - ', first_index=1)))
+        for org in sorted(
+            mainform.functions_orgs[fieldname], key=methodcaller("get_full_title")
+        ):
+            terms.append(
+                SimpleTerm(
+                    org.UID(), title=org.get_full_title(separator=" - ", first_index=1)
+                )
+            )
         self.terms = SimpleVocabulary(terms)
         field.vocabulary = self.terms
 
@@ -107,5 +119,7 @@ class DGFVocabularyTerms(ChoiceTermsVocabulary):
         self.widget = widget
         # see DataGridFieldObjectSubForm
         mainform = self.form.parentForm
-        self.terms = getUtility(IVocabularyFactory, field.vocabularyName)(mainform.context)
+        self.terms = getUtility(IVocabularyFactory, field.vocabularyName)(
+            mainform.context
+        )
         field.vocabulary = self.terms

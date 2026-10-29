@@ -1,20 +1,20 @@
-<?xml version="1.0"?>
-<object
-    name="portal_controlpanel"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    i18n:domain="plone">
+<?xml version="1.0" encoding="utf-8"?>
+<object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        name="portal_controlpanel"
+        i18n:domain="plone"
+>
 
-    <configlet
-        title="Contact Plone Group settings"
-        action_id="contact.plonegroup.settings"
-        appId="contact.plonegroup"
-        category="Products"
-        condition_expr=""
-        url_expr="string:${portal_url}/@@contact-plonegroup-settings"
-        icon_expr=""
-        visible="True"
-        i18n:attributes="title">
-        <permission>Plone Site Setup: Site</permission>
-    </configlet>
+  <configlet action_id="contact.plonegroup.settings"
+             appId="contact.plonegroup"
+             category="Products"
+             condition_expr=""
+             icon_expr="string:diagram-3"
+             title="Contact Plone Group settings"
+             url_expr="string:${portal_url}/@@contact-plonegroup-settings"
+             visible="True"
+             i18n:attributes="title"
+  >
+    <permission>Plone Site Setup: Site</permission>
+  </configlet>
 
 </object>

@@ -1,0 +1,49 @@
+# Generated from:
+# https://github.com/plone/meta/tree/2.x/src/plone/meta/default
+# See the inline comments on how to expand/tweak this configuration file
+[meta]
+template = "default"
+commit-id = "2.11.1"
+
+[gitignore]
+extra_lines = """
+# buildout local dev (Makefile)
+.plone-version
+.plone.versioncheck.tracked.json
+.python-version
+CACHEDIR.TAG
+src/*
+!src/collective
+htmlcov/
+*.log
+output.xml
+report.html
+"""
+
+[tox]
+use_mxdev = true
+# the tests check French translations (buildout: zope_i18n_compile_mo_files = true);
+# robot suites written for Firefox (buildout geckodriver): Chrome intercepts their clicks
+test_environment_variables = """
+    zope_i18n_compile_mo_files=true
+    ROBOT_BROWSER=headlessfirefox
+    # Playwright (rfbrowser init) does not know ubuntu-latest 26.04 yet
+    PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64
+"""
+test_matrix = {"6.2" = ["*"]}
+test_deps_additional = """
+horse-with-no-namespace
+    collective.contact.core @ file://{toxinidir}/sources/collective.contact.core
+    collective.eeafaceted.z3ctable @ file://{toxinidir}/sources/collective.eeafaceted.z3ctable
+    collective.elephantvocabulary @ file://{toxinidir}/sources/collective.elephantvocabulary
+    collective.js.tooltipster @ file://{toxinidir}/sources/collective.js.tooltipster
+    imio.actionspanel @ file://{toxinidir}/sources/imio.actionspanel
+    imio.fpaudit @ file://{toxinidir}/sources/imio.fpaudit
+    imio.history @ file://{toxinidir}/sources/imio.history
+    imio.prettylink @ file://{toxinidir}/sources/imio.prettylink
+    plone.formwidget.masterselect @ file://{toxinidir}/sources/plone.formwidget.masterselect
+"""
+
+[pyproject]
+dependencies_ignores = "['Products.PluginIndexes']"
+codespell_ignores = "succesfully,dum,iterms,groupes"

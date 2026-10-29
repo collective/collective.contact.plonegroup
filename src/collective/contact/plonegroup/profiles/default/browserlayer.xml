@@ -1,7 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <layers>
-  <layer
-    name="collective.contact.plonegroup"
-    interface="collective.contact.plonegroup.interfaces.ICollectiveContactPlonegroupLayer"
+  <layer interface="collective.contact.plonegroup.interfaces.ICollectiveContactPlonegroupLayer"
+         name="collective.contact.plonegroup"
   />
 </layers>
