@@ -36,6 +36,7 @@ horse-with-no-namespace
     collective.contact.core @ file://{toxinidir}/sources/collective.contact.core
     collective.eeafaceted.z3ctable @ file://{toxinidir}/sources/collective.eeafaceted.z3ctable
     collective.elephantvocabulary @ file://{toxinidir}/sources/collective.elephantvocabulary
+    collective.fingerpointing @ file://{toxinidir}/sources/collective.fingerpointing
     collective.js.tooltipster @ file://{toxinidir}/sources/collective.js.tooltipster
     imio.actionspanel @ file://{toxinidir}/sources/imio.actionspanel
     imio.fpaudit @ file://{toxinidir}/sources/imio.fpaudit
