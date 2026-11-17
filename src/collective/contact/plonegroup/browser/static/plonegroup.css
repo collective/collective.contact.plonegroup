@@ -71,7 +71,7 @@ td.td_cell_PloneGroupUsersGroupsColumn h5 {
 }
 
 /* avoid too long groups_management list of checkboxes in configuration */
-.template-contact-plonegroup-settings span#form-widgets-groups_management {
+.template-contact-plonegroup-settings div#form-widgets-groups_management {
     max-height: 500px;
     display: block;
     overflow-x: auto;
@@ -80,17 +80,21 @@ td.td_cell_PloneGroupUsersGroupsColumn h5 {
 
 /* manage-own-groups-users view related */
 
-.template-manage-own-groups-users table.datagridwidget-table-view :not(.auto-append):not(.new-row).datagridwidget-row select {
+.template-manage-own-groups-users .pat-datagridfield table :not(.auto-append):not(.new-row).datagridwidget-row select {
     -webkit-appearance: none;
     -moz-appearance: none;
     border: 0px;
 }
 
-.template-manage-own-groups-users span.cross_icon {
+.template-manage-own-groups-users span.trash_icon {
     color: indianred;
 }
 
-.template-manage-own-groups-users table.datagridwidget-table-view .new-row.datagridwidget-row {
+.template-manage-own-groups-users .pat-datagridfield table .datagridwidget-row td {
+    background-color: inherit;
+}
+
+.template-manage-own-groups-users .pat-datagridfield table .new-row.datagridwidget-row {
     background-color: burlywood;
 }
 
@@ -98,7 +102,7 @@ td.td_cell_PloneGroupUsersGroupsColumn h5 {
     color: burlywood;
 }
 
-.template-manage-own-groups-users table.datagridwidget-table-view .auto-append.datagridwidget-row {
+.template-manage-own-groups-users .pat-datagridfield table .auto-append.datagridwidget-row {
     background-color: cadetblue;
 }
 
@@ -106,8 +110,8 @@ td.td_cell_PloneGroupUsersGroupsColumn h5 {
     color: cadetblue;
 }
 
-.template-manage-own-groups-users table.datagridwidget-table-view {
-    width: min-content;
+.template-manage-own-groups-users .pat-datagridfield table {
+    width: auto;
 }
 
 .template-manage-own-groups-users #edit-bar {
@@ -116,8 +120,4 @@ td.td_cell_PloneGroupUsersGroupsColumn h5 {
 
 .template-manage-own-groups-users .field {
     margin-top: 2em;
-}
-
-.template-manage-own-groups-users .datagridwidget-cell {
-    padding: 1px 5px 1px 10px;
 }

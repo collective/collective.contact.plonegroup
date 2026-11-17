@@ -1,16 +1,22 @@
 $(document).ready(function(){
-    $('.subsection-plonegroup-organization .portalMessage.error dd').html(function(index, html){
-        // returns interpreted string with entities replaced
-        return $("<div/>").html(html).text();
+
+    $('.subsection-plonegroup-organization #global_statusmessage .portalMessage').html(function(index, html) {
+        // returns interpreted string in portal messages with entities replaced
+        $(this).contents().filter(function() {
+            return this.nodeType === Node.TEXT_NODE;
+        }).each(function() {
+            var decodedHtml = $("<div>").html(this.nodeValue).text();
+            $(this).replaceWith(decodedHtml);
+        });
     });
-    $("body.template-manage-own-groups-users table.datagridwidget-table-view :not(.auto-append):not(.new-row):not(.datagridwidget-empty-row).datagridwidget-row option:not([selected])").attr("disabled", "disabled");
+
+    $("body.template-manage-own-groups-users .pat-datagridfield table :not(.auto-append):not(.new-row):not(.datagridwidget-empty-row).datagridwidget-row option:not([selected])").attr("disabled", "disabled");
 })
 
 var handleDGFAfterAuto = function(event, dgf, row) {
-    row = $(row);
-    parents=row.parents('table.datagridwidget-table-view');
-    $('#' + parents[0].id + ' tr.datagridwidget-row.row-' + row.data('index')).addClass('new-row');
+    added_row = $(row).prev();
+    added_row.addClass('new-row');
 };
 
 // Bind all DGF handlers on the page
-$(document).on('afteraddrowauto', 'body.template-manage-own-groups-users table.datagridwidget-table-view', handleDGFAfterAuto);
+$(document).on('afteraddrow', 'body.template-manage-own-groups-users .pat-datagridfield', handleDGFAfterAuto);
